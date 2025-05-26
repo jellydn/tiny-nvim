@@ -24,7 +24,7 @@ mise install \
   lua-language-server@latest \
   neovim@nightly \
   node@lts \
-  ripgrep@latest \
+  rg@latest \
   ruby@latest \
   ruff@latest \
   rye@latest \
@@ -54,7 +54,7 @@ npm install -g \
   rustywind \
   typescript-language-server \
   typescript \
-  vscode-langservers-extracted 
+  vscode-langservers-extracted
 
 # Install tools with uv
 echo "Installing tools with uv..."
