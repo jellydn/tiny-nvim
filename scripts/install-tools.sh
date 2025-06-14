@@ -29,6 +29,7 @@ mise install \
   ruff@latest \
   rye@latest \
   stylua@latest \
+  ffmpeg@latest \
   usage@latest \
   uv@latest \
   yarn@1.22.22
