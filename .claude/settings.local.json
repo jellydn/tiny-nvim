@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Edit",
+      "View",
+      "Bash(rg:*)",
+      "Bash(git add:*)",
+      "Bash(git push:*)"
+    ],
+    "deny": []
+  }
+}

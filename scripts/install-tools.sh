@@ -55,9 +55,9 @@ npm install -g \
   rustywind \
   typescript-language-server \
   typescript \
-  vscode-langservers-extracted
+  vscode-langservers-extracted npm-check-updates
 
-# Install tools with uv
+  # Install tools with uv
 echo "Installing tools with uv..."
 uv tool install codespell
 uv tool install isort
