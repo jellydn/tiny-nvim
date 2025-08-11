@@ -5,9 +5,15 @@ if ! command -v mise &> /dev/null; then
     echo "Installing mise..."
     curl https://mise.run | sh
     # Add mise to shell
+    echo '' >> ~/.bashrc
     echo 'eval "$(mise activate)"' >> ~/.bashrc
+    echo '' >> ~/.zshrc  
     echo 'eval "$(mise activate)"' >> ~/.zshrc
+    mkdir -p ~/.config/fish
+    echo '' >> ~/.config/fish/config.fish
     echo 'eval "$(mise activate)"' >> ~/.config/fish/config.fish
+    # Activate mise for current session
+    eval "$(mise activate)"
 fi
 
 # Install tools with mise first
