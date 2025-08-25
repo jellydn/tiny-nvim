@@ -140,11 +140,17 @@ This configuration provides a minimal yet powerful development environment with 
   - [conform.nvim](https://github.com/stevearc/conform.nvim): Code formatting
   - [nvim-lint](https://github.com/mfussenegger/nvim-lint): Linting support
 
-- **AI & Code Assistance**
+- **AI & Code Assistance** _(enabled by default)_
 
   - [CopilotChat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim): AI-powered coding assistant
   - [blink-copilot](https://github.com/fang2hou/blink-copilot): Copilot integration
   - [copilot.vim](https://github.com/github/copilot.vim): GitHub Copilot integration
+  - [claude-code.nvim](https://github.com/greggh/claude-code.nvim): Claude Code integration
+
+  **Usage Tips:**
+  - **Copilot Chat** (`<leader>a*`): Best for interactive conversations, code explanations, and commit messages
+  - **Claude Code** (`<C-,>`): Quick access to Claude for coding assistance in a floating window
+  - Both can be used simultaneously without conflicts - different keybindings and use cases
 
 - **Code Generation & Documentation**
 
@@ -474,6 +480,14 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<leader>av` | CopilotChat - Toggle                        |
 | `<leader>a?` | CopilotChat - Select Models                 |
 | `<leader>aa` | CopilotChat - Select Agents                 |
+
+### Claude Code
+
+| Key          | Description                          |
+| ------------ | ------------------------------------ |
+| `<C-,>`      | Toggle Claude (normal/terminal mode) |
+| `<leader>Cc` | Continue Claude conversation         |
+| `<leader>Cv` | Claude verbose mode                  |
 
 ### Testing
 
