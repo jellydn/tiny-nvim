@@ -5,7 +5,8 @@
       "View",
       "Bash(rg:*)",
       "Bash(git add:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "WebSearch"
     ],
     "deny": []
   }
