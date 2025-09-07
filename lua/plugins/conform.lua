@@ -26,6 +26,7 @@ return {
     -- Define your formatters
     formatters_by_ft = {
       lua = { "stylua" },
+      hurl = { "hurlfmt" },
       -- Conform will run multiple formatters sequentially
       go = { "goimports", "gofmt" },
       -- Install Ruff globally.
