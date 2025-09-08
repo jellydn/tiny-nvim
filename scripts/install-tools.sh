@@ -18,13 +18,14 @@ fi
 
 # Install tools with mise first
 echo "Installing tools with mise..."
-mise install \
+mise use -g \
   bat@latest \
   black@latest \
   bun@latest \
   delta@latest \
   deno@latest \
   fzf@latest \
+  fd@latest \
   go@latest \
   lazygit@latest \
   lua-language-server@latest \
@@ -38,6 +39,7 @@ mise install \
   ffmpeg@latest \
   usage@latest \
   uv@latest \
+  zoxide@latest \
   yarn@1.22.22
 
 # Install Go tools
