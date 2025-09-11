@@ -675,6 +675,29 @@ This configuration includes several extra plugins that can be enabled on demand 
    - Access Minecraft plugins directly from Neovim
    - Command: `:MCPHub`
 
+5. **[oil.nvim](https://github.com/stevearc/oil.nvim)**
+   - File explorer that lets you edit your filesystem like a buffer
+   - Replace netrw with a more intuitive file management experience
+   - Built-in git integration and smart file hiding
+   - Keymaps:
+     - `<leader>e`: Toggle floating file explorer
+     - `<C-s>`: Save all changes in oil buffer
+     - `q`: Close oil buffer
+
+6. **[nvim-ufo](https://github.com/kevinhwang91/nvim-ufo)**
+   - Ultra-fast folding with treesitter and indent providers
+   - Enhanced fold text with line count display
+   - Improves code navigation and readability
+   - Keymaps:
+     - `zR`: Open all folds
+     - `zM`: Close all folds
+
+7. **[fold-preview.nvim](https://github.com/anuvyklack/fold-preview.nvim)**
+   - Preview folded code without opening the fold
+   - Includes pretty-fold.nvim for better fold text formatting
+   - Smart fold navigation with h/l keys
+   - Shows fold level indicators and line counts
+
 ### Enabling Extra Plugins
 
 To enable any of these plugins, add them to your `.nvim-config.lua` file:
@@ -684,7 +707,10 @@ vim.g.enable_extra_plugins = {
   "no-neck-pain",
   "codecompanion",
   "avante",
-  "mcphub"
+  "mcphub",
+  "oil",
+  "nvim-ufo",
+  "fold-preview"
 }
 ```
 
