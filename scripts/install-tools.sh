@@ -23,6 +23,7 @@ mise use -g \
   black@latest \
   bun@latest \
   delta@latest \
+  difftastic@latest \
   deno@latest \
   fzf@latest \
   fd@latest \
