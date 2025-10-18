@@ -12,24 +12,6 @@ return {
       },
     },
   },
-  {
-    "saghen/blink.cmp",
-    ---@module 'blink.cmp'
-    opts = {
-      keymap = {
-        ["<Tab>"] = {
-          "snippet_forward",
-          function() -- sidekick next edit suggestion
-            return require("sidekick").nes_jump_or_apply()
-          end,
-          function() -- if you are using Neovim's native inline completions
-            return vim.lsp.inline_completion.get()
-          end,
-          "fallback",
-        },
-      },
-    },
-  },
   -- Disable copilot chat if using sidekick
   {
     "CopilotC-Nvim/CopilotChat.nvim",
@@ -92,6 +74,17 @@ return {
         mode = { "n", "x" },
         desc = "Sidekick Select Prompt",
       },
+      {
+      "<tab>",
+      function()
+        -- if there is a next edit, jump to it, otherwise apply it if any
+        if not require("sidekick").nes_jump_or_apply() then
+          return "<Tab>" -- fallback to normal tab
+        end
+      end,
+      expr = true,
+      desc = "Goto/Apply Next Edit Suggestion",
+    },
       {
         "<c-.>",
         function() require("sidekick.cli").focus() end,
