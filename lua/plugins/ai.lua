@@ -27,9 +27,11 @@ return {
     },
     build = "make tiktoken", -- Only on MacOS or Linux
     opts = {
-      question_header = "## User ",
-      answer_header = "## Copilot ",
-      error_header = "## Error ",
+      headers = {
+        user = "  User ",
+        assistant = "  Copilot ",
+        tool = "󰊳  Tool ",
+      },
       mappings = {
         -- Use tab for completion
         complete = {
@@ -97,8 +99,6 @@ return {
       { "<leader>av", "<cmd>CopilotChatToggle<cr>", desc = "CopilotChat - Toggle" },
       -- Copilot Chat Models
       { "<leader>a?", "<cmd>CopilotChatModels<cr>", desc = "CopilotChat - Select Models" },
-      -- Copilot Chat Agents
-      { "<leader>aa", "<cmd>CopilotChatAgents<cr>", desc = "CopilotChat - Select Agents" },
     },
   },
 }
