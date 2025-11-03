@@ -142,15 +142,17 @@ This configuration provides a minimal yet powerful development environment with 
 
 - **AI & Code Assistance** _(enabled by default)_
 
-  - [CopilotChat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim): AI-powered coding assistant
+  - [sidekick.nvim](https://github.com/folke/sidekick.nvim): AI sidekick integrating Copilot LSP's Next Edit Suggestions with built-in terminal for AI CLI tools
   - [blink-copilot](https://github.com/fang2hou/blink-copilot): Copilot integration
   - [copilot.vim](https://github.com/github/copilot.vim): GitHub Copilot integration
   - [claude-code.nvim](https://github.com/greggh/claude-code.nvim): Claude Code integration
 
   **Usage Tips:**
-  - **Copilot Chat** (`<leader>a*`): Best for interactive conversations, code explanations, and commit messages
+  - **Sidekick** (`<leader>a*`): AI CLI integration with Claude, Gemini, Copilot CLI and more. Includes Next Edit Suggestions (NES) for multi-line refactorings
   - **Claude Code** (`<C-,>`): Quick access to Claude for coding assistance in a floating window
   - Both can be used simultaneously without conflicts - different keybindings and use cases
+  
+  **Alternative:** [CopilotChat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim) is available as an extra plugin if you prefer the traditional chat interface
 
 - **Code Generation & Documentation**
 
@@ -469,17 +471,21 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<D-c>` | Copy (in visual mode) |
 | `<D-v>` | Paste (in all modes)  |
 
-### AI (Copilot Chat)
+### AI (Sidekick)
 
 | Key          | Description                                 |
 | ------------ | ------------------------------------------- |
-| `<leader>ap` | CopilotChat - Prompt actions                |
-| `<leader>am` | CopilotChat - Generate commit message       |
-| `<leader>af` | CopilotChat - Fix Diagnostic                |
-| `<leader>al` | CopilotChat - Clear buffer and chat history |
-| `<leader>av` | CopilotChat - Toggle                        |
-| `<leader>a?` | CopilotChat - Select Models                 |
-| `<leader>aa` | CopilotChat - Select Agents                 |
+| `<leader>aa` | Sidekick - Toggle CLI                       |
+| `<leader>as` | Sidekick - Select CLI tool                  |
+| `<leader>ad` | Sidekick - Detach CLI session               |
+| `<leader>at` | Sidekick - Send "this" context              |
+| `<leader>af` | Sidekick - Send file                        |
+| `<leader>av` | Sidekick - Send visual selection            |
+| `<leader>ap` | Sidekick - Select prompt                    |
+| `<leader>ac` | Sidekick - Toggle Claude                    |
+| `<leader>am` | Sidekick - Generate commit message          |
+| `<Tab>`      | Next Edit Suggestion - Jump/Apply           |
+| `<C-.>`      | Sidekick - Switch focus to/from CLI         |
 
 ### Claude Code
 
@@ -698,6 +704,35 @@ This configuration includes several extra plugins that can be enabled on demand 
    - Smart fold navigation with h/l keys
    - Shows fold level indicators and line counts
 
+8. **[copilot-chat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim)**
+   - Traditional AI chat interface with GitHub Copilot
+   - Interactive conversations, code explanations, and commit message generation
+   - Alternative to sidekick.nvim if you prefer a dedicated chat window
+   - Automatically disables sidekick.nvim when enabled
+   - Keymaps (when enabled):
+     - `<leader>ap`: Prompt actions
+     - `<leader>am`: Generate commit message
+     - `<leader>af`: Fix diagnostic
+     - `<leader>al`: Clear buffer and chat history
+     - `<leader>av`: Toggle chat window
+     - `<leader>a?`: Select models
+
+9. **[difft.nvim](https://github.com/ahkohd/difft.nvim)**
+   - Beautiful structural diffs using difft
+   - Shows git diffs with better syntax highlighting and structure awareness
+   - Supports multiple layouts: buffer, float, or ivy_taller
+   - Keymaps:
+     - `<leader>gd`: Toggle Difft viewer
+
+10. **[scooter](https://github.com/liamg/scooter)**
+    - Blazingly fast file search and navigation
+    - Alternative to grug-far with better performance
+    - Interactive fuzzy search with file preview
+    - Automatically disables grug-far.nvim when enabled
+    - Keymaps:
+      - `<leader>sr`: Open scooter (normal mode)
+      - `<leader>sr`: Search selected text in scooter (visual mode)
+
 ### Enabling Extra Plugins
 
 To enable any of these plugins, add them to your `.nvim-config.lua` file:
@@ -710,11 +745,14 @@ vim.g.enable_extra_plugins = {
   "mcphub",
   "oil",
   "nvim-ufo",
-  "fold-preview"
+  "fold-preview",
+  "copilot-chat",  -- Alternative to sidekick.nvim
+  "difft",
+  "scooter"        -- Alternative to grug-far.nvim
 }
 ```
 
-Note that some plugins like `avante.nvim` will disable conflicting plugins (such as `copilot.vim`) when enabled.
+Note that some plugins like `avante.nvim`, `copilot-chat`, and `scooter` will disable conflicting plugins when enabled.
 
 </details>
 
