@@ -1,4 +1,4 @@
--- Setup AI with CopilotChat
+-- Setup AI with sidekick.nvim
 return {
   {
     "folke/which-key.nvim",
@@ -6,99 +6,98 @@ return {
     opts = {
       spec = {
         { "<leader>a", group = "ai" },
-        { "<leader>gm", group = "Copilot Chat" },
       },
     },
   },
   {
-    "MeanderingProgrammer/render-markdown.nvim",
-    optional = true,
+    "folke/sidekick.nvim",
     opts = {
-      file_types = { "markdown", "copilot-chat" },
-    },
-    ft = { "markdown", "copilot-chat" },
-  },
-  {
-    "CopilotC-Nvim/CopilotChat.nvim",
-    branch = "main",
-    dependencies = {
-      { "github/copilot.vim" },
-      { "nvim-lua/plenary.nvim", branch = "master" },
-    },
-    build = "make tiktoken", -- Only on MacOS or Linux
-    opts = {
-      headers = {
-        user = "  User ",
-        assistant = "  Copilot ",
-        tool = "󰊳  Tool ",
-      },
-      mappings = {
-        -- Use tab for completion
-        complete = {
-          detail = "Use @<Tab> or /<Tab> for options.",
-          insert = "<Tab>",
-        },
-        -- Close the chat
-        close = {
-          normal = "q",
-          insert = "<C-c>",
-        },
-        -- Reset the chat buffer
-        reset = {
-          normal = "<C-x>",
-          insert = "<C-x>",
-        },
-        -- Submit the prompt to Copilot
-        submit_prompt = {
-          normal = "<CR>",
-          insert = "<C-CR>",
-        },
-        -- Accept the diff
-        accept_diff = {
-          normal = "<C-y>",
-          insert = "<C-y>",
-        },
-        -- Show help
-        show_help = {
-          normal = "g?",
+      cli = {
+        mux = {
+          -- Terminal multiplexer backend for Sidekick CLI integration
+          -- Options: "tmux" or "zellij"
+          -- Determines which multiplexer is used to spawn and manage CLI sessions
+          backend = "tmux",
+          enabled = true,
         },
       },
     },
+    -- stylua: ignore
     keys = {
-      -- Show prompts actions with telescope
       {
-        "<leader>ap",
+        "<leader>aa",
+        function() require("sidekick.cli").toggle() end,
+        desc = "Sidekick Toggle CLI",
+      },
+      {
+        "<leader>as",
         function()
-          require("CopilotChat").select_prompt {
-            context = {
-              "buffers",
-            },
-          }
+          require("sidekick.cli").select()
+          -- Or to select only installed tools:
+          -- require("sidekick.cli").select({ filter = { installed = true } })
         end,
-        desc = "CopilotChat - Prompt actions",
+        desc = "Select CLI",
+      },
+      {
+        "<leader>ad",
+        function() require("sidekick.cli").close() end,
+        desc = "Detach a CLI session",
+      },
+      {
+        "<leader>at",
+        function() require("sidekick.cli").send({ msg = "{this}" }) end,
+        mode = { "x", "n" },
+        desc = "Send This",
+      },
+      {
+        "<leader>af",
+        function() require("sidekick.cli").send({ msg = "{file}" }) end,
+        desc = "Send File",
+      },
+      {
+        "<leader>av",
+        function() require("sidekick.cli").send({ msg = "{selection}" }) end,
+        mode = { "x" },
+        desc = "Send Visual Selection",
       },
       {
         "<leader>ap",
-        function()
-          require("CopilotChat").select_prompt()
-        end,
-        mode = "x",
-        desc = "CopilotChat - Prompt actions",
+        function() require("sidekick.cli").prompt() end,
+        mode = { "n", "x" },
+        desc = "Sidekick Select Prompt",
+      },
+      {
+      "<tab>",
+      function()
+        -- if there is a next edit, jump to it, otherwise apply it if any
+        if not require("sidekick").nes_jump_or_apply() then
+          return "<Tab>" -- fallback to normal tab
+        end
+      end,
+      expr = true,
+      desc = "Goto/Apply Next Edit Suggestion",
+    },
+      {
+        "<c-.>",
+        function() require("sidekick.cli").focus() end,
+        mode = { "n", "x", "i", "t" },
+        desc = "Sidekick Switch Focus",
+      },
+      {
+        "<leader>ac",
+        function() require("sidekick.cli").toggle({ name = "claude", focus = true }) end,
+        desc = "Sidekick Toggle Claude",
       },
       -- Generate commit message based on the git diff
       {
         "<leader>am",
-        "<cmd>CopilotChatCommit<cr>",
-        desc = "CopilotChat - Generate commit message for all changes",
+        function()
+          local prompt =
+          "Run git diff --staged then write commit message for the change with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how'."
+          require("sidekick.cli").send({ name = "copilot", focus = true, msg = prompt, submit = true })
+        end,
+        desc = "Sidekick - Generate commit message for staged changes",
       },
-      -- Fix the issue with diagnostic
-      { "<leader>af", "<cmd>CopilotChatFix<cr>", desc = "CopilotChat - Fix Diagnostic" },
-      -- Clear buffer and chat history
-      { "<leader>al", "<cmd>CopilotChatReset<cr>", desc = "CopilotChat - Clear buffer and chat history" },
-      -- Toggle Copilot Chat Vsplit
-      { "<leader>av", "<cmd>CopilotChatToggle<cr>", desc = "CopilotChat - Toggle" },
-      -- Copilot Chat Models
-      { "<leader>a?", "<cmd>CopilotChatModels<cr>", desc = "CopilotChat - Select Models" },
     },
   },
 }
