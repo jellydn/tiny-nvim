@@ -113,7 +113,7 @@ return {
         "<leader>am",
         function()
           local prompt =
-          "Run git diff --staged then write commit message for the change with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how'."
+          "Run git diff --staged then do atomic commit message for the change with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how'."
           require("sidekick.cli").send({ focus = true, msg = prompt, submit = true })
         end,
         desc = "Sidekick - Generate commit message for staged changes",
