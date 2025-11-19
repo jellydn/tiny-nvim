@@ -11,6 +11,7 @@ return {
   },
   {
     "stevearc/overseer.nvim",
+    version = "v1.6.0",
     dependencies = {
       -- Uncomment to use toggleterm as the strategy
       -- "akinsho/toggleterm.nvim",
