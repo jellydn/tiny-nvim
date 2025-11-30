@@ -20,14 +20,17 @@ fi
 echo "Installing tools with mise..."
 mise use -g \
   bat@latest \
+  biome@latest \
   black@latest \
   bun@latest \
   delta@latest \
   difftastic@latest \
   deno@latest \
+  dprint@latest \
   fzf@latest \
   fd@latest \
   go@latest \
+  hurl@latest \
   lazygit@latest \
   lua-language-server@latest \
   neovim@nightly \
@@ -46,27 +49,29 @@ mise use -g \
 # Install Go tools
 echo "Installing Go tools..."
 go install golang.org/x/tools/gopls@latest
+go install golang.org/x/tools/cmd/goimports@latest
 go install github.com/mgechev/revive@latest
 go install mvdan.cc/sh/v3/cmd/shfmt@latest
 
 # Install npm packages
 echo "Installing npm packages..."
-npm install -g \
+npm install -g --force \
   @antfu/ni \
   @fsouza/prettierd \
   @mermaid-js/mermaid-cli \
   @tailwindcss/language-server \
   @vtsls/language-server \
   cspell \
+  npm-check-updates \
   oxlint \
   pnpm \
   prettier \
   rustywind \
-  typescript-language-server \
   typescript \
-  vscode-langservers-extracted npm-check-updates
+  typescript-language-server \
+  vscode-langservers-extracted
 
-  # Install tools with uv
+# Install tools with uv
 echo "Installing tools with uv..."
 uv tool install codespell
 uv tool install isort
