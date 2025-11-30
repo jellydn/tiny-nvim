@@ -6,7 +6,9 @@
       "Bash(rg:*)",
       "Bash(git add:*)",
       "Bash(git push:*)",
-      "WebSearch"
+      "WebSearch",
+      "mcp__context7__resolve-library-id",
+      "mcp__context7__get-library-docs"
     ],
     "deny": []
   }
