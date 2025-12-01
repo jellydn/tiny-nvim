@@ -8,7 +8,10 @@
       "Bash(git push:*)",
       "WebSearch",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__get-library-docs"
+      "mcp__context7__get-library-docs",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nchore(claude): allow WebFetch for GitHub domains\n\nEnable direct fetching from github.com and raw.githubusercontent.com\nto support documentation lookup and file retrieval workflows.\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")"
     ],
     "deny": []
   }
