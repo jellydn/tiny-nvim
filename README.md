@@ -145,7 +145,7 @@ This configuration provides a minimal yet powerful development environment with 
   - [sidekick.nvim](https://github.com/folke/sidekick.nvim): AI sidekick integrating Copilot LSP's Next Edit Suggestions with built-in terminal for AI CLI tools
   - [blink-copilot](https://github.com/fang2hou/blink-copilot): Copilot integration
   - [copilot.vim](https://github.com/github/copilot.vim): GitHub Copilot integration
-  - [claude-code.nvim](https://github.com/greggh/claude-code.nvim): Claude Code integration
+  - [claudecode.nvim](https://github.com/coder/claudecode.nvim): Claude Code integration
 
   **Usage Tips:**
   - **Sidekick** (`<leader>a*`): AI CLI integration with Claude, Gemini, Copilot CLI and more. Includes Next Edit Suggestions (NES) for multi-line refactorings
@@ -489,11 +489,25 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Claude Code
 
-| Key          | Description                          |
-| ------------ | ------------------------------------ |
-| `<C-,>`      | Toggle Claude (normal/terminal mode) |
-| `<leader>Cc` | Continue Claude conversation         |
-| `<leader>Cv` | Claude verbose mode                  |
+| Key          | Description                    |
+| ------------ | ------------------------------ |
+| `<C-,>`      | Toggle Claude                  |
+| `<leader>Cc` | Toggle Claude                  |
+| `<leader>Cf` | Focus Claude                   |
+| `<leader>Cs` | Send selection to Claude       |
+| `<leader>Cb` | Add buffer to Claude           |
+| `<leader>Ca` | Accept diff                    |
+| `<leader>Cd` | Deny diff                      |
+| `<leader>Cp` | Select prompt                  |
+| `<leader>Ce` | Explain code                   |
+| `<leader>Cr` | Review code                    |
+| `<leader>Ct` | Write tests                    |
+| `<leader>Cm` | Generate commit message        |
+| `<leader>Co` | Optimize code                  |
+| `<leader>Cx` | Fix issues                     |
+| `<leader>CR` | Refactor code                  |
+| `<leader>CD` | Add documentation              |
+| `<leader>CS` | Security review                |
 
 ### Testing
 
