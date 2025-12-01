@@ -64,6 +64,35 @@ return {
             end,
           },
         },
+        prompts = {
+          -- Simple string prompts
+          explain = "Explain this code",
+          optimize = "How can this code be optimized?",
+          tests = "Can you write tests for this code?",
+          -- Prompts with diagnostics context
+          diagnostics = {
+            msg = "What do the diagnostics in this file mean?",
+            diagnostics = true,
+          },
+          fix = {
+            msg = "Can you fix the issues in this code?",
+            diagnostics = true,
+          },
+          review = {
+            msg = "Can you review this code for any issues or improvements?",
+            diagnostics = true,
+          },
+          -- Custom prompts
+          commit = {
+            msg = "Run git diff --staged then do atomic commit message for the change with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how'.",
+          },
+          refactor = "Refactor this code to improve readability and maintainability while preserving functionality.",
+          document = "Add documentation comments to this code following best practices.",
+          security = {
+            msg = "Review this code for potential security vulnerabilities.",
+            diagnostics = true,
+          },
+        },
       },
     },
     -- stylua: ignore
