@@ -260,3 +260,6 @@ buttonless
 getnf
 todesktop
 Huynh
+claudecode
+deepcopy
+startinsert
