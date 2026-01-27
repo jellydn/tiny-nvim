@@ -16,42 +16,47 @@ if ! command -v mise &> /dev/null; then
     eval "$(mise activate)"
 fi
 
-# Install tools with mise first
+# Install tools with mise first (per package installation)
 echo "Installing tools with mise..."
-mise use -g \
-  bat@latest \
-  biome@latest \
-  black@latest \
-  bun@latest \
-  delta@latest \
-  difftastic@latest \
-  deno@latest \
-  dprint@latest \
-  fzf@latest \
-  fd@latest \
-  go@latest \
-  hurl@latest \
-  lazygit@latest \
-  lua-language-server@latest \
-  neovim@nightly \
-  node@lts \
-  rg@latest \
-  ruby@latest \
-  ruff@latest \
-  rye@latest \
-  stylua@latest \
-  ffmpeg@latest \
-  usage@latest \
-  uv@latest \
-  zoxide@latest \
-  yarn@1.22.22
+mise use -g bat@latest
+mise use -g biome@latest
+mise use -g black@latest
+mise use -g bun@latest
+mise use -g delta@latest
+mise use -g difftastic@latest
+mise use -g deno@latest
+mise use -g dprint@latest
+mise use -g fzf@latest
+mise use -g fd@latest
+mise use -g go@latest
+mise use -g hurl@latest
+mise use -g lazygit@latest
+mise use -g lua-language-server@latest
+mise use -g neovim@nightly
+mise use -g node@lts
+mise use -g rg@latest
+mise use -g ruby@latest
+mise use -g ruff@latest
+mise use -g rye@latest
+mise use -g stylua@latest
+mise use -g ffmpeg@latest
+mise use -g usage@latest
+mise use -g uv@latest
+mise use -g zoxide@latest
+mise use -g yarn@1.22.22
 
-# Install Go tools
-echo "Installing Go tools..."
-go install golang.org/x/tools/gopls@latest
-go install golang.org/x/tools/cmd/goimports@latest
-go install github.com/mgechev/revive@latest
-go install mvdan.cc/sh/v3/cmd/shfmt@latest
+# Note: Most tools are now handled by mise, removing manual Go tool installations
+
+# Install system dependencies (Ubuntu/Debian)
+if command -v apt &> /dev/null; then
+    echo "Installing system dependencies..."
+    sudo apt update
+    sudo apt install -y \
+        trash-cli \
+        imagemagick \
+        ghostscript \
+        tree-sitter-cli
+fi
 
 # Install npm packages
 echo "Installing npm packages..."
@@ -62,20 +67,21 @@ npm install -g --force \
   @tailwindcss/language-server \
   @vtsls/language-server \
   cspell \
+  gopls \
   npm-check-updates \
   oxlint \
   pnpm \
   prettier \
+  pyright \
   rustywind \
   typescript \
   typescript-language-server \
   vscode-langservers-extracted
 
-# Install tools with uv
+# Install Python tools with uv (note: pyright is already handled by npm)
 echo "Installing tools with uv..."
 uv tool install codespell
 uv tool install isort
-uv tool install pyright
 uv tool install ruff
 
 echo "All tools have been installed successfully!"

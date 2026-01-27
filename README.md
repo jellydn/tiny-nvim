@@ -718,18 +718,29 @@ This configuration includes several extra plugins that can be enabled on demand 
    - Smart fold navigation with h/l keys
    - Shows fold level indicators and line counts
 
-8. **[copilot-chat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim)**
-   - Traditional AI chat interface with GitHub Copilot
-   - Interactive conversations, code explanations, and commit message generation
-   - Alternative to sidekick.nvim if you prefer a dedicated chat window
-   - Automatically disables sidekick.nvim when enabled
-   - Keymaps (when enabled):
-     - `<leader>ap`: Prompt actions
-     - `<leader>am`: Generate commit message
-     - `<leader>af`: Fix diagnostic
-     - `<leader>al`: Clear buffer and chat history
-     - `<leader>av`: Toggle chat window
-     - `<leader>a?`: Select models
+8a. **[copilot-chat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim)**
+    - Traditional AI chat interface with GitHub Copilot
+    - Interactive conversations, code explanations, and commit message generation
+    - Alternative to sidekick.nvim if you prefer a dedicated chat window
+    - Automatically disables sidekick.nvim when enabled
+    - Keymaps (when enabled):
+      - `<leader>ap`: Prompt actions
+      - `<leader>am`: Generate commit message
+      - `<leader>af`: Fix diagnostic
+      - `<leader>al`: Clear buffer and chat history
+      - `<leader>av`: Toggle chat window
+      - `<leader>a?`: Select models
+
+8b. **[copilot.vim](https://github.com/github/copilot.vim)**
+    - GitHub Copilot integration moved to extra plugins
+    - Provides AI-powered code completion and suggestions
+    - Keymaps (when enabled):
+      - `<C-y>`: Accept suggestion
+      - `<C-i>`: Accept line
+      - `<C-j>`: Next suggestion
+      - `<C-k>`: Previous suggestion
+      - `<C-d>`: Dismiss suggestion
+    - Note: This plugin is disabled by default and can be enabled via extra plugins
 
 9. **[difft.nvim](https://github.com/ahkohd/difft.nvim)**
    - Beautiful structural diffs using difft
@@ -761,6 +772,7 @@ vim.g.enable_extra_plugins = {
   "nvim-ufo",
   "fold-preview",
   "copilot-chat",  -- Alternative to sidekick.nvim
+  "copilot",       -- GitHub Copilot integration
   "difft",
   "scooter"        -- Alternative to grug-far.nvim
 }
