@@ -214,6 +214,8 @@ return {
       prompt_keymap("m", "commit", "Generate Commit Message"),
     },
     opts = {
+      -- Use ccs with GLM model
+      terminal_cmd = "ccs glm",
       terminal = {
         snacks_win_opts = {
           position = "float",
