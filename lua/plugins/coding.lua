@@ -1,6 +1,13 @@
 local completion = vim.g.completion_mode or "blink" -- or 'native'
 
 return {
+  -- nvim-cmp compatibility layer for blink.cmp (required by 99 plugin for blink support)
+  {
+    "saghen/blink.compat",
+    -- use v2.* for blink.cmp v1.*
+    version = "2.*",
+    opts = {},
+  },
   -- Autocomplete, refer to https://cmp.saghen.dev/#compared-to-built-in-completion for more information
   {
     "saghen/blink.cmp",
@@ -73,7 +80,13 @@ return {
       },
       snippets = { preset = "luasnip" },
       sources = {
-        default = { "lsp", "path", "snippets", "buffer" },
+        default = { "lsp", "path", "snippets", "buffer", "cmp" },
+        providers = {
+          cmp = {
+            name = "cmp",
+            module = "blink.compat.source",
+          },
+        },
       },
       fuzzy = { implementation = "prefer_rust_with_warning" },
       -- Disable cmdline completions
