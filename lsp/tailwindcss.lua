@@ -6,7 +6,6 @@ return {
     -- html
     "aspnetcorerazor",
     "astro",
-    "astro-markdown",
     "blade",
     "clojure",
     "django-html",
@@ -15,7 +14,6 @@ return {
     "eelixir", -- vim ft
     "elixir",
     "ejs",
-    "erb",
     "eruby", -- vim ft
     "gohtml",
     "gohtmltmpl",
