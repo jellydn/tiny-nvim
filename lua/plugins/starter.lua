@@ -8,6 +8,39 @@ local logo = [[
 ]]
 
 logo = string.rep("\n", 4) .. logo .. "\n"
+local hostname = io.popen("hostname"):read("*a"):gsub("%s+", "")
+
+local function action_find_files()
+  require("mini.pick").builtin.files()
+end
+
+local function action_find_text()
+  require("mini.pick").builtin.grep_live()
+end
+
+local function action_recent_files()
+  require("mini.extra").pickers.oldfiles()
+end
+
+local function action_config_files()
+  require("mini.pick").builtin.files(nil, { source = { cwd = vim.fn.stdpath "config" } })
+end
+
+local function starter_footer()
+  local base = "Welcome back, " .. hostname .. "!"
+  local ok, lazy = pcall(require, "lazy")
+  if not ok then
+    return base
+  end
+
+  local stats = lazy.stats()
+  if not stats or not stats.count or not stats.startuptime then
+    return base
+  end
+
+  local startup_ms = math.floor(stats.startuptime + 0.5)
+  return string.format("%s  |  %d/%d plugins in %dms", base, stats.loaded or 0, stats.count, startup_ms)
+end
 
 local function restore_session()
   local ok, persistence = pcall(require, "persistence")
@@ -35,56 +68,50 @@ return {
       local starter = require "mini.starter"
       return {
         header = logo,
+        footer = starter_footer,
+        query_updaters = "",
         items = {
           {
-            name = "Find File",
-            action = function()
-              require("mini.pick").builtin.files()
-            end,
+            name = " [F]iles",
+            action = action_find_files,
             section = "Search",
           },
           {
-            name = "Find Text",
-            action = function()
-              require("mini.pick").builtin.grep_live()
-            end,
+            name = " [G]rep",
+            action = action_find_text,
             section = "Search",
           },
           {
-            name = "Recent Files",
-            action = function()
-              require("mini.extra").pickers.oldfiles()
-            end,
+            name = " [R]ecent Files",
+            action = action_recent_files,
             section = "Search",
           },
           {
-            name = "Config",
-            action = function()
-              require("mini.pick").builtin.files(nil, { source = { cwd = vim.fn.stdpath "config" } })
-            end,
+            name = " [C]onfig",
+            action = action_config_files,
             section = "Search",
           },
           {
-            name = "Restore Session",
+            name = " [S]ession",
             action = restore_session,
             section = "Session",
           },
           {
-            name = "Lazy",
+            name = "󰒲 [L]azy",
             action = function()
               lazy_cmd "Lazy"
             end,
             section = "Tools",
           },
           {
-            name = "Update",
+            name = "󰊳 [U]pdate",
             action = function()
               lazy_cmd "Lazy update"
             end,
             section = "Tools",
           },
           {
-            name = "Quit",
+            name = " [Q]uit",
             action = "qa",
             section = "Builtins",
           },
@@ -95,6 +122,32 @@ return {
           starter.gen_hook.padding(3, 2),
         },
       }
+    end,
+    config = function(_, opts)
+      require("mini.starter").setup(opts)
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniStarterOpened",
+        callback = function(args)
+          local buf = args.buf or vim.api.nvim_get_current_buf()
+          local map = function(lhs, rhs)
+            vim.keymap.set("n", lhs, rhs, { buffer = buf, silent = true, nowait = true })
+          end
+
+          map("f", action_find_files)
+          map("g", action_find_text)
+          map("r", action_recent_files)
+          map("c", action_config_files)
+          map("s", restore_session)
+          map("q", "<cmd>qa<cr>")
+          map("l", function()
+            lazy_cmd "Lazy"
+          end)
+          map("u", function()
+            lazy_cmd "Lazy update"
+          end)
+        end,
+      })
     end,
   },
   {
