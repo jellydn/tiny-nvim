@@ -29,6 +29,8 @@ return {
       hurl = { "hurlfmt" },
       -- Conform will run multiple formatters sequentially
       go = { "goimports", "gofmt" },
+      -- rustfmt is installed via rustup component add rustfmt
+      rust = { "rustfmt" },
       -- Install Ruff globally.
       -- uv tool install ruff@latest
       python = function(bufnr)
