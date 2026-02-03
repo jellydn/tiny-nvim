@@ -10,6 +10,55 @@ local function deduplicate(list)
   return result
 end
 
+local function get_listed_buffers()
+  local buffers = vim.fn.getbufinfo { buflisted = 1 }
+  table.sort(buffers, function(a, b)
+    return a.bufnr < b.bufnr
+  end)
+  return buffers
+end
+
+local function close_buffers(predicate)
+  for _, buf in ipairs(get_listed_buffers()) do
+    if predicate(buf.bufnr) then
+      pcall(vim.api.nvim_buf_delete, buf.bufnr, {})
+    end
+  end
+end
+
+local function close_buffers_left()
+  local current = vim.api.nvim_get_current_buf()
+  close_buffers(function(bufnr)
+    return bufnr < current
+  end)
+end
+
+local function close_buffers_right()
+  local current = vim.api.nvim_get_current_buf()
+  close_buffers(function(bufnr)
+    return bufnr > current
+  end)
+end
+
+local function close_other_buffers()
+  local current = vim.api.nvim_get_current_buf()
+  close_buffers(function(bufnr)
+    return bufnr ~= current
+  end)
+end
+
+local function mini_diff_goto(direction)
+  require("mini.diff").goto_hunk(direction)
+end
+
+local function mini_diff_apply_current()
+  vim.cmd "normal ghgh"
+end
+
+local function mini_diff_reset_current()
+  vim.cmd "normal gHgh"
+end
+
 return {
   "nvim-lua/plenary.nvim",
   {
@@ -77,26 +126,22 @@ return {
     },
   },
   {
-    "akinsho/bufferline.nvim",
+    "echasnovski/mini.tabline",
     event = "VeryLazy",
     keys = {
-      { "<leader>bp", "<Cmd>BufferLineTogglePin<CR>", desc = "Toggle Pin" },
-      { "<leader>bP", "<Cmd>BufferLineGroupClose ungrouped<CR>", desc = "Delete Non-Pinned Buffers" },
-      { "<leader>bo", "<Cmd>BufferLineCloseOthers<CR>", desc = "Delete Other Buffers" },
-      { "<leader>br", "<Cmd>BufferLineCloseRight<CR>", desc = "Delete Buffers to the Right" },
-      { "<leader>bl", "<Cmd>BufferLineCloseLeft<CR>", desc = "Delete Buffers to the Left" },
-      { "<S-h>", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
-      { "<S-l>", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
-      { "[b", "<cmd>BufferLineCyclePrev<cr>", desc = "Prev Buffer" },
-      { "]b", "<cmd>BufferLineCycleNext<cr>", desc = "Next Buffer" },
-      { "[B", "<cmd>BufferLineMovePrev<cr>", desc = "Move buffer prev" },
-      { "]B", "<cmd>BufferLineMoveNext<cr>", desc = "Move buffer next" },
+      { "<leader>bo", close_other_buffers, desc = "Delete Other Buffers" },
+      { "<leader>br", close_buffers_right, desc = "Delete Buffers to the Right" },
+      { "<leader>bl", close_buffers_left, desc = "Delete Buffers to the Left" },
+      { "<S-h>", "<cmd>bprevious<cr>", desc = "Prev Buffer" },
+      { "<S-l>", "<cmd>bnext<cr>", desc = "Next Buffer" },
+      { "[b", "<cmd>bprevious<cr>", desc = "Prev Buffer" },
+      { "]b", "<cmd>bnext<cr>", desc = "Next Buffer" },
     },
-    opts = {
-      options = {
-        always_show_bufferline = false,
-      },
-    },
+    opts = {},
+  },
+  {
+    "echasnovski/mini.bufremove",
+    opts = {},
   },
   {
     "folke/todo-comments.nvim",
@@ -152,6 +197,7 @@ return {
     "nvim-treesitter/nvim-treesitter",
     lazy = false,
     build = ":TSUpdate",
+    branch = "main",
     keys = {
       { "<c-space>", desc = "Increment Selection" },
       { "<bs>", desc = "Decrement Selection", mode = "x" },
@@ -162,6 +208,14 @@ return {
         opts.ensure_installed = deduplicate(opts.ensure_installed)
       end
       require("nvim-treesitter.config").setup(opts)
+      local filetypes = opts.ensure_installed
+      require("nvim-treesitter").install(filetypes)
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = filetypes,
+        callback = function()
+          vim.treesitter.start()
+        end,
+      })
     end,
     opts = {
       highlight = { enable = true },
@@ -169,12 +223,15 @@ return {
       ensure_installed = {
         "bash",
         "c",
+        "css",
         "diff",
+        "go",
+        "gomod",
         "html",
         "javascript",
         "jsdoc",
         "json",
-        "jsonc",
+        "latex",
         "lua",
         "luadoc",
         "luap",
@@ -185,11 +242,15 @@ return {
         "query",
         "regex",
         "rust",
+        "scss",
+        "svelte",
         "toml",
         "tsx",
         "typescript",
+        "typst",
         "vim",
         "vimdoc",
+        "vue",
         "xml",
         "yaml",
       },
@@ -258,67 +319,45 @@ return {
     end,
   },
   {
-    "lewis6991/gitsigns.nvim",
+    "echasnovski/mini.diff",
     event = "VeryLazy",
-    opts = {
-      signs = {
-        add = { text = "▎" },
-        change = { text = "▎" },
-        delete = { text = "" },
-        topdelete = { text = "" },
-        changedelete = { text = "▎" },
-        untracked = { text = "▎" },
+    keys = {
+      {
+        "]h",
+        function()
+          mini_diff_goto "next"
+        end,
+        desc = "Next Hunk",
       },
-      on_attach = function(buffer)
-        local gs = package.loaded.gitsigns
-
-        local function map(mode, l, r, desc)
-          vim.keymap.set(mode, l, r, { buffer = buffer, desc = desc })
-        end
-
-        map("n", "]h", function()
-          if vim.wo.diff then
-            vim.cmd.normal { "]c", bang = true }
-          else
-            gs.nav_hunk "next"
-          end
-        end, "Next Hunk")
-        map("n", "[h", function()
-          if vim.wo.diff then
-            vim.cmd.normal { "[c", bang = true }
-          else
-            gs.nav_hunk "prev"
-          end
-        end, "Prev Hunk")
-        map("n", "]H", function()
-          gs.nav_hunk "last"
-        end, "Last Hunk")
-        map("n", "[H", function()
-          gs.nav_hunk "first"
-        end, "First Hunk")
-        map({ "n", "v" }, "<leader>ghs", ":Gitsigns stage_hunk<CR>", "Stage Hunk")
-        map({ "n", "v" }, "<leader>ghr", ":Gitsigns reset_hunk<CR>", "Reset Hunk")
-        map("n", "<leader>ghS", gs.stage_buffer, "Stage Buffer")
-        map("n", "<leader>ghu", gs.undo_stage_hunk, "Undo Stage Hunk")
-        map("n", "<leader>ghR", gs.reset_buffer, "Reset Buffer")
-        map("n", "<leader>ghp", gs.preview_hunk_inline, "Preview Hunk Inline")
-        map("n", "<leader>ghb", function()
-          gs.blame_line { full = true }
-        end, "Blame Line")
-        map("n", "<leader>ghB", function()
-          gs.blame()
-        end, "Blame Buffer")
-        map("n", "<leader>ghd", gs.diffthis, "Diff This")
-        map("n", "<leader>ghD", function()
-          gs.diffthis "~"
-        end, "Diff This ~")
-        map({ "o", "x" }, "ih", ":<C-U>Gitsigns select_hunk<CR>", "GitSigns Select Hunk")
-
-        -- Toggle blame line
-        map("n", "<leader>tb", function()
-          gs.toggle_current_line_blame()
-        end, "Toggle Blame Line")
-      end,
+      {
+        "[h",
+        function()
+          mini_diff_goto "prev"
+        end,
+        desc = "Prev Hunk",
+      },
+      {
+        "]H",
+        function()
+          mini_diff_goto "last"
+        end,
+        desc = "Last Hunk",
+      },
+      {
+        "[H",
+        function()
+          mini_diff_goto "first"
+        end,
+        desc = "First Hunk",
+      },
+      { "<leader>ghs", mini_diff_apply_current, desc = "Stage Hunk" },
+      { "<leader>ghr", mini_diff_reset_current, desc = "Reset Hunk" },
+    },
+    opts = {
+      view = {
+        style = "sign",
+        signs = { add = "▎", change = "▎", delete = "" },
+      },
     },
   },
   -- Search and replace
@@ -342,89 +381,6 @@ return {
         mode = { "n", "v" },
         desc = "Search and Replace",
       },
-    },
-  },
-  -- Theme
-  {
-    "rebelot/kanagawa.nvim",
-    lazy = true,
-    opts = {
-      dimInactive = true, -- dim inactive window `:h hl-NormalNC`
-      -- Remove gutter background
-      colors = {
-        theme = {
-          all = {
-            ui = {
-              bg_gutter = "none",
-            },
-          },
-        },
-      },
-      overrides = function(colors)
-        local theme = colors.theme
-        return {
-          -- Transparent background
-          NormalFloat = { bg = "none" },
-          FloatBorder = { bg = "none" },
-          FloatTitle = { bg = "none" },
-
-          NormalDark = { fg = theme.ui.fg_dim, bg = theme.ui.bg_m3 },
-          LazyNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
-          MasonNormal = { bg = theme.ui.bg_m3, fg = theme.ui.fg_dim },
-
-          -- Credit to https://github.com/rebelot/kanagawa.nvim/pull/268
-          -- SnacksDashboard
-          SnacksDashboardHeader = { fg = theme.vcs.removed },
-          SnacksDashboardFooter = { fg = theme.syn.comment },
-          SnacksDashboardDesc = { fg = theme.syn.identifier },
-          SnacksDashboardIcon = { fg = theme.ui.special },
-          SnacksDashboardKey = { fg = theme.syn.special1 },
-          SnacksDashboardSpecial = { fg = theme.syn.comment },
-          SnacksDashboardDir = { fg = theme.syn.identifier },
-          -- SnacksNotifier
-          SnacksNotifierBorderError = { link = "DiagnosticError" },
-          SnacksNotifierBorderWarn = { link = "DiagnosticWarn" },
-          SnacksNotifierBorderInfo = { link = "DiagnosticInfo" },
-          SnacksNotifierBorderDebug = { link = "Debug" },
-          SnacksNotifierBorderTrace = { link = "Comment" },
-          SnacksNotifierIconError = { link = "DiagnosticError" },
-          SnacksNotifierIconWarn = { link = "DiagnosticWarn" },
-          SnacksNotifierIconInfo = { link = "DiagnosticInfo" },
-          SnacksNotifierIconDebug = { link = "Debug" },
-          SnacksNotifierIconTrace = { link = "Comment" },
-          SnacksNotifierTitleError = { link = "DiagnosticError" },
-          SnacksNotifierTitleWarn = { link = "DiagnosticWarn" },
-          SnacksNotifierTitleInfo = { link = "DiagnosticInfo" },
-          SnacksNotifierTitleDebug = { link = "Debug" },
-          SnacksNotifierTitleTrace = { link = "Comment" },
-          SnacksNotifierError = { link = "DiagnosticError" },
-          SnacksNotifierWarn = { link = "DiagnosticWarn" },
-          SnacksNotifierInfo = { link = "DiagnosticInfo" },
-          SnacksNotifierDebug = { link = "Debug" },
-          SnacksNotifierTrace = { link = "Comment" },
-          -- SnacksProfiler
-          SnacksProfilerIconInfo = { bg = theme.ui.bg_search, fg = theme.syn.fun },
-          SnacksProfilerBadgeInfo = { bg = theme.ui.bg_visual, fg = theme.syn.fun },
-          SnacksScratchKey = { link = "SnacksProfilerIconInfo" },
-          SnacksScratchDesc = { link = "SnacksProfilerBadgeInfo" },
-          SnacksProfilerIconTrace = { bg = theme.syn.fun, fg = theme.ui.float.fg_border },
-          SnacksProfilerBadgeTrace = { bg = theme.syn.fun, fg = theme.ui.float.fg_border },
-          SnacksIndent = { fg = theme.ui.bg_p2, nocombine = true },
-          SnacksIndentScope = { fg = theme.ui.pmenu.bg, nocombine = true },
-          SnacksZenIcon = { fg = theme.syn.statement },
-          SnacksInputIcon = { fg = theme.ui.pmenu.bg },
-          SnacksInputBorder = { fg = theme.syn.identifier },
-          SnacksInputTitle = { fg = theme.syn.identifier },
-          -- SnacksPicker
-          SnacksPickerInputBorder = { fg = theme.syn.constant },
-          SnacksPickerInputTitle = { fg = theme.syn.constant },
-          SnacksPickerBoxTitle = { fg = theme.syn.constant },
-          SnacksPickerSelected = { fg = theme.syn.number },
-          SnacksPickerToggle = { link = "SnacksProfilerBadgeInfo" },
-          SnacksPickerPickWinCurrent = { fg = theme.ui.fg, bg = theme.syn.number, bold = true },
-          SnacksPickerPickWin = { fg = theme.ui.fg, bg = theme.ui.bg_search, bold = true },
-        }
-      end,
     },
   },
 }

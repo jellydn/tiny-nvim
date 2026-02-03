@@ -177,7 +177,6 @@ return {
   },
   {
     "coder/claudecode.nvim",
-    dependencies = { "folke/snacks.nvim" },
     config = function(_, opts)
       if opts.prompts then
         prompts = vim.tbl_deep_extend("force", prompts, opts.prompts)

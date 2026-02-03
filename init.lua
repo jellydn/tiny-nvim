@@ -17,6 +17,7 @@ require "config.autocmds"
 require "config.lazy"
 require "config.keymaps"
 require "config.project"
+require "config.theme"
 
 -- Only load the theme if not in VSCode
 if vim.g.vscode then
@@ -25,7 +26,9 @@ if vim.g.vscode then
     vim.api.nvim_exec_autocmds("User", { pattern = pattern, modeline = false })
 else
     -- Load the theme
-    require("kanagawa").load "wave"
+    local theme = require "config.theme"
+    theme.setup()
+    theme.apply()
 
     local ts_server = vim.g.lsp_typescript_server or "ts_ls" -- "ts_ls" or "vtsls" for TypeScript
 
@@ -35,7 +38,8 @@ else
         "lua_ls",       -- Lua
         "biome",        -- Biome = Eslint + Prettier
         "json",         -- JSON
-        "pyright",      -- Python
+        "basedpyright", -- Python (type checking)
+        "ruff",         -- Python (linting)
         "gopls",        -- Go
         "rust-analyzer", -- Rust
         "tailwindcss",  -- Tailwind CSS
