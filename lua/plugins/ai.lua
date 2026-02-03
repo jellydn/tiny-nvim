@@ -202,9 +202,9 @@ return {
         "<leader>ac",
         function()
           local cli = safe_require("sidekick.cli")
-          if cli then cli.toggle({ name = "claude", focus = true }) end
+          if cli then cli.toggle({ name = "OpenCode", focus = true }) end
         end,
-        desc = "Sidekick Toggle Claude",
+        desc = "Sidekick Toggle OpenCode",
       },
       {
         "<leader>am",

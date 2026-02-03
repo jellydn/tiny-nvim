@@ -150,8 +150,6 @@ vim.api.nvim_create_autocmd("User", {
   pattern = "VeryLazy",
   callback = function()
     map("n", "<leader>gg", open_lazygit, { desc = "Lazygit" })
-    map("n", "<leader>gf", open_lazygit_current_file, { desc = "Lazygit Current File" })
-    map("n", "<leader>gl", open_lazygit, { desc = "Lazygit Log (cwd)" })
   end,
 })
 

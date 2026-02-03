@@ -1,6 +1,9 @@
 # Welcome to My Tiny Neovim 👋
+
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+
 [![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
+
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](#)
@@ -18,7 +21,6 @@
 This configuration is a migration from [my-nvim-ide](https://github.com/jellydn/my-nvim-ide) with two main goals:
 
 1. **Leverage Neovim 0.11+ Built-in Features**:
-
    - Remove dependency on [`lspconfig`](https://github.com/neovim/nvim-lspconfig/pull/3659) by utilizing Neovim's built-in LSP support
    - No need for the `mason.nvim` plugin; instead, use a shell [script](./scripts/install-tools.sh) to install necessary tools
    - Experience faster startup times and reduced complexity
@@ -144,17 +146,18 @@ for uncommon extensions and templates. The mappings live in `lua/config/autocmds
 This configuration has migrated from `snacks.nvim` to `mini.nvim` as its core UI framework.
 
 **Why mini.nvim?**
+
 - Consistent ecosystem from a single author
 - Better integration between plugins
 - Reduced dependencies while maintaining feature parity
 - Optimized for Neovim 0.11+
 
-| Feature | Previously (snacks) | Now (mini.nvim) |
-|---------|---------------------|-----------------|
-| Fuzzy Picker | Snacks.picker | mini.pick + mini.extra |
-| Dashboard | Snacks.dashboard | mini.starter |
-| Git Diff | Snacks.git | mini.diff |
-| Icons | nvim-web-devicons | mini.icons |
+| Feature      | Previously (snacks) | Now (mini.nvim)        |
+| ------------ | ------------------- | ---------------------- |
+| Fuzzy Picker | Snacks.picker       | mini.pick + mini.extra |
+| Dashboard    | Snacks.dashboard    | mini.starter           |
+| Git Diff     | Snacks.git          | mini.diff              |
+| Icons        | nvim-web-devicons   | mini.icons             |
 
 > **Note**: `snacks.nvim` is still available as an optional extra plugin if you prefer it.
 
@@ -180,14 +183,12 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 ### Core Development
 
 - **LSP & Completion**
-
   - Built-in LSP support (Neovim 0.11+)
   - [blink.cmp](https://github.com/saghen/blink.cmp) (v1.\*): Enhanced completion menu
   - [conform.nvim](https://github.com/stevearc/conform.nvim): Code formatting
   - [nvim-lint](https://github.com/mfussenegger/nvim-lint): Linting support
 
 - **AI & Code Assistance**
-
   - **Enabled by default:** [sidekick.nvim](https://github.com/folke/sidekick.nvim) for AI CLI tools + Copilot NES
   - **Extra plugins:** [blink-copilot](https://github.com/fang2hou/blink-copilot), [copilot.vim](https://github.com/github/copilot.vim), [claudecode.nvim](https://github.com/coder/claudecode.nvim)
 
@@ -195,11 +196,10 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
   - **Sidekick** (`<leader>a*`): AI CLI integration with Claude, Gemini, Copilot CLI and more. Includes Next Edit Suggestions (NES) for multi-line refactorings
   - **Claude Code** (`<C-,>`): Quick access to Claude in a floating window (when enabled)
   - Both can be used simultaneously without conflicts - different keybindings and use cases
-  
+
   **Alternative:** [CopilotChat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim) is available as an extra plugin if you prefer the traditional chat interface
 
 - **Code Generation & Documentation**
-
   - [LuaSnip](https://github.com/L3MON4D3/LuaSnip) (v2.\*): Snippet engine
   - [friendly-snippets](https://github.com/rafamadriz/friendly-snippets): Snippet collection
   - [neogen](https://github.com/danymat/neogen): Documentation generator
@@ -223,6 +223,7 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 - [betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim): Terminal manager with tabs and quick toggles
 
 Theme switching:
+
 - Default theme: `kanagawa`
 - Switch theme: `:Theme kanagawa`
 - Check current theme: `:Theme`
@@ -354,28 +355,29 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Git Operations
 
-| Key           | Description        |
-| ------------- | ------------------ |
-| `]h`          | Next Hunk          |
-| `[h`          | Previous Hunk      |
-| `]H`          | Last Hunk          |
-| `[H`          | First Hunk         |
-| `<leader>ghs` | Stage Hunk         |
-| `<leader>ghr` | Reset Hunk         |
-| `<leader>gg`  | Lazygit            |
-| `<leader>gf`  | Lazygit current    |
-| `<leader>gl`  | Lazygit log        |
+| Key           | Description   |
+| ------------- | ------------- |
+| `]h`          | Next Hunk     |
+| `[h`          | Previous Hunk |
+| `]H`          | Last Hunk     |
+| `[H`          | First Hunk    |
+| `<leader>ghs` | Stage Hunk    |
+| `<leader>ghr` | Reset Hunk    |
+| `<leader>gc`  | Git Log       |
+| `<leader>gs`  | Git Hunks     |
+| `<leader>gS`  | Git Stash     |
+| `<leader>gg`  | Lazygit       |
 
 ### LSP & Code Actions
 
-| Key          | Description           |
-| ------------ | --------------------- |
-| `<leader>ca` | Code Action           |
-| `<leader>cr` | Rename                |
-| `<leader>cf` | Format Document       |
+| Key          | Description             |
+| ------------ | ----------------------- |
+| `<leader>ca` | Code Action             |
+| `<leader>cr` | Rename                  |
+| `<leader>cf` | Format Document         |
 | `<leader>.`  | Quick Fix / Code Action |
-| `gd`         | Go to Definition      |
-| `K`          | Show Documentation    |
+| `gd`         | Go to Definition        |
+| `K`          | Show Documentation      |
 
 ### Copilot _(extra plugin)_
 
@@ -446,16 +448,16 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Dashboard
 
-| Item            | Description             |
-| --------------- | ----------------------- |
-| Find File       | Open file picker        |
-| Find Text       | Live grep               |
-| Recent Files    | Recently opened files   |
-| Config          | Find files in config    |
-| Restore Session | Load last session       |
-| Lazy            | Open lazy.nvim          |
-| Update          | Update plugins          |
-| Quit            | Quit Neovim             |
+| Item            | Description           |
+| --------------- | --------------------- |
+| Find File       | Open file picker      |
+| Find Text       | Live grep             |
+| Recent Files    | Recently opened files |
+| Config          | Find files in config  |
+| Restore Session | Load last session     |
+| Lazy            | Open lazy.nvim        |
+| Update          | Update plugins        |
+| Quit            | Quit Neovim           |
 
 ### Terminal
 
@@ -494,41 +496,41 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### AI (Sidekick)
 
-| Key          | Description                                 |
-| ------------ | ------------------------------------------- |
-| `<leader>aa` | Sidekick - Toggle CLI                       |
-| `<leader>as` | Sidekick - Select CLI tool                  |
-| `<leader>ad` | Sidekick - Detach CLI session               |
-| `<leader>at` | Sidekick - Send "this" context              |
-| `<leader>af` | Sidekick - Send file                        |
-| `<leader>av` | Sidekick - Send visual selection            |
-| `<leader>ap` | Sidekick - Select prompt                    |
-| `<leader>ac` | Sidekick - Toggle Claude                    |
-| `<leader>am` | Sidekick - Generate commit message          |
-| `<Tab>`      | Next Edit Suggestion - Jump/Apply           |
-| `<C-.>`      | Sidekick - Switch focus to/from CLI         |
+| Key          | Description                         |
+| ------------ | ----------------------------------- |
+| `<leader>aa` | Sidekick - Toggle CLI               |
+| `<leader>as` | Sidekick - Select CLI tool          |
+| `<leader>ad` | Sidekick - Detach CLI session       |
+| `<leader>at` | Sidekick - Send "this" context      |
+| `<leader>af` | Sidekick - Send file                |
+| `<leader>av` | Sidekick - Send visual selection    |
+| `<leader>ap` | Sidekick - Select prompt            |
+| `<leader>ac` | Sidekick - Toggle Claude            |
+| `<leader>am` | Sidekick - Generate commit message  |
+| `<Tab>`      | Next Edit Suggestion - Jump/Apply   |
+| `<C-.>`      | Sidekick - Switch focus to/from CLI |
 
 ### Claude Code (extra)
 
-| Key          | Description                    |
-| ------------ | ------------------------------ |
-| `<C-,>`      | Toggle Claude                  |
-| `<leader>Cc` | Toggle Claude                  |
-| `<leader>Cf` | Focus Claude                   |
-| `<leader>Cs` | Send selection to Claude       |
-| `<leader>Cb` | Add buffer to Claude           |
-| `<leader>Ca` | Accept diff                    |
-| `<leader>Cd` | Deny diff                      |
-| `<leader>Cp` | Select prompt                  |
-| `<leader>Ce` | Explain code                   |
-| `<leader>Cr` | Review code                    |
-| `<leader>Ct` | Write tests                    |
-| `<leader>Cm` | Generate commit message        |
-| `<leader>Co` | Optimize code                  |
-| `<leader>Cx` | Fix issues                     |
-| `<leader>CR` | Refactor code                  |
-| `<leader>CD` | Add documentation              |
-| `<leader>CS` | Security review                |
+| Key          | Description              |
+| ------------ | ------------------------ |
+| `<C-,>`      | Toggle Claude            |
+| `<leader>Cc` | Toggle Claude            |
+| `<leader>Cf` | Focus Claude             |
+| `<leader>Cs` | Send selection to Claude |
+| `<leader>Cb` | Add buffer to Claude     |
+| `<leader>Ca` | Accept diff              |
+| `<leader>Cd` | Deny diff                |
+| `<leader>Cp` | Select prompt            |
+| `<leader>Ce` | Explain code             |
+| `<leader>Cr` | Review code              |
+| `<leader>Ct` | Write tests              |
+| `<leader>Cm` | Generate commit message  |
+| `<leader>Co` | Optimize code            |
+| `<leader>Cx` | Fix issues               |
+| `<leader>CR` | Refactor code            |
+| `<leader>CD` | Add documentation        |
+| `<leader>CS` | Security review          |
 
 ### Testing
 
@@ -621,7 +623,6 @@ Example usage:
 Available options:
 
 1. Plugins:
-
    - `no-neck-pain`: Additional UI plugin
    - `codecompanion`: AI code companion
    - `avante`: Alternative AI assistant
@@ -683,7 +684,6 @@ This configuration includes several extra plugins that can be enabled on demand 
 ### Available Extra Plugins
 
 1. **[no-neck-pain.nvim](https://github.com/shortcuts/no-neck-pain.nvim)**
-
    - Distraction-free writing mode with customizable width
    - Alternative to zen-mode with a focus on reducing neck strain
    - Keymaps:
@@ -692,7 +692,6 @@ This configuration includes several extra plugins that can be enabled on demand 
      - `<leader>zd`: Decrease width
 
 2. **[codecompanion.nvim](https://github.com/olimorris/codecompanion.nvim)**
-
    - AI code companion with GitHub Copilot integration
    - Rich set of features including code explanation, refactoring, and inline documentation
    - Supports slash commands for context-aware actions
@@ -706,7 +705,6 @@ This configuration includes several extra plugins that can be enabled on demand 
      - `<leader>An`: Suggest better naming
 
 3. **[avante.nvim](https://github.com/yetone/avante.nvim)**
-
    - Alternative AI code assistant using Copilot
    - Replaces the standard Copilot implementation
    - Provides a more streamlined interface
@@ -739,37 +737,13 @@ This configuration includes several extra plugins that can be enabled on demand 
    - Smart fold navigation with h/l keys
    - Shows fold level indicators and line counts
 
-8a. **[copilot-chat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim)**
-    - Traditional AI chat interface with GitHub Copilot
-    - Interactive conversations, code explanations, and commit message generation
-    - Alternative to sidekick.nvim if you prefer a dedicated chat window
-    - Automatically disables sidekick.nvim when enabled
-    - Keymaps (when enabled):
-      - `<leader>ap`: Prompt actions
-      - `<leader>am`: Generate commit message
-      - `<leader>af`: Fix diagnostic
-      - `<leader>al`: Clear buffer and chat history
-      - `<leader>av`: Toggle chat window
-      - `<leader>a?`: Select models
+8a. **[copilot-chat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim)** - Traditional AI chat interface with GitHub Copilot - Interactive conversations, code explanations, and commit message generation - Alternative to sidekick.nvim if you prefer a dedicated chat window - Automatically disables sidekick.nvim when enabled - Keymaps (when enabled): - `<leader>ap`: Prompt actions - `<leader>am`: Generate commit message - `<leader>af`: Fix diagnostic - `<leader>al`: Clear buffer and chat history - `<leader>av`: Toggle chat window - `<leader>a?`: Select models
 
-8b. **[copilot.vim](https://github.com/github/copilot.vim)**
-    - GitHub Copilot integration moved to extra plugins
-    - Provides AI-powered code completion and suggestions
-    - Keymaps (when enabled):
-      - `<C-y>`: Accept suggestion
-      - `<C-i>`: Accept line
-      - `<C-j>`: Next suggestion
-      - `<C-k>`: Previous suggestion
-      - `<C-d>`: Dismiss suggestion
-    - Note: This plugin is disabled by default and can be enabled via extra plugins
+8b. **[copilot.vim](https://github.com/github/copilot.vim)** - GitHub Copilot integration moved to extra plugins - Provides AI-powered code completion and suggestions - Keymaps (when enabled): - `<C-y>`: Accept suggestion - `<C-i>`: Accept line - `<C-j>`: Next suggestion - `<C-k>`: Previous suggestion - `<C-d>`: Dismiss suggestion - Note: This plugin is disabled by default and can be enabled via extra plugins
 
-8c. **[blink-copilot](https://github.com/fang2hou/blink-copilot)**
-    - Copilot source for blink.cmp
-    - Note: This plugin is disabled by default and can be enabled via extra plugins
+8c. **[blink-copilot](https://github.com/fang2hou/blink-copilot)** - Copilot source for blink.cmp - Note: This plugin is disabled by default and can be enabled via extra plugins
 
-8d. **[claudecode.nvim](https://github.com/coder/claudecode.nvim)**
-    - Claude Code integration (floating terminal + prompt shortcuts)
-    - Note: This plugin is disabled by default and can be enabled via extra plugins
+8d. **[claudecode.nvim](https://github.com/coder/claudecode.nvim)** - Claude Code integration (floating terminal + prompt shortcuts) - Note: This plugin is disabled by default and can be enabled via extra plugins
 
 9. **[difft.nvim](https://github.com/ahkohd/difft.nvim)**
    - Beautiful structural diffs using difft
@@ -803,7 +777,7 @@ vim.g.enable_extra_plugins = {
   "copilot-chat",  -- Alternative to sidekick.nvim
   "copilot",       -- GitHub Copilot integration
   "blink-copilot", -- Copilot source for blink.cmp
-  "claude-code",   -- Claude Code integration
+  "claudecode",    -- Claude Code integration
   "difft",
   "scooter"        -- Alternative to grug-far.nvim
 }

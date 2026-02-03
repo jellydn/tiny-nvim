@@ -188,9 +188,33 @@ return {
   {
     "folke/noice.nvim",
     event = "VeryLazy",
-    opts = {},
     dependencies = {
       "MunifTanjim/nui.nvim",
+      "rcarriga/nvim-notify",
+    },
+    opts = {
+      presets = {},
+    },
+    keys = {
+      {
+        "<leader>ud",
+        "<cmd>NoiceDismiss<CR>",
+        desc = "Dismiss Noice Message",
+      },
+      {
+        "<leader>ul",
+        function()
+          require("noice").cmd "last"
+        end,
+        desc = "Noice Last Message",
+      },
+      {
+        "<leader>uh",
+        function()
+          require("noice").cmd "history"
+        end,
+        desc = "Noice History",
+      },
     },
   },
   {
