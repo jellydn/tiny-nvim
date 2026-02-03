@@ -94,6 +94,7 @@ fi
 echo "Installing npm packages..."
 npm install -g --force \
   @antfu/ni \
+  basedpyright \
   @fsouza/prettierd \
   @mermaid-js/mermaid-cli \
   @tailwindcss/language-server \
@@ -103,7 +104,6 @@ npm install -g --force \
   oxlint \
   pnpm \
   prettier \
-  pyright \
   rustywind \
   typescript \
   typescript-language-server \
