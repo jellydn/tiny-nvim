@@ -150,8 +150,8 @@ return {
   },
   {
     "nvim-treesitter/nvim-treesitter",
+    lazy = false,
     build = ":TSUpdate",
-    cmd = { "TSUpdateSync", "TSUpdate", "TSInstall" },
     keys = {
       { "<c-space>", desc = "Increment Selection" },
       { "<bs>", desc = "Decrement Selection", mode = "x" },
@@ -161,7 +161,7 @@ return {
       if type(opts.ensure_installed) == "table" then
         opts.ensure_installed = deduplicate(opts.ensure_installed)
       end
-      require("nvim-treesitter.configs").setup(opts)
+      require("nvim-treesitter.config").setup(opts)
     end,
     opts = {
       highlight = { enable = true },
