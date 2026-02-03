@@ -29,6 +29,11 @@ This configuration is a migration from [my-nvim-ide](https://github.com/jellydn/
    - Use `blink.cmp` for completion instead of built-in completion for better UX
    - Maintain a minimal yet powerful development environment
 
+3. **Adopt mini.nvim as Core UI Framework**:
+   - Migrate from snacks.nvim to mini.nvim for better integration
+   - Use consistent plugin ecosystem from the same author
+   - Reduce dependencies while maintaining feature parity
+
 The result is a faster, more maintainable configuration that still provides all the necessary features for modern development.
 
 [![IT Man - My Tiny Nvim (2025 version) for Neovim 0.11+](https://i.ytimg.com/vi/-N9QTQzEt0w/hqdefault.jpg)](https://www.youtube.com/watch?v=-N9QTQzEt0w)
@@ -134,13 +139,43 @@ for uncommon extensions and templates. The mappings live in `lua/config/autocmds
 <details>
 <summary>Click to expand features</summary>
 
-### Migration Note
+### Migration from snacks.nvim to mini.nvim
 
-This config now uses `mini.pick` for fuzzy finding and `mini.starter` for the start screen.
-`snacks.nvim` is an optional extra and is not referenced by the default setup.
-For the legacy setup, use the v1 branch (the old version prior to the slim migration).
+This configuration has migrated from `snacks.nvim` to `mini.nvim` as its core UI framework.
 
-This configuration provides a minimal yet powerful development environment with carefully selected plugins organized by category:
+**Why mini.nvim?**
+- Consistent ecosystem from a single author
+- Better integration between plugins
+- Reduced dependencies while maintaining feature parity
+- Optimized for Neovim 0.11+
+
+| Feature | Previously (snacks) | Now (mini.nvim) |
+|---------|---------------------|-----------------|
+| Fuzzy Picker | Snacks.picker | mini.pick + mini.extra |
+| Dashboard | Snacks.dashboard | mini.starter |
+| Git Diff | Snacks.git | mini.diff |
+| Icons | nvim-web-devicons | mini.icons |
+
+> **Note**: `snacks.nvim` is still available as an optional extra plugin if you prefer it.
+
+---
+
+### mini.nvim Ecosystem
+
+This configuration leverages the mini.nvim plugin suite as its core UI framework:
+
+- **mini.pick**: Fuzzy finder for files, buffers, git, and more
+- **mini.starter**: Beautiful start screen dashboard
+- **mini.diff**: Git diff integration with hunk navigation
+- **mini.statusline**: Lightweight, informative statusline
+- **mini.tabline**: Smart buffer/tabline with buffer management
+- **mini.icons**: Comprehensive icon support
+- **mini.ai**: Enhanced text objects for code
+- **mini.pairs**: Automatic bracket and quote pairing
+- **mini.bufremove**: Cleaner buffer deletion
+- **mini.extra**: Additional pickers and utilities
+
+---
 
 ### Core Development
 
@@ -171,11 +206,9 @@ This configuration provides a minimal yet powerful development environment with 
   - [friendly-snippets](https://github.com/rafamadriz/friendly-snippets): Snippet collection
   - [neogen](https://github.com/danymat/neogen): Documentation generator
   - [ts-comments.nvim](https://github.com/folke/ts-comments.nvim): Comment utilities
-  - [mini.pairs](https://github.com/echasnovski/mini.pairs): Auto pairs
-  - [mini.ai](https://github.com/echasnovski/mini.ai): Extend and create a/i textobjects
 
 - **Git Integration**
-  - [mini.diff](https://github.com/echasnovski/mini.diff): Git hunks and signs in the sign column
+  - Git hunks and signs via mini.diff
 
 ### Testing & Debugging
 
@@ -187,10 +220,7 @@ This configuration provides a minimal yet powerful development environment with 
 
 - [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim): Beautiful theme inspired by Kanagawa wave
 - [bufferline.nvim](https://github.com/akinsho/bufferline.nvim): Enhanced buffer management
-- [mini.tabline](https://github.com/echasnovski/mini.tabline): Lightweight buffer/tabline
-- [mini.statusline](https://github.com/echasnovski/mini.statusline): Lightweight statusline
-- [mini.icons](https://github.com/echasnovski/mini.icons): Improved icon support
-- [mini.starter](https://github.com/echasnovski/mini.starter): Start screen dashboard
+- Statusline, tabline, icons, and starter via mini.nvim ecosystem
 - [noice.nvim](https://github.com/folke/noice.nvim): Improved notifications and command-line UI
 - [betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim): Terminal manager with tabs and quick toggles
 
@@ -203,8 +233,7 @@ Theme switching:
 
 - [flash.nvim](https://github.com/folke/flash.nvim): Navigation and search enhancements
 - [which-key.nvim](https://github.com/folke/which-key.nvim): Keybinding hints and management
-- [mini.pick](https://github.com/echasnovski/mini.pick): Fuzzy finder
-- [mini.extra](https://github.com/echasnovski/mini.extra): Extra pickers and utilities
+- Fuzzy finder and extra pickers via mini.nvim ecosystem
 - [better-escape.nvim](https://github.com/max397574/better-escape.nvim): Better escape functionality
 - [grug-far.nvim](https://github.com/MagicDuck/grug-far.nvim): Advanced search and replace functionality
 
@@ -274,15 +303,11 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 | Key             | Description                 |
 | --------------- | --------------------------- |
-| `<leader>bp`    | Toggle Pin                  |
-| `<leader>bP`    | Delete Non-Pinned Buffers   |
 | `<leader>bo`    | Delete Other Buffers        |
 | `<leader>br`    | Delete Buffers to the Right |
 | `<leader>bl`    | Delete Buffers to the Left  |
 | `<S-h>` or `[b` | Previous Buffer             |
 | `<S-l>` or `]b` | Next Buffer                 |
-| `[B`            | Move Buffer Left            |
-| `]B`            | Move Buffer Right           |
 | `<leader>bb`    | Switch to Other Buffer      |
 | `<leader>`      | Switch to Other Buffer      |
 
@@ -327,49 +352,34 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<A-k>` | Move Line Up                     |
 | `gl`    | Go to end of line                |
 | `gh`    | Go to start of line              |
-| `<A-h>` | Go to start of line              |
-| `<A-l>` | Go to end of line                |
 | `<A-a>` | Select all text                  |
 
 ### Git Operations
 
-| Key           | Description         |
-| ------------- | ------------------- |
-| `]h`          | Next Hunk           |
-| `[h`          | Previous Hunk       |
-| `]H`          | Last Hunk           |
-| `[H`          | First Hunk          |
-| `<leader>ghs` | Stage Hunk          |
-| `<leader>ghr` | Reset Hunk          |
-| `<leader>ghS` | Stage Buffer        |
-| `<leader>ghu` | Undo Stage Hunk     |
-| `<leader>ghR` | Reset Buffer        |
-| `<leader>ghp` | Preview Hunk Inline |
-| `<leader>ghb` | Blame Line          |
-| `<leader>ghB` | Blame Buffer        |
-| `<leader>ghd` | Diff This           |
-| `<leader>ghD` | Diff This ~         |
-| `<leader>tb`  | Toggle Blame Line   |
-| `<leader>gs`  | Git Status          |
+| Key           | Description        |
+| ------------- | ------------------ |
+| `]h`          | Next Hunk          |
+| `[h`          | Previous Hunk      |
+| `]H`          | Last Hunk          |
+| `[H`          | First Hunk         |
+| `<leader>ghs` | Stage Hunk         |
+| `<leader>ghr` | Reset Hunk         |
+| `<leader>gg`  | Lazygit            |
+| `<leader>gf`  | Lazygit current    |
+| `<leader>gl`  | Lazygit log        |
 
 ### LSP & Code Actions
 
-| Key          | Description                 |
-| ------------ | --------------------------- |
-| `<leader>ca` | Code Action                 |
-| `<leader>cA` | Source Action               |
-| `<leader>cr` | Rename                      |
-| `<leader>cf` | Format Document             |
-| `<leader>ck` | Run Type Check (TypeScript) |
-| `<leader>cR` | Refactor                    |
-| `<leader>.`  | Quick Fix                   |
-| `gr`         | Find References             |
-| `gd`         | Go to Definition            |
-| `gi`         | Go to Implementation        |
-| `go`         | Go to Type Definition       |
-| `K`          | Show Documentation          |
+| Key          | Description           |
+| ------------ | --------------------- |
+| `<leader>ca` | Code Action           |
+| `<leader>cr` | Rename                |
+| `<leader>cf` | Format Document       |
+| `<leader>.`  | Quick Fix / Code Action |
+| `gd`         | Go to Definition      |
+| `K`          | Show Documentation    |
 
-### Copilot
+### Copilot _(extra plugin)_
 
 | Key     | Description         |
 | ------- | ------------------- |
@@ -396,8 +406,8 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<leader>xX` | Toggle Buffer Diagnostics         |
 | `<leader>cs` | Toggle Symbols                    |
 | `<leader>cl` | Toggle LSP Definitions/References |
-| `<leader>xl` | Toggle Location List              |
-| `<leader>xq` | Toggle Quickfix List              |
+| `<leader>xL` | Toggle Location List              |
+| `<leader>xQ` | Toggle Quickfix List              |
 | `[q`         | Previous Quickfix                 |
 | `]q`         | Next Quickfix                     |
 | `<leader>cd` | Line Diagnostics                  |
@@ -448,13 +458,6 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | Lazy            | Open lazy.nvim          |
 | Update          | Update plugins          |
 | Quit            | Quit Neovim             |
-
-### Zen Mode
-
-| Key          | Description      |
-| ------------ | ---------------- |
-| `<leader>cz` | Toggle Zen Mode  |
-| `<leader>tz` | Toggle Zoom Mode |
 
 ### Terminal
 
