@@ -11,7 +11,7 @@ if ! command -v mise &> /dev/null; then
     echo 'eval "$(mise activate)"' >> ~/.zshrc
     mkdir -p ~/.config/fish
     echo '' >> ~/.config/fish/config.fish
-    echo 'eval "$(mise activate)"' >> ~/.config/fish/config.fish
+    echo 'eval "mise activate fish | source"' >> ~/.config/fish/config.fish
     # Activate mise for current session
     eval "$(mise activate)"
 fi
@@ -58,6 +58,38 @@ if command -v apt &> /dev/null; then
         tree-sitter-cli
 fi
 
+# Install tree-sitter CLI (required for nvim-treesitter on Neovim 0.11+)
+echo "Installing tree-sitter CLI..."
+if ! command -v tree-sitter &> /dev/null; then
+  if command -v cargo &> /dev/null; then
+    cargo install tree-sitter-cli
+  elif command -v npm &> /dev/null; then
+    npm install -g tree-sitter-cli
+  else
+    echo "Warning: Neither cargo nor npm found. Please install tree-sitter-cli manually."
+  fi
+fi
+
+# Install gopls (Go language server) via Go
+echo "Installing gopls..."
+if command -v go &> /dev/null; then
+  go install golang.org/x/tools/gopls@latest
+else
+  echo "Warning: Go not found, skipping gopls installation"
+fi
+
+# Install rust-analyzer (Rust language server)
+echo "Installing rust-analyzer..."
+if command -v rustup &> /dev/null; then
+  rustup component add rust-analyzer
+elif command -v cargo &> /dev/null; then
+  cargo install rust-analyzer
+elif command -v brew &> /dev/null; then
+  brew install rust-analyzer
+else
+  echo "Warning: rustup/cargo/brew not found. Install rust-analyzer manually via: rustup component add rust-analyzer"
+fi
+
 # Install npm packages
 echo "Installing npm packages..."
 npm install -g --force \
@@ -67,7 +99,6 @@ npm install -g --force \
   @tailwindcss/language-server \
   @vtsls/language-server \
   cspell \
-  gopls \
   npm-check-updates \
   oxlint \
   pnpm \
