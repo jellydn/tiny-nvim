@@ -744,6 +744,9 @@ return {
           end
           vim.print = _G.dd -- Override print to use snacks for `:=` command
 
+          -- Setup statuscolumn
+          vim.opt.statuscolumn = [[%!v:lua.require'snacks.statuscolumn'.get()]]
+
           -- Create some toggle mappings
           Snacks.toggle.option("spell", { name = "Spelling" }):map "<leader>us"
           Snacks.toggle.option("wrap", { name = "Wrap" }):map "<leader>uw"
