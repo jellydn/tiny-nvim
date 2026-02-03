@@ -1,5 +1,69 @@
 local map = vim.keymap.set
 
+local function in_git_repo()
+  return vim.fn.isdirectory ".git" == 1
+end
+
+local function close_buffer()
+  local ok, bufremove = pcall(require, "mini.bufremove")
+  if ok then
+    bufremove.delete(0, false)
+    return
+  end
+
+  vim.cmd "bdelete"
+end
+
+_G.mini_git_cli = function(command, fallback)
+  if not in_git_repo() then
+    vim.notify(fallback or "Not a git repository", vim.log.levels.WARN)
+    return
+  end
+
+  require("mini.pick").builtin.cli(nil, { command = command })
+end
+
+local function open_lazygit(opts)
+  if vim.fn.executable "lazygit" ~= 1 then
+    vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
+    return
+  end
+
+  local file = opts and opts.file or ""
+  local ui = vim.api.nvim_list_uis()[1]
+  local width = math.floor(ui.width * 0.95)
+  local height = math.floor(ui.height * 0.95)
+  local row = math.floor((ui.height - height) / 2)
+  local col = math.floor((ui.width - width) / 2)
+
+  local buf = vim.api.nvim_create_buf(false, true)
+  local win = vim.api.nvim_open_win(buf, true, {
+    relative = "editor",
+    width = width,
+    height = height,
+    row = row,
+    col = col,
+    style = "minimal",
+    border = "rounded",
+  })
+
+  vim.api.nvim_set_option_value("winhl", "Normal:Normal,FloatBorder:FloatBorder", { win = win })
+  vim.fn.termopen "lazygit"
+  vim.cmd "startinsert"
+
+  if file ~= "" then
+    vim.defer_fn(function()
+      vim.api.nvim_feedkeys("/" .. file, "t", true)
+      vim.api.nvim_input "<CR>"
+      vim.api.nvim_input "<ESC>"
+    end, 150)
+  end
+end
+
+local function open_lazygit_current_file()
+  open_lazygit { file = vim.fn.expand "%:t" }
+end
+
 -- Better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
@@ -35,6 +99,7 @@ map("n", "<S-h>", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "<S-l>", "<cmd>bnext<cr>", { desc = "Next Buffer" })
 map("n", "[b", "<cmd>bprevious<cr>", { desc = "Prev Buffer" })
 map("n", "]b", "<cmd>bnext<cr>", { desc = "Next Buffer" })
+map("n", "<S-q>", close_buffer, { desc = "Delete Buffer" })
 map("n", "<leader>bb", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 map("n", "<leader>`", "<cmd>e #<cr>", { desc = "Switch to Other Buffer" })
 
@@ -80,6 +145,16 @@ map("n", "gcO", "O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Commen
 -- lazy
 map("n", "<leader>zz", "<cmd>Lazy<cr>", { desc = "Lazy" })
 
+-- lazygit (override extra/snacks mappings without editing that file)
+vim.api.nvim_create_autocmd("User", {
+  pattern = "VeryLazy",
+  callback = function()
+    map("n", "<leader>gg", open_lazygit, { desc = "Lazygit" })
+    map("n", "<leader>gf", open_lazygit_current_file, { desc = "Lazygit Current File" })
+    map("n", "<leader>gl", open_lazygit, { desc = "Lazygit Log (cwd)" })
+  end,
+})
+
 -- new file
 map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })
 
@@ -104,8 +179,8 @@ map("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 -- diagnostic
 local diagnostic_goto = function(next, severity)
   severity = severity and vim.diagnostic.severity[severity] or nil
-  return function ()
-    vim.diagnostic.jump({ count = next and 1 or -1, float = true, severity = severity })
+  return function()
+    vim.diagnostic.jump { count = next and 1 or -1, float = true, severity = severity }
   end
 end
 map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })

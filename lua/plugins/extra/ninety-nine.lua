@@ -20,7 +20,7 @@ return {
       local _99 = require "99"
 
       _99.setup {
-        model = "opencode/big-pickle", -- Use free model
+        model = "zai-coding-plan/glm-4.7",
         completion = {
           source = "blink",
           -- Custom skills folder alongside the plugin config

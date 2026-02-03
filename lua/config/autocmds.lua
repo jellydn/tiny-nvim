@@ -55,7 +55,6 @@ vim.api.nvim_create_autocmd("FileType", {
     "PlenaryTestPopup",
     "checkhealth",
     "dbout",
-    "gitsigns-blame",
     "grug-far",
     "help",
     "lspinfo",
@@ -152,15 +151,6 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   end,
 })
 
--- Set filetype for .ejs files
-vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
-  group = augroup "ejs_filetype",
-  pattern = { "*.ejs", "*.ejs.t" },
-  callback = function()
-    vim.opt_local.filetype = "embedded_template"
-  end,
-})
-
 -- Set filetype for .code-snippets files
 vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   group = augroup "code_snippets_filetype",
@@ -169,6 +159,41 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
     vim.opt_local.filetype = "json"
   end,
 })
+
+vim.filetype.add {
+  extension = {
+    cshtml = "aspnetcorerazor",
+    edge = "edge",
+    eex = "eelixir",
+    ejs = "ejs",
+    gohtml = "gohtml",
+    gohtmltmpl = "gohtmltmpl",
+    gowork = "gowork",
+    gotmpl = "gotmpl",
+    handlebars = "handlebars",
+    hbs = "hbs",
+    jade = "jade",
+    leaf = "leaf",
+    mdx = "mdx",
+    mustache = "mustache",
+    njk = "njk",
+    nunjucks = "nunjucks",
+    pcss = "postcss",
+    razor = "razor",
+    re = "reason",
+    sss = "sugarss",
+    templ = "templ",
+  },
+  filename = {
+    ["go.work"] = "gowork",
+  },
+  pattern = {
+    [".*%.blade%.php"] = "blade",
+    [".*%.django%.html"] = "django-html",
+    [".*%.djhtml"] = "django-html",
+    [".*%.html%.eex"] = "html-eex",
+  },
+}
 
 -- LSP
 local completion = vim.g.completion_mode or "blink" -- or 'native'
