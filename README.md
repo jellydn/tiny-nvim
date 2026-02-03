@@ -124,10 +124,21 @@ After installation, run the following commands to ensure everything is set up co
 
 For more detailed debugging information, refer to [conform.nvim debugging guide](https://github.com/stevearc/conform.nvim/blob/master/doc/debugging.md#tools).
 
+## Filetype Mappings
+
+This config includes custom filetype mappings to help LSPs attach cleanly and avoid `:checkhealth` warnings
+for uncommon extensions and templates. The mappings live in `lua/config/autocmds.lua`.
+
 ## Features
 
 <details>
 <summary>Click to expand features</summary>
+
+### Migration Note
+
+This config now uses `mini.pick` for fuzzy finding and `mini.starter` for the start screen.
+`snacks.nvim` is an optional extra and is not referenced by the default setup.
+For the legacy setup, use the v1 branch (the old version prior to the slim migration).
 
 This configuration provides a minimal yet powerful development environment with carefully selected plugins organized by category:
 
@@ -164,7 +175,7 @@ This configuration provides a minimal yet powerful development environment with 
   - [mini.ai](https://github.com/echasnovski/mini.ai): Extend and create a/i textobjects
 
 - **Git Integration**
-  - [gitsigns.nvim](https://github.com/lewis6991/gitsigns.nvim): Git signs in the sign column
+  - [mini.diff](https://github.com/echasnovski/mini.diff): Git hunks and signs in the sign column
 
 ### Testing & Debugging
 
@@ -176,15 +187,24 @@ This configuration provides a minimal yet powerful development environment with 
 
 - [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim): Beautiful theme inspired by Kanagawa wave
 - [bufferline.nvim](https://github.com/akinsho/bufferline.nvim): Enhanced buffer management
+- [mini.tabline](https://github.com/echasnovski/mini.tabline): Lightweight buffer/tabline
 - [mini.statusline](https://github.com/echasnovski/mini.statusline): Lightweight statusline
 - [mini.icons](https://github.com/echasnovski/mini.icons): Improved icon support
+- [mini.starter](https://github.com/echasnovski/mini.starter): Start screen dashboard
 - [noice.nvim](https://github.com/folke/noice.nvim): Improved notifications and command-line UI
-- [snacks.nvim](https://github.com/folke/snacks.nvim): Enhanced UI and utilities
+- [betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim): Terminal manager with tabs and quick toggles
+
+Theme switching:
+- Default theme: `kanagawa`
+- Switch theme: `:Theme kanagawa`
+- Check current theme: `:Theme`
 
 ### Navigation & Search
 
 - [flash.nvim](https://github.com/folke/flash.nvim): Navigation and search enhancements
 - [which-key.nvim](https://github.com/folke/which-key.nvim): Keybinding hints and management
+- [mini.pick](https://github.com/echasnovski/mini.pick): Fuzzy finder
+- [mini.extra](https://github.com/echasnovski/mini.extra): Extra pickers and utilities
 - [better-escape.nvim](https://github.com/max397574/better-escape.nvim): Better escape functionality
 - [grug-far.nvim](https://github.com/MagicDuck/grug-far.nvim): Advanced search and replace functionality
 
@@ -418,16 +438,16 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Dashboard
 
-| Key | Description     |
-| --- | --------------- |
-| `f` | Find File       |
-| `g` | Find Text       |
-| `r` | Recent Files    |
-| `c` | Config          |
-| `s` | Restore Session |
-| `q` | Quit            |
-| `l` | Lazy            |
-| `u` | Update          |
+| Item            | Description             |
+| --------------- | ----------------------- |
+| Find File       | Open file picker        |
+| Find Text       | Live grep               |
+| Recent Files    | Recently opened files   |
+| Config          | Find files in config    |
+| Restore Session | Load last session       |
+| Lazy            | Open lazy.nvim          |
+| Update          | Update plugins          |
+| Quit            | Quit Neovim             |
 
 ### Zen Mode
 
@@ -445,8 +465,8 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<C-j>`      | Go to Lower Window |
 | `<C-k>`      | Go to Upper Window |
 | `<C-l>`      | Go to Right Window |
-| `<C-/>`      | Hide Terminal      |
-| `<C-t>`      | Toggle Terminal    |
+| `<leader>ft` | Toggle Terminal    |
+| `<C-/>`      | Toggle Terminal    |
 
 ### Treesitter
 
