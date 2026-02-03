@@ -1,9 +1,14 @@
+-- GitHub Copilot integration
+-- Enable by adding "copilot" to vim.g.enable_extra_plugins in .nvim-config.lua
+
+local enabled = vim.tbl_contains(vim.g.enable_extra_plugins or {}, "copilot")
+
 return {
   -- Setup Copilot
   {
     "github/copilot.vim",
     event = "VeryLazy",
-    enabled = false,
+    enabled = enabled,
     config = function()
       -- For copilot.vim
       -- enable copilot for specific filetypes

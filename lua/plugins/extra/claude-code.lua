@@ -1,11 +1,7 @@
--- Claude Code integration with prompt shortcuts
+-- Claude Code integration (extra plugin)
+-- Enable by adding "claude-code" to vim.g.enable_extra_plugins in .nvim-config.lua
 
--- Configuration
-local MAPPING_PREFIX = "<leader>C"
-local TOGGLE_KEY = "<C-,>"
-local MAX_RETRY_ATTEMPTS = 5
-local INITIAL_RETRY_DELAY_MS = 100
-local PROMPT_PREVIEW_LENGTH = 50
+local enabled = vim.tbl_contains(vim.g.enable_extra_plugins or {}, "claude-code")
 
 -- Prompts (can be extended via opts.prompts)
 local prompts = {
@@ -26,6 +22,13 @@ local prompts = {
   dependency = "Review this code for dependency issues, security vulnerabilities, and compatibility problems.",
   tdd = "Help with test-driven development. First write tests that define the expected behavior, then implement the code to pass those tests.",
 }
+
+-- Configuration
+local MAPPING_PREFIX = "<leader>C"
+local TOGGLE_KEY = "<C-,>"
+local MAX_RETRY_ATTEMPTS = 5
+local INITIAL_RETRY_DELAY_MS = 100
+local PROMPT_PREVIEW_LENGTH = 50
 
 --- Escape text for safe terminal input
 ---@param text string
@@ -177,6 +180,7 @@ return {
   },
   {
     "coder/claudecode.nvim",
+    enabled = enabled,
     config = function(_, opts)
       if opts.prompts then
         prompts = vim.tbl_deep_extend("force", prompts, opts.prompts)

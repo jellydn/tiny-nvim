@@ -186,16 +186,14 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
   - [conform.nvim](https://github.com/stevearc/conform.nvim): Code formatting
   - [nvim-lint](https://github.com/mfussenegger/nvim-lint): Linting support
 
-- **AI & Code Assistance** _(enabled by default)_
+- **AI & Code Assistance**
 
-  - [sidekick.nvim](https://github.com/folke/sidekick.nvim): AI sidekick integrating Copilot LSP's Next Edit Suggestions with built-in terminal for AI CLI tools
-  - [blink-copilot](https://github.com/fang2hou/blink-copilot): Copilot integration
-  - [copilot.vim](https://github.com/github/copilot.vim): GitHub Copilot integration
-  - [claudecode.nvim](https://github.com/coder/claudecode.nvim): Claude Code integration
+  - **Enabled by default:** [sidekick.nvim](https://github.com/folke/sidekick.nvim) for AI CLI tools + Copilot NES
+  - **Extra plugins:** [blink-copilot](https://github.com/fang2hou/blink-copilot), [copilot.vim](https://github.com/github/copilot.vim), [claudecode.nvim](https://github.com/coder/claudecode.nvim)
 
   **Usage Tips:**
   - **Sidekick** (`<leader>a*`): AI CLI integration with Claude, Gemini, Copilot CLI and more. Includes Next Edit Suggestions (NES) for multi-line refactorings
-  - **Claude Code** (`<C-,>`): Quick access to Claude for coding assistance in a floating window
+  - **Claude Code** (`<C-,>`): Quick access to Claude in a floating window (when enabled)
   - Both can be used simultaneously without conflicts - different keybindings and use cases
   
   **Alternative:** [CopilotChat.nvim](https://github.com/CopilotC-Nvim/CopilotChat.nvim) is available as an extra plugin if you prefer the traditional chat interface
@@ -219,7 +217,7 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 ### UI & Theme
 
 - [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim): Beautiful theme inspired by Kanagawa wave
-- [bufferline.nvim](https://github.com/akinsho/bufferline.nvim): Enhanced buffer management
+- [mini.nvim](https://github.com/echasnovski/mini.nvim): Buffer management via mini.tabline/mini.bufremove
 - Statusline, tabline, icons, and starter via mini.nvim ecosystem
 - [noice.nvim](https://github.com/folke/noice.nvim): Improved notifications and command-line UI
 - [betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim): Terminal manager with tabs and quick toggles
@@ -510,7 +508,7 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<Tab>`      | Next Edit Suggestion - Jump/Apply           |
 | `<C-.>`      | Sidekick - Switch focus to/from CLI         |
 
-### Claude Code
+### Claude Code (extra)
 
 | Key          | Description                    |
 | ------------ | ------------------------------ |
@@ -765,6 +763,14 @@ This configuration includes several extra plugins that can be enabled on demand 
       - `<C-d>`: Dismiss suggestion
     - Note: This plugin is disabled by default and can be enabled via extra plugins
 
+8c. **[blink-copilot](https://github.com/fang2hou/blink-copilot)**
+    - Copilot source for blink.cmp
+    - Note: This plugin is disabled by default and can be enabled via extra plugins
+
+8d. **[claudecode.nvim](https://github.com/coder/claudecode.nvim)**
+    - Claude Code integration (floating terminal + prompt shortcuts)
+    - Note: This plugin is disabled by default and can be enabled via extra plugins
+
 9. **[difft.nvim](https://github.com/ahkohd/difft.nvim)**
    - Beautiful structural diffs using difft
    - Shows git diffs with better syntax highlighting and structure awareness
@@ -796,6 +802,8 @@ vim.g.enable_extra_plugins = {
   "fold-preview",
   "copilot-chat",  -- Alternative to sidekick.nvim
   "copilot",       -- GitHub Copilot integration
+  "blink-copilot", -- Copilot source for blink.cmp
+  "claude-code",   -- Claude Code integration
   "difft",
   "scooter"        -- Alternative to grug-far.nvim
 }
