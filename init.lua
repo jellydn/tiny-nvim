@@ -32,22 +32,67 @@ else
 
     local ts_server = vim.g.lsp_typescript_server or "ts_ls" -- "ts_ls" or "vtsls" for TypeScript
 
-    -- Enable LSP servers for Neovim 0.11+
-    vim.lsp.enable {
-        ts_server,
-        "lua_ls",       -- Lua
-        "biome",        -- Biome = Eslint + Prettier
-        "json",         -- JSON
-        "basedpyright", -- Python (type checking)
-        "ruff",         -- Python (linting)
-        "gopls",        -- Go
-        "rust-analyzer", -- Rust
-        "tailwindcss",  -- Tailwind CSS
+    -- Enable LSP servers per filetype (Neovim 0.11+)
+    local lsp_by_ft = {
+        lua = { "lua_ls" },
+        json = { "json", "biome" },
+        jsonc = { "json", "biome" },
+        json5 = { "json", "biome" },
+        python = { "basedpyright", "ruff" },
+        go = { "gopls" },
+        gomod = { "gopls" },
+        gowork = { "gopls" },
+        gotmpl = { "gopls" },
+        rust = { "rust-analyzer" },
+        javascript = { ts_server, "biome" },
+        javascriptreact = { ts_server, "biome" },
+        typescript = { ts_server, "biome" },
+        typescriptreact = { ts_server, "biome" },
+        html = { "tailwindcss" },
+        css = { "tailwindcss" },
+        scss = { "tailwindcss" },
+        sass = { "tailwindcss" },
+        less = { "tailwindcss" },
+        postcss = { "tailwindcss" },
     }
 
-    -- Load Lsp on-demand, e.g: eslint is disable by default
-    -- e.g: We could enable eslint by set vim.g.lsp_on_demands = {"eslint"}
-    if vim.g.lsp_on_demands then
-        vim.lsp.enable(vim.g.lsp_on_demands)
+    local enabled_lsp = {}
+    local on_demands = vim.g.lsp_on_demands or {}
+    local js_ts_filetypes = {
+        javascript = true,
+        javascriptreact = true,
+        typescript = true,
+        typescriptreact = true,
+        json = true,
+        jsonc = true,
+        json5 = true,
+    }
+
+    local function enable_lsp(servers)
+        if not servers or #servers == 0 then
+            return
+        end
+        for _, server in ipairs(servers) do
+            if not enabled_lsp[server] then
+                enabled_lsp[server] = true
+                vim.lsp.enable(server)
+            end
+        end
     end
+
+    vim.api.nvim_create_autocmd("FileType", {
+        group = vim.api.nvim_create_augroup("my_nvim_lsp_by_ft", { clear = true }),
+        callback = function(event)
+            local filetype = vim.bo[event.buf].filetype
+            local servers = lsp_by_ft[filetype] or {}
+
+            if js_ts_filetypes[filetype] and #on_demands > 0 then
+                for _, server in ipairs(on_demands) do
+                    table.insert(servers, server)
+                end
+            end
+
+            enable_lsp(servers)
+        end,
+    })
 end
