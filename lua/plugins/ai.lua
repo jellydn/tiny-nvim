@@ -45,10 +45,9 @@ return {
           enabled = true,
         },
         tools = {
+          nes = { enabled = false },
           -- GLM model with CCS
           glm = { cmd = { "ccs", "glm" } },
-          -- MiniMax model with CCS
-          mm = { cmd = { "ccs", "mm" } },
           -- Based on https://github.com/folke/sidekick.nvim/issues/158#issuecomment-3491732950
           amp = {
             cmd = { "amp" },
