@@ -263,3 +263,4 @@ Huynh
 claudecode
 deepcopy
 startinsert
+termcodes
