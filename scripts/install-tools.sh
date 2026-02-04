@@ -35,11 +35,9 @@ mise use -g lua-language-server@latest
 mise use -g neovim@nightly
 mise use -g node@lts
 mise use -g rg@latest
-mise use -g ruby@latest
 mise use -g ruff@latest
 mise use -g rye@latest
 mise use -g stylua@latest
-mise use -g ffmpeg@latest
 mise use -g usage@latest
 mise use -g uv@latest
 mise use -g zoxide@latest
