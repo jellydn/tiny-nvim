@@ -37,7 +37,7 @@
   "previm": { "branch": "master", "commit": "bb3b132693f19d04dea2cb26be07717c2c8996a9" },
   "quick-code-runner.nvim": { "branch": "main", "commit": "a98f19996cac0d4ae196a69b96686dde7fb8d382" },
   "refactoring.nvim": { "branch": "master", "commit": "6784b54587e6d8a6b9ea199318512170ffb9e418" },
-  "render-markdown.nvim": { "branch": "main", "commit": "b3efd6408e4e4d66d6caaee0579e72b579bc0884" },
+  "render-markdown.nvim": { "branch": "main", "commit": "48b4175dbca8439d30c1f52231cbe5a712c8f9d9" },
   "sidekick.nvim": { "branch": "main", "commit": "c2bdf8cfcd87a6be5f8b84322c1b5052e78e302e" },
   "todo-comments.nvim": { "branch": "main", "commit": "31e3c38ce9b29781e4422fc0322eb0a21f4e8668" },
   "trouble.nvim": { "branch": "main", "commit": "bd67efe408d4816e25e8491cc5ad4088e708a69a" },
