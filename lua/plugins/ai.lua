@@ -36,6 +36,9 @@ return {
   {
     "folke/sidekick.nvim",
     opts = {
+      nes = {
+        enabled = false,
+      },
       cli = {
         mux = {
           -- Terminal multiplexer backend for Sidekick CLI integration
@@ -45,7 +48,6 @@ return {
           enabled = true,
         },
         tools = {
-          nes = { enabled = false },
           -- GLM model with CCS
           glm = { cmd = { "ccs", "glm" } },
           -- Based on https://github.com/folke/sidekick.nvim/issues/158#issuecomment-3491732950
