@@ -190,7 +190,6 @@ return {
     event = "VeryLazy",
     dependencies = {
       "MunifTanjim/nui.nvim",
-      "rcarriga/nvim-notify",
     },
     opts = {
       presets = {},
@@ -296,12 +295,7 @@ return {
     opts = {
       defaults = {},
       ---@type false | "classic" | "modern" | "helix"
-      preset = vim.g.which_key_preset or "helix", -- default is "classic"
-      -- Custom helix layout
-      win = vim.g.which_key_window or {
-        width = { min = 30, max = 60 },
-        height = { min = 4, max = 0.85 },
-      },
+      preset = vim.g.which_key_preset or "modern", -- default is "classic"
       spec = {
         {
           mode = { "n", "v" },

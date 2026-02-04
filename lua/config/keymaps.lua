@@ -47,7 +47,7 @@ local function open_lazygit(opts)
     border = "rounded",
   })
 
-  vim.api.nvim_set_option_value("winhl", "Normal:Normal,FloatBorder:FloatBorder", { win = win })
+  vim.wo[win].winhl = "Normal:Normal,FloatBorder:FloatBorder"
   vim.fn.termopen "lazygit"
   vim.cmd "startinsert"
 

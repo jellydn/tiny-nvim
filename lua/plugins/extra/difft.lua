@@ -32,10 +32,11 @@ return {
     {
       mapping_key_prefix,
       function()
-        if Difft.is_visible() then
-          Difft.hide()
+        local difft = require "difft"
+        if difft.is_visible() then
+          difft.hide()
         else
-          Difft.diff()
+          difft.diff()
         end
       end,
       desc = "Toggle Difft",
