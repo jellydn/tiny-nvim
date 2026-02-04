@@ -18,6 +18,32 @@ local function pick_resume()
   require("mini.pick").builtin.resume()
 end
 
+local function minifiles_toggle(path)
+  local mini_files = require "mini.files"
+  if not mini_files.close() then
+    mini_files.open(path)
+  end
+end
+
+local function minifiles_open_cwd()
+  minifiles_toggle()
+end
+
+local function minifiles_open_file()
+  local path = vim.api.nvim_buf_get_name(0)
+  if path == "" then
+    minifiles_toggle()
+    return
+  end
+
+  if vim.fn.filereadable(path) == 1 or vim.fn.isdirectory(path) == 1 then
+    minifiles_toggle(path)
+    return
+  end
+
+  minifiles_toggle()
+end
+
 local function in_git_repo()
   return vim.fn.isdirectory ".git" == 1
 end
@@ -90,14 +116,14 @@ return {
       {
         "<leader>e",
         function()
-          require("mini.extra").pickers.explorer()
+          minifiles_open_file()
         end,
         desc = "File Explorer",
       },
       {
         "<leader>E",
         function()
-          require("mini.extra").pickers.explorer { cwd = vim.fn.expand "%:p:h" }
+          minifiles_open_cwd()
         end,
         desc = "File Explorer (cwd)",
       },
