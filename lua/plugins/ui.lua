@@ -144,6 +144,98 @@ return {
     opts = {},
   },
   {
+    "echasnovski/mini.files",
+    opts = {
+      mappings = {
+        close = "q",
+        go_in = "<CR>",
+        go_in_plus = "l",
+        go_out = "-",
+        go_out_plus = "h",
+        mark_goto = "'",
+        mark_set = "m",
+        reset = "<BS>",
+        reveal_cwd = "@",
+        show_help = "g?",
+        synchronize = "<C-s>",
+        trim_left = "<",
+        trim_right = ">",
+      },
+    },
+    config = function(_, opts)
+      require("mini.files").setup(opts)
+
+      local show_dotfiles = true
+      local filter_show = function(_)
+        return true
+      end
+      local filter_hide = function(fs_entry)
+        return not vim.startswith(fs_entry.name, ".")
+      end
+
+      local function toggle_dotfiles()
+        show_dotfiles = not show_dotfiles
+        local new_filter = show_dotfiles and filter_show or filter_hide
+        require("mini.files").refresh { content = { filter = new_filter } }
+      end
+
+      local function copy_path()
+        local entry = require("mini.files").get_fs_entry()
+        if not entry or not entry.path then
+          vim.notify("No entry under cursor", vim.log.levels.WARN)
+          return
+        end
+
+        vim.fn.setreg(vim.v.register, entry.path)
+        vim.notify("Copied path: " .. entry.path)
+      end
+
+      local function align_minifiles_to_bottom_left(win_id)
+        if not vim.api.nvim_win_is_valid(win_id) then
+          return
+        end
+
+        local config = vim.api.nvim_win_get_config(win_id)
+        if config.relative ~= "editor" then
+          return
+        end
+
+        local has_tabline = vim.o.showtabline == 2 or (vim.o.showtabline == 1 and #vim.api.nvim_list_tabpages() > 1)
+        local has_statusline = vim.o.laststatus > 0
+        local max_height = vim.o.lines - vim.o.cmdheight - (has_tabline and 1 or 0) - (has_statusline and 1 or 0) - 2
+        local height = config.height or max_height
+        config.row = (has_tabline and 1 or 0) + math.max(max_height - height, 0)
+        config.col = 0
+        config.anchor = "NW"
+
+        vim.api.nvim_win_set_config(win_id, config)
+      end
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = { "MiniFilesWindowOpen", "MiniFilesWindowUpdate" },
+        callback = function(args)
+          local win_id = args.data and args.data.win_id
+          if win_id then
+            align_minifiles_to_bottom_left(win_id)
+          end
+        end,
+      })
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "MiniFilesBufferCreate",
+        callback = function(args)
+          local buf_id = args.data and args.data.buf_id
+          if not buf_id then
+            return
+          end
+
+          vim.keymap.set("n", ".", toggle_dotfiles, { buffer = buf_id, desc = "Toggle Hidden Files" })
+          vim.keymap.set("n", "<C-c>", copy_path, { buffer = buf_id, desc = "Copy Path" })
+        end,
+      })
+    end,
+  },
+  {
     "folke/todo-comments.nvim",
     dependencies = { "nvim-lua/plenary.nvim" },
     opts = {},
