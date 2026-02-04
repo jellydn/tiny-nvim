@@ -173,6 +173,7 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 - **mini.statusline**: Lightweight, informative statusline
 - **mini.tabline**: Smart buffer/tabline with buffer management
 - **mini.icons**: Comprehensive icon support
+- **mini.files**: File explorer with a consistent mini.nvim UI
 - **mini.ai**: Enhanced text objects for code
 - **mini.pairs**: Automatic bracket and quote pairing
 - **mini.bufremove**: Cleaner buffer deletion
@@ -428,6 +429,10 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<C-c>`      | Copy whole file content          |
 | `<leader>m`  | Markdown preview (Previm)        |
 | `<leader>tm` | Toggle Markdown preview (Render) |
+| `<leader>e`  | File Explorer (mini.files)       |
+| `<leader>E`  | File Explorer (cwd)              |
+| `.`          | Toggle hidden files (mini.files) |
+| `<C-c>`      | Copy path (mini.files)           |
 
 ### UI & Formatting
 
@@ -719,7 +724,7 @@ This configuration includes several extra plugins that can be enabled on demand 
    - Replace netrw with a more intuitive file management experience
    - Built-in git integration and smart file hiding
    - Keymaps:
-     - `<leader>e`: Toggle floating file explorer
+     - `<leader>e`: Toggle floating file explorer (overrides mini.files)
      - `<C-s>`: Save all changes in oil buffer
      - `q`: Close oil buffer
 
