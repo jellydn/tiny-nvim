@@ -87,7 +87,7 @@ return {
         ["<C-s>"] = {
           desc = "Save all changes",
           callback = function()
-            require("oil").save({ confirm = false })
+            require("oil").save { confirm = false }
           end,
         },
         ["q"] = "actions.close",

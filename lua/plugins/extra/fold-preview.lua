@@ -14,7 +14,7 @@ return {
     "bbjornstad/pretty-fold.nvim",
     event = "BufReadPost",
     config = function()
-      require("pretty-fold").setup({
+      require("pretty-fold").setup {
         keep_indentation = false,
         fill_char = " ",
         sections = {
@@ -35,7 +35,7 @@ return {
             "number_of_folded_lines",
           },
         },
-      })
+      }
     end,
   },
 }

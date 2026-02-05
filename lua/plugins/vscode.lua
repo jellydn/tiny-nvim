@@ -240,15 +240,15 @@ vim.api.nvim_create_autocmd("User", {
 
     -- Save file, need to add this key to "vscode-neovim.ctrlKeysForInsertMode" and "vscode-neovim.ctrlKeysForNormalMode" in settings.json
     vim.keymap.set({ "n", "i", "v" }, "<C-s>", function()
-      vscode.action("workbench.action.files.save")
+      vscode.action "workbench.action.files.save"
       if vim.fn.mode() ~= "n" then
-        vim.cmd("stopinsert")
+        vim.cmd "stopinsert"
       end
     end)
 
     -- Close file/buffer
     vim.keymap.set("n", "<S-q>", function()
-      vscode.action("workbench.action.closeActiveEditor")
+      vscode.action "workbench.action.closeActiveEditor"
     end)
   end,
 })
