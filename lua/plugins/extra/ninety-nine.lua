@@ -54,6 +54,13 @@ return {
       vim.keymap.set("v", mapping_key_prefix .. "p", function()
         _99.visual_prompt()
       end, { desc = "99: Visual selection with prompt" })
+
+      -- File-level operations
+      vim.keymap.set("n", mapping_key_prefix .. "F", function()
+        -- Select entire file, then open prompt
+        vim.cmd("normal! ggVG")
+        _99.visual_prompt()
+      end, { desc = "99: Process entire file with prompt" })
     end,
   },
 }
