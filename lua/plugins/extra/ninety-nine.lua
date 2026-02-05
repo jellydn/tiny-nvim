@@ -45,6 +45,15 @@ return {
       vim.keymap.set("v", mapping_key_prefix .. "s", function()
         _99.stop_all_requests()
       end, { desc = "99: Stop all requests" })
+
+      -- Prompt variants - opens floating window for custom prompt input
+      vim.keymap.set("n", mapping_key_prefix .. "p", function()
+        _99.fill_in_function_prompt()
+      end, { desc = "99: Fill in function with prompt" })
+
+      vim.keymap.set("v", mapping_key_prefix .. "p", function()
+        _99.visual_prompt()
+      end, { desc = "99: Visual selection with prompt" })
     end,
   },
 }
