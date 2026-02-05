@@ -173,9 +173,9 @@ return {
       {
         "<leader>gs",
         function()
-          require("mini.extra").pickers.git_hunks()
+          require("mini.extra").pickers.git_files { scope = "modified" }
         end,
-        desc = "Git Hunks",
+        desc = "Git Status",
       },
       {
         "<leader>gS",
