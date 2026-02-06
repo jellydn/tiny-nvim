@@ -23,47 +23,6 @@ _G.mini_git_cli = function(command, fallback)
   require("mini.pick").builtin.cli(nil, { command = command })
 end
 
-local function open_lazygit(opts)
-  if vim.fn.executable "lazygit" ~= 1 then
-    vim.notify("lazygit not found in PATH", vim.log.levels.ERROR)
-    return
-  end
-
-  local file = opts and opts.file or ""
-  local ui = vim.api.nvim_list_uis()[1]
-  local width = math.floor(ui.width * 0.95)
-  local height = math.floor(ui.height * 0.95)
-  local row = math.floor((ui.height - height) / 2)
-  local col = math.floor((ui.width - width) / 2)
-
-  local buf = vim.api.nvim_create_buf(false, true)
-  local win = vim.api.nvim_open_win(buf, true, {
-    relative = "editor",
-    width = width,
-    height = height,
-    row = row,
-    col = col,
-    style = "minimal",
-    border = "rounded",
-  })
-
-  vim.wo[win].winhl = "Normal:Normal,FloatBorder:FloatBorder"
-  vim.fn.termopen "lazygit"
-  vim.cmd "startinsert"
-
-  if file ~= "" then
-    vim.defer_fn(function()
-      vim.api.nvim_feedkeys("/" .. file, "t", true)
-      vim.api.nvim_input "<CR>"
-      vim.api.nvim_input "<ESC>"
-    end, 150)
-  end
-end
-
-local function open_lazygit_current_file()
-  open_lazygit { file = vim.fn.expand "%:t" }
-end
-
 -- Better up/down
 map({ "n", "x" }, "j", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
 map({ "n", "x" }, "<Down>", "v:count == 0 ? 'gj' : 'j'", { desc = "Down", expr = true, silent = true })
@@ -144,14 +103,6 @@ map("n", "gcO", "O<esc>Vcx<esc><cmd>normal gcc<cr>fxa<bs>", { desc = "Add Commen
 
 -- lazy
 map("n", "<leader>zz", "<cmd>Lazy<cr>", { desc = "Lazy" })
-
--- lazygit (override extra/snacks mappings without editing that file)
-vim.api.nvim_create_autocmd("User", {
-  pattern = "VeryLazy",
-  callback = function()
-    map("n", "<leader>gg", open_lazygit, { desc = "Lazygit" })
-  end,
-})
 
 -- new file
 map("n", "<leader>fn", "<cmd>enew<cr>", { desc = "New File" })

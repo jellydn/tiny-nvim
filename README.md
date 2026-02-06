@@ -221,7 +221,7 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 - [mini.nvim](https://github.com/echasnovski/mini.nvim): Buffer management via mini.tabline/mini.bufremove
 - Statusline, tabline, icons, and starter via mini.nvim ecosystem
 - [noice.nvim](https://github.com/folke/noice.nvim): Improved notifications and command-line UI
-- [betterTerm.nvim](https://github.com/CRAG666/betterTerm.nvim): Terminal manager with tabs and quick toggles
+- [tiny-term.nvim](https://github.com/jellydn/tiny-term.nvim): Lightweight terminal manager with simple toggles
 
 Theme switching:
 
