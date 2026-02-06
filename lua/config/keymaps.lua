@@ -20,7 +20,7 @@ _G.mini_git_cli = function(command, fallback)
     return
   end
 
-  require("mini.pick").builtin.cli(nil, { command = command })
+  require("mini.pick").builtin.cli({ command = command })
 end
 
 -- Better up/down

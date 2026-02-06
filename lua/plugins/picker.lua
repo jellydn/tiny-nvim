@@ -1,9 +1,103 @@
+-- Module state for tracking hidden file toggle
+local _hidden_files = false
+local _unrestricted_files = false
+
 local function pick_files(opts)
-  require("mini.pick").builtin.files(nil, opts or {})
+  local MiniPick = require("mini.pick")
+  MiniPick.builtin.files(nil, vim.tbl_deep_extend("force", opts or {}, {
+    mappings = {
+      toggle_hidden = { char = "<M-h>", func = function()
+        _hidden_files = not _hidden_files
+        _unrestricted_files = false
+        local cmd = _hidden_files and { "fd", "-H", "-t", "f" } or { "fd", "-t", "f" }
+        vim.notify("Hidden files: " .. tostring(_hidden_files), vim.log.levels.INFO)
+        MiniPick.builtin.cli({
+          command = cmd,
+          spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
+        }, {
+          source = {
+            name = _hidden_files and "Files (hidden)" or "Files",
+            choose = MiniPick.default_choose,
+            preview = MiniPick.default_preview,
+          },
+        })
+      end },
+      toggle_unrestricted = { char = "<M-u>", func = function()
+        _unrestricted_files = not _unrestricted_files
+        _hidden_files = false
+        local cmd = _unrestricted_files and { "fd", "-HI", "-t", "f" } or { "fd", "-t", "f" }
+        vim.notify("Include gitignored: " .. tostring(_unrestricted_files), vim.log.levels.INFO)
+        MiniPick.builtin.cli({
+          command = cmd,
+          spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
+        }, {
+          source = {
+            name = _unrestricted_files and "Files (unrestricted)" or "Files",
+            choose = MiniPick.default_choose,
+            preview = MiniPick.default_preview,
+          },
+        })
+      end },
+    },
+  }))
 end
 
+-- Find all files including gitignored
+local function pick_files_unrestricted(opts)
+  local MiniPick = require("mini.pick")
+  MiniPick.builtin.cli({
+    command = { "fd", "-HI", "-t", "f" },
+    spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
+  }, {
+    source = {
+      name = "Files (all)",
+      choose = MiniPick.default_choose,
+      preview = MiniPick.default_preview,
+    },
+  })
+end
+
+-- Find git files including untracked files
+local function pick_git_files_all(opts)
+  local MiniPick = require("mini.pick")
+  MiniPick.builtin.cli({
+    -- List all tracked and untracked files (respecting .gitignore)
+    command = { "git", "ls-files", "-co", "--exclude-standard" },
+    spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
+  }, {
+    source = {
+      name = "Git Files (all)",
+      choose = MiniPick.default_choose,
+      preview = MiniPick.default_preview,
+    },
+  })
+end
+
+-- Normal grep (respects .gitignore)
 local function pick_grep_live(opts)
-  require("mini.pick").builtin.grep_live(nil, opts or {})
+  local MiniPick = require("mini.pick")
+  MiniPick.builtin.grep_live(nil, opts or {})
+end
+
+-- Grep with hidden files (respects .gitignore)
+-- Asks for pattern, then searches in hidden files like .env
+local function pick_grep_unrestricted(opts)
+  local pattern = vim.fn.input("Grep (hidden) pattern: ")
+  if pattern == "" then
+    return
+  end
+
+  local MiniPick = require("mini.pick")
+  MiniPick.builtin.cli({
+    command = { "rg", "--hidden", "--line-number", "--color=never", "--with-filename", pattern },
+    spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
+  }, {
+    source = {
+      name = "Grep (hidden)",
+      choose = MiniPick.default_choose,
+      preview = MiniPick.default_preview,
+    },
+  })
 end
 
 local function pick_help()
@@ -54,7 +148,7 @@ local function git_cli(command, fallback)
     return
   end
 
-  require("mini.pick").builtin.cli(nil, { command = command })
+  require("mini.pick").builtin.cli({ command = command })
 end
 
 local function pick_commands_history()
@@ -138,12 +232,13 @@ return {
         desc = "Find Config File",
       },
       { "<leader>ff", pick_files, desc = "Find Files" },
+{ "<leader>fA", pick_files_unrestricted, desc = "Find Files (all)" },
       {
         "<leader>fg",
         function()
-          git_cli({ "git", "ls-files", "--cached", "--others", "--exclude-standard" }, "No git files found")
+          pick_git_files_all()
         end,
-        desc = "Find Git Files",
+        desc = "Find Git Files (including untracked)",
       },
       {
         "<leader>fr",
@@ -188,7 +283,7 @@ return {
       -- Grep
       { "<leader>sb", pick_buffer_lines, desc = "Buffer Lines" },
       { "<leader>sB", pick_open_buffer_lines, desc = "Grep Open Buffers" },
-      { "<leader>sg", pick_grep_live, desc = "Grep" },
+      { "<leader>sg", pick_grep_unrestricted, desc = "Grep (all files)" },
 
       -- search
       {

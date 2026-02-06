@@ -421,18 +421,30 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### File Operations
 
-| Key          | Description                      |
-| ------------ | -------------------------------- |
-| `<C-s>`      | Save File                        |
-| `<leader>fn` | New File                         |
-| `<leader>qq` | Quit All                         |
-| `<C-c>`      | Copy whole file content          |
-| `<leader>m`  | Markdown preview (Previm)        |
-| `<leader>tm` | Toggle Markdown preview (Render) |
-| `<leader>e`  | File Explorer (mini.files)       |
-| `<leader>E`  | File Explorer (cwd)              |
-| `.`          | Toggle hidden files (mini.files) |
-| `<C-c>`      | Copy path (mini.files)           |
+| Key          | Description                         |
+| ------------ | ----------------------------------- |
+| `<C-s>`      | Save File                           |
+| `<leader>fn` | New File                            |
+| `<leader>qq` | Quit All                            |
+| `<C-c>`      | Copy whole file content             |
+| `<leader>m`  | Markdown preview (Previm)          |
+| `<leader>tm` | Toggle Markdown preview (Render)    |
+| `<leader>e`  | File Explorer (mini.files)          |
+| `<leader>E`  | File Explorer (cwd)                 |
+| `.`          | Toggle hidden files (mini.files)    |
+| `<C-c>`      | Copy path (mini.files)              |
+| `<M-h>`      | Toggle hidden files (mini.pick)     |
+| `<M-u>`      | Toggle gitignored files (mini.pick) |
+
+### Search & Navigation
+
+| Key          | Description                              |
+| ------------ | ---------------------------------------- |
+| `<leader><space>` | Find Files (normal picker)          |
+| `<leader>ff` | Find Files (with hidden toggle)        |
+| `<leader>fA` | Find Files (all including gitignored)  |
+| `<leader>/`  | Live Grep (normal files only)           |
+| `<leader>sg` | Live Grep (hidden files, respects .gitignore) |
 
 ### UI & Formatting
 
