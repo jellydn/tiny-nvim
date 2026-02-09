@@ -2,6 +2,7 @@ return {
   {
     "jellydn/tiny-term.nvim",
     opts = {
+      override_snacks = true, -- Automatically override Snacks.terminal
       win = {
         position = "bottom",
         split_size = 15,

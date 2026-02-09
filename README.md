@@ -237,6 +237,95 @@ Theme switching:
 - [better-escape.nvim](https://github.com/max397574/better-escape.nvim): Better escape functionality
 - [grug-far.nvim](https://github.com/MagicDuck/grug-far.nvim): Advanced search and replace functionality
 
+### Picker Keymaps (mini.pick)
+
+#### General
+
+| Keymap | Mode | Description |
+| --- | --- | --- |
+| `<leader><space>` | n | Find Files (toggle hidden with `Alt-h`, unrestricted with `Alt-u`) |
+| `<leader>/` | n | Grep (live) |
+| `<leader>,` | n | Switch Buffer |
+| `<leader>:` | n | Command History |
+| `<C-g>` | n | Grep Project |
+| `<C-g>` | v | Grep visual selection |
+| `<C-e>` | n | Find Files at project directory |
+
+#### Explorer
+
+| Keymap | Mode | Description |
+| --- | --- | --- |
+| `<leader>e` | n | File Explorer (current file) |
+| `<leader>E` | n | File Explorer (cwd) |
+
+#### Find (`<leader>f`)
+
+| Keymap | Mode | Description |
+| --- | --- | --- |
+| `<leader>fb` | n | Buffers |
+| `<leader>fc` | n | Find Config File |
+| `<leader>ff` | n | Find Git Files |
+| `<leader>fa` | n | Find Files (all, including gitignored) |
+| `<leader>fg` | n | Find Git Files (including untracked) |
+| `<leader>fr` | n | Recent Files |
+| `<leader>fR` | n | Resume last picker |
+| `<leader>fl` | n | Live Grep (including hidden files) |
+
+#### Git (`<leader>g`)
+
+| Keymap | Mode | Description |
+| --- | --- | --- |
+| `<leader>gc` | n | Git Commits |
+| `<leader>gs` | n | Git Status |
+| `<leader>gS` | n | Git Stash |
+| `<leader>gb` | n | Git Branches |
+| `<leader>gB` | n | Git Buffer Commits |
+
+#### Search (`<leader>s`)
+
+| Keymap | Mode | Description |
+| --- | --- | --- |
+| `<leader>sb` | n | Search Current Buffer |
+| `<leader>sB` | n | Search Lines in Open Buffers |
+| `<leader>sg` | n | Grep (all files, including hidden) |
+| `<leader>sw` | n | Search word under cursor |
+| `<leader>sw` | v | Search visual selection |
+| `<leader>sW` | n | Search WORD under cursor |
+| `<leader>s"` | n | Registers |
+| `<leader>sa` | n | Find Actions (Commands) |
+| `<leader>s:` | n | Command History |
+| `<leader>sc` | n | Autocmds |
+| `<leader>sC` | n | Commands |
+| `<leader>sd` | n | Document Diagnostics |
+| `<leader>sD` | n | Workspace Diagnostics |
+| `<leader>sh` | n | Help Pages |
+| `<leader>sH` | n | Highlights |
+| `<leader>si` | n | LSP Incoming Calls |
+| `<leader>so` | n | LSP Outgoing Calls |
+| `<leader>sj` | n | Search Jumplist |
+| `<leader>sk` | n | Search Keymaps |
+| `<leader>sl` | n | Location List |
+| `<leader>sm` | n | Search Marks |
+| `<leader>sM` | n | Man Pages |
+| `<leader>sq` | n | Search Quickfix |
+| `<leader>st` | n | Todo Comments |
+| `<leader>sT` | n | Todo/Fix/Fixme |
+| `<leader>su` | n | Changelist |
+| `<leader>sp` | n | Search for Plugin Spec |
+| `<leader>uC` | n | Colorschemes |
+
+#### LSP
+
+| Keymap | Mode | Description |
+| --- | --- | --- |
+| `gd` | n | Goto Definition |
+| `gD` | n | Goto Declaration |
+| `gr` | n | References |
+| `gi` | n | Goto Implementation |
+| `gy` | n | Goto Type Definition |
+| `<leader>ss` | n | LSP Document Symbols |
+| `<leader>sS` | n | LSP Workspace Symbols |
+
 ### Task Management & Productivity
 
 - [hurl.nvim](https://github.com/jellydn/hurl.nvim): Run HTTP requests directly from `.hurl` files

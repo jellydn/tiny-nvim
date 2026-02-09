@@ -20,7 +20,7 @@ _G.mini_git_cli = function(command, fallback)
     return
   end
 
-  require("mini.pick").builtin.cli({ command = command })
+  require("mini.pick").builtin.cli { command = command }
 end
 
 -- Better up/down
@@ -288,7 +288,7 @@ map("n", "<leader>ts", "<cmd>set spell!<CR>", {
 
 map(
   "n",
-  "<leader>uS",
+  "<leader>us",
   "<cmd>lua require('utils.cspell').add_word_to_c_spell_dictionary()<CR>",
   { noremap = true, silent = true, desc = "Add unknown to cspell dictionary" }
 )
