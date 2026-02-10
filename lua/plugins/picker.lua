@@ -421,18 +421,42 @@ return {
         desc = "Git Commits",
       },
       {
-        "<leader>gs",
+        "<leader>gS",
         function()
           require("mini.extra").pickers.git_files { scope = "modified" }
         end,
-        desc = "Git Status",
+        desc = "Git Modified",
       },
       {
-        "<leader>gS",
+        "<leader>gs",
         function()
-          git_cli({ "git", "stash", "list" }, "No git stash entries")
+          if not require("utils.path").is_git_repo() then
+            vim.notify("Not a git repository", vim.log.levels.WARN)
+            return
+          end
+          local output = vim.fn.systemlist "git status --short"
+          if #output == 0 then
+            vim.notify("No modified or untracked files", vim.log.levels.INFO)
+            return
+          end
+          local items = {}
+          for _, line in ipairs(output) do
+            local file = line:match "^...(.+)$"
+            if file then
+              table.insert(items, vim.trim(file))
+            end
+          end
+          require("mini.pick").start {
+            source = {
+              name = "Git Status",
+              items = items,
+              show = function(buf_id, items_to_show, query)
+                require("mini.pick").default_show(buf_id, items_to_show, query, { show_icons = true })
+              end,
+            },
+          }
         end,
-        desc = "Git Stash",
+        desc = "Git Status",
       },
       {
         "<leader>gb",
