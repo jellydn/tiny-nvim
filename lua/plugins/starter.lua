@@ -124,7 +124,17 @@ return {
       }
     end,
     config = function(_, opts)
-      require("mini.starter").setup(opts)
+      local starter = require "mini.starter"
+      starter.setup(opts)
+
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "LazyVimStarted",
+        callback = function()
+          if starter.refresh then
+            starter.refresh()
+          end
+        end,
+      })
 
       vim.api.nvim_create_autocmd("User", {
         pattern = "MiniStarterOpened",
