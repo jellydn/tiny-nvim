@@ -114,13 +114,23 @@ local function pick_grep_unrestricted(opts)
 
   local MiniPick = require "mini.pick"
   MiniPick.builtin.cli({
-    command = { "rg", "--hidden", "--line-number", "--color=never", "--with-filename", pattern },
+    command = {
+      "rg",
+      "--hidden",
+      "--column",
+      "--line-number",
+      "--no-heading",
+      "--field-match-separator",
+      "\\x00",
+      "--color=never",
+      "--smart-case",
+      "--",
+      pattern,
+    },
     spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
   }, {
     source = {
       name = "Grep (hidden)",
-      choose = MiniPick.default_choose,
-      preview = MiniPick.default_preview,
     },
   })
 end
@@ -154,13 +164,22 @@ local function pick_grep_project(opts)
 
   local MiniPick = require "mini.pick"
   MiniPick.builtin.cli({
-    command = { "rg", "--line-number", "--color=never", "--with-filename", "--smart-case", pattern },
+    command = {
+      "rg",
+      "--column",
+      "--line-number",
+      "--no-heading",
+      "--field-match-separator",
+      "\\x00",
+      "--color=never",
+      "--smart-case",
+      "--",
+      pattern,
+    },
     spawn_opts = { cwd = opts and opts.source and opts.source.cwd },
   }, {
     source = {
       name = "Grep Project",
-      choose = MiniPick.default_choose,
-      preview = MiniPick.default_preview,
     },
   })
 end
@@ -172,9 +191,12 @@ local function pick_grep_live_hidden(opts)
     command = {
       "rg",
       "--hidden",
+      "--column",
       "--line-number",
+      "--no-heading",
+      "--field-match-separator",
+      "\\x00",
       "--color=never",
-      "--with-filename",
       "--smart-case",
       "-g",
       "!{.git,node_modules}/",
@@ -184,8 +206,6 @@ local function pick_grep_live_hidden(opts)
   }, {
     source = {
       name = "Grep (hidden)",
-      choose = MiniPick.default_choose,
-      preview = MiniPick.default_preview,
     },
   })
 end
@@ -252,9 +272,18 @@ end
 local function pick_autocmds()
   local MiniPick = require "mini.pick"
   local autocmds = vim.api.nvim_get_autocmds {}
+  local function normalize_list(value)
+    if type(value) == "table" then
+      return value
+    end
+    if value == nil then
+      return {}
+    end
+    return { value }
+  end
   local items = vim.tbl_map(function(autocmd)
-    local events = table.concat(autocmd.event or {}, ",")
-    local patterns = table.concat(autocmd.pattern or {}, ",")
+    local events = table.concat(normalize_list(autocmd.event), ",")
+    local patterns = table.concat(normalize_list(autocmd.pattern), ",")
     local group = autocmd.group_name or autocmd.group or "-"
     local desc = autocmd.desc or ""
     local cmd = autocmd.command or ""
