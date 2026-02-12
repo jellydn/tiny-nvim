@@ -34,6 +34,16 @@ return {
     },
   },
   {
+    "echasnovski/mini.pick",
+    opts = {},
+    lazy = false,
+    config = function(_, opts)
+      local MiniPick = require "mini.pick"
+      MiniPick.setup(opts)
+      vim.ui.select = MiniPick.ui_select
+    end,
+  },
+  {
     "folke/sidekick.nvim",
     opts = {
       nes = {
