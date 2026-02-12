@@ -473,7 +473,14 @@ return {
   -- Search and replace
   {
     "MagicDuck/grug-far.nvim",
-    opts = { headerMaxWidth = 80 },
+    opts = {
+      headerMaxWidth = 80,
+      keymaps = {
+        replace = { n = "<C-r>" },
+        syncLine = { n = "<C-l>" },
+        syncLocations = { n = "<C-s>" },
+      },
+    },
     cmd = "GrugFar",
     keys = {
       {
@@ -490,6 +497,20 @@ return {
         end,
         mode = { "n", "v" },
         desc = "Search and Replace",
+      },
+      {
+        "<leader>sR",
+        function()
+          local grug = require "grug-far"
+          grug.open {
+            transient = true,
+            prefills = {
+              paths = vim.fn.expand "%",
+            },
+          }
+        end,
+        mode = { "n", "v" },
+        desc = "Search and Replace (Buffer)",
       },
     },
   },
