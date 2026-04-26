@@ -1,3 +1,5 @@
+local prefix = "<leader>'"
+
 return {
   -- fff.nvim - Fast fuzzy file finder with memory built-in
   -- A fast file picker for Neovim with frecency scoring, git integration,
@@ -9,7 +11,7 @@ return {
     optional = true,
     opts = {
       spec = {
-        { "<leader>F", group = "FFF", mode = { "n", "v" } },
+        { prefix, group = "FFF", mode = { "n", "v" } },
       },
     },
   },
@@ -82,21 +84,21 @@ return {
     },
     keys = {
       {
-        "<leader>Ff",
+        prefix .. "f",
         function()
           require("fff").find_files()
         end,
         desc = "FFF find files",
       },
       {
-        "<leader>Fg",
+        prefix .. "g",
         function()
           require("fff").live_grep()
         end,
         desc = "FFF live grep",
       },
       {
-        "<leader>Fz",
+        prefix .. "z",
         function()
           require("fff").live_grep {
             grep = {
@@ -107,7 +109,7 @@ return {
         desc = "FFF fuzzy grep",
       },
       {
-        "<leader>Fc",
+        prefix .. "c",
         function()
           require("fff").live_grep { query = vim.fn.expand "<cword>" }
         end,
