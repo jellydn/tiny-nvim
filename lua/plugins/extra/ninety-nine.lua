@@ -14,16 +14,15 @@ return {
     },
   },
   {
-    "jellydn/99",
-    branch = "feature/blink-cmp-source", -- Testing blink.cmp support PR
+    "ThePrimeagen/99",
     config = function()
       local _99 = require "99"
 
       _99.setup {
         model = "zai-coding-plan/glm-4.7",
+        tmp_dir = "./tmp",
         completion = {
           source = "blink",
-          -- Custom skills folder alongside the plugin config
           custom_rules = {
             vim.fn.stdpath "config" .. "/lua/plugins/extra/99-skills/",
           },
@@ -33,34 +32,30 @@ return {
         },
       }
 
-      -- Keybindings
-      vim.keymap.set("n", mapping_key_prefix .. "f", function()
-        _99.fill_in_function()
-      end, { desc = "99: Fill in function" })
+      -- Search - runs prompt and populates quickfix list
+      vim.keymap.set("n", mapping_key_prefix .. "s", function()
+        _99.search()
+      end, { desc = "99: Search" })
 
+      -- Visual selection AI
       vim.keymap.set("v", mapping_key_prefix .. "v", function()
         _99.visual()
       end, { desc = "99: Visual selection AI" })
 
-      vim.keymap.set("v", mapping_key_prefix .. "s", function()
+      -- Stop all in-flight requests
+      vim.keymap.set("n", mapping_key_prefix .. "x", function()
         _99.stop_all_requests()
       end, { desc = "99: Stop all requests" })
 
-      -- Prompt variants - opens floating window for custom prompt input
-      vim.keymap.set("n", mapping_key_prefix .. "p", function()
-        _99.fill_in_function_prompt()
-      end, { desc = "99: Fill in function with prompt" })
+      -- Clear previous requests
+      vim.keymap.set("n", mapping_key_prefix .. "c", function()
+        _99.clear_previous_requests()
+      end, { desc = "99: Clear previous requests" })
 
-      vim.keymap.set("v", mapping_key_prefix .. "p", function()
-        _99.visual_prompt()
-      end, { desc = "99: Visual selection with prompt" })
-
-      -- File-level operations
-      vim.keymap.set("n", mapping_key_prefix .. "F", function()
-        -- Select entire file, then open prompt
-        vim.cmd("normal! ggVG")
-        _99.visual_prompt()
-      end, { desc = "99: Process entire file with prompt" })
+      -- View logs
+      vim.keymap.set("n", mapping_key_prefix .. "l", function()
+        _99.view_logs()
+      end, { desc = "99: View logs" })
     end,
   },
 }
