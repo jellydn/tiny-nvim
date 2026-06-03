@@ -168,10 +168,12 @@ return {
     },
   },
   -- The Refactoring library based off the Refactoring book by Martin Fowler
+  -- v2.0+: uses operator-pending mode (functions return textobject strings)
   {
     "ThePrimeagen/refactoring.nvim",
     vscode = true,
     dependencies = {
+      { "lewis6991/async.nvim" },
       { "nvim-lua/plenary.nvim", vscode = true },
       { "nvim-treesitter/nvim-treesitter" },
     },
@@ -179,9 +181,7 @@ return {
       {
         "<leader>rm",
         function()
-          require("refactoring").select_refactor {
-            show_success_message = true,
-          }
+          require("refactoring").select_refactor()
         end,
         mode = { "n", "v" },
         desc = "Refactoring Menu",
@@ -189,116 +189,78 @@ return {
       {
         "<leader>re",
         function()
-          require("refactoring").refactor "Extract Function"
+          return require("refactoring").extract_func()
         end,
-        desc = "Extract",
+        desc = "Extract Function",
         mode = "x",
+        expr = true,
       },
       {
         "<leader>rf",
         function()
-          require("refactoring").refactor "Extract Function To File"
+          return require("refactoring").extract_func_to_file()
         end,
         desc = "Extract to file",
         mode = "x",
+        expr = true,
       },
       {
         "<leader>rv",
         function()
-          require("refactoring").refactor "Extract Variable"
+          return require("refactoring").extract_var()
         end,
         desc = "Extract variable",
         mode = "x",
+        expr = true,
       },
       {
         "<leader>ri",
         function()
-          require("refactoring").refactor "Inline Variable"
+          return require("refactoring").inline_var()
         end,
         desc = "Inline variable",
         mode = { "n", "x" },
+        expr = true,
       },
       {
         "<leader>rI",
         function()
-          require("refactoring").refactor "Inline Function"
+          return require("refactoring").inline_func()
         end,
         desc = "Inline function",
-        mode = { "n" },
-      },
-      {
-        "<leader>rb",
-        function()
-          require("refactoring").refactor "Extract Block"
-        end,
-        desc = "Extract block",
-      },
-      {
-        "<leader>rB",
-        function()
-          require("refactoring").refactor "Extract Block To File"
-        end,
-        desc = "Extract block to file",
+        mode = { "n", "x" },
+        expr = true,
       },
       -- Debug variable
       {
         "<leader>dv",
         function()
-          require("refactoring").debug.print_var {
-            show_success_message = true,
-            below = true,
-          }
+          return require("refactoring.debug").print_var { output_location = "below" } .. "iw"
         end,
         mode = { "n", "x" },
         desc = "Print below variables",
+        expr = true,
       },
       {
         "<leader>dV",
         function()
-          require("refactoring").debug.print_var {
-            show_success_message = true,
-            below = false,
-          }
+          return require("refactoring.debug").print_var { output_location = "above" } .. "iw"
         end,
         mode = { "n", "x" },
         desc = "Print above variables",
+        expr = true,
       },
       -- Clean up debugging
       {
         "<leader>dc",
         function()
-          require("refactoring").debug.cleanup {
-            force = true,
-            show_success_message = true,
-          }
+          return require("refactoring.debug").cleanup { restore_view = true } .. "ag"
         end,
         desc = "Clear debugging",
+        expr = true,
       },
     },
-    opts = {
-      prompt_func_return_type = {
-        go = false,
-        java = false,
-
-        cpp = false,
-        c = false,
-        h = false,
-        hpp = false,
-        cxx = false,
-      },
-      prompt_func_param_type = {
-        go = false,
-        java = false,
-
-        cpp = false,
-        c = false,
-        h = false,
-        hpp = false,
-        cxx = false,
-      },
-      printf_statements = {},
-      print_var_statements = {},
-    },
+    opts = {},
   },
   -- Code comment
   {
@@ -336,6 +298,7 @@ return {
           },
           u = ai.gen_spec.function_call(), -- u for "Usage"
           U = ai.gen_spec.function_call { name_pattern = "[%w_]" }, -- without dot in function name
+          g = require("mini.extra").gen_ai_spec.buffer(), -- g for "Global/buffer" (used with `ag` textobject)
         },
       }
     end,
