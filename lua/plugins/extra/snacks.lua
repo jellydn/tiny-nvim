@@ -700,6 +700,13 @@ return {
         desc = "Delete Buffer",
       },
       {
+        "<leader>bi",
+        function()
+          Snacks.bufdelete.invisible()
+        end,
+        desc = "Delete Invisible Buffers",
+      },
+      {
         "<leader>cR",
         function()
           Snacks.rename.rename_file()
