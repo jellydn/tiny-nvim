@@ -9,7 +9,6 @@ return {
     opts = {
       spec = {
         { mapping_key_prefix, group = "AI Code", mode = { "n", "v" } },
-        { "<leader>gm", group = "Copilot Chat" },
       },
     },
   },
