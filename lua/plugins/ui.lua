@@ -447,7 +447,7 @@ return {
           { "]", group = "next" },
           { "g", group = "goto" },
           { "gs", group = "surround" },
-          { "z", group = "fold" },
+          { "z", group = "fold/spell/zoom" },
         },
       },
     },
