@@ -192,7 +192,7 @@ return {
           return require("refactoring").extract_func()
         end,
         desc = "Extract Function",
-        mode = "x",
+        mode = { "n", "x" },
         expr = true,
       },
       {
@@ -201,7 +201,7 @@ return {
           return require("refactoring").extract_func_to_file()
         end,
         desc = "Extract to file",
-        mode = "x",
+        mode = { "n", "x" },
         expr = true,
       },
       {
@@ -210,7 +210,7 @@ return {
           return require("refactoring").extract_var()
         end,
         desc = "Extract variable",
-        mode = "x",
+        mode = { "n", "x" },
         expr = true,
       },
       {
@@ -235,7 +235,11 @@ return {
       {
         "<leader>dv",
         function()
-          return require("refactoring.debug").print_var { output_location = "below" } .. "iw"
+          local cmd = require("refactoring.debug").print_var { output_location = "below" }
+          if vim.fn.mode() == "n" then
+            return cmd .. "iw"
+          end
+          return cmd
         end,
         mode = { "n", "x" },
         desc = "Print below variables",
@@ -244,7 +248,11 @@ return {
       {
         "<leader>dV",
         function()
-          return require("refactoring.debug").print_var { output_location = "above" } .. "iw"
+          local cmd = require("refactoring.debug").print_var { output_location = "above" }
+          if vim.fn.mode() == "n" then
+            return cmd .. "iw"
+          end
+          return cmd
         end,
         mode = { "n", "x" },
         desc = "Print above variables",
@@ -254,8 +262,13 @@ return {
       {
         "<leader>dc",
         function()
-          return require("refactoring.debug").cleanup { restore_view = true } .. "ag"
+          local cmd = require("refactoring.debug").cleanup { restore_view = true }
+          if vim.fn.mode() == "n" then
+            return cmd .. "ag"
+          end
+          return cmd
         end,
+        mode = { "n", "x" },
         desc = "Clear debugging",
         expr = true,
       },
