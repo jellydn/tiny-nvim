@@ -34,27 +34,27 @@ vim.api.nvim_create_autocmd("User", {
       vscode.action "workbench.action.showAllEditorsByMostRecentlyUsed"
     end)
 
-    -- Need to install https://github.com/jellydn/vscode-fzf-picker
+    -- Need to install https://github.com/jellydn/vscode-fff-gpui
     vim.keymap.set("n", "<leader>ff", function()
-      vscode.action "fzf-picker.findFiles"
+      vscode.action "fff-gpui.findFiles"
     end)
-    -- Find word
+    -- Grep files (replaces fzf-picker.findWithinFiles)
     vim.keymap.set({ "n", "v" }, "<leader>fw", function()
-      vscode.action "fzf-picker.findWithinFiles"
+      vscode.action "fff-gpui.grepFiles"
     end)
     vim.keymap.set("n", "<leader>fw", function()
       vscode.action "editor.action.addSelectionToNextFindMatch"
-      vscode.action "fzf-picker.findWithinFiles"
+      vscode.action "fff-gpui.grepFiles"
     end)
-    -- Find file from git status
+    -- Find file from git status (via fzf-picker)
     vim.keymap.set("n", "<leader>fg", function()
       vscode.action "fzf-picker.pickFileFromGitStatus"
     end)
-    -- Resume last search
+    -- Resume last search (via fzf-picker)
     vim.keymap.set("n", "<leader>fR", function()
       vscode.action "fzf-picker.resumeSearch"
     end)
-    -- Find todo/fixme
+    -- Find todo/fixme (via fzf-picker)
     vim.keymap.set("n", "<leader>fx", function()
       vscode.action "fzf-picker.findTodoFixme"
     end)
