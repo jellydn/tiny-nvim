@@ -71,6 +71,12 @@ vim.api.nvim_create_autocmd("User", {
     vim.keymap.set("n", "<leader>e", function()
       vscode.action "workbench.view.explorer"
     end)
+    -- Neovim 0.13 `nvim.dir` maps `-` to a buffer tree; reveal in VS Code instead
+    pcall(vim.keymap.del, "n", "-")
+    pcall(vim.api.nvim_del_augroup_by_name, "nvim.dir")
+    vim.keymap.set("n", "-", function()
+      vscode.action "workbench.files.action.showActiveFileInExplorer"
+    end, { desc = "Reveal in VS Code explorer" })
 
     -- +Search
     -- Open symbol

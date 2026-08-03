@@ -1,6 +1,10 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Neovim 0.13 built-in dir browser maps `-` / BufEnter to a directory buffer.
+-- This config uses oil.nvim (terminal) or VS Code explorer (vscode-neovim) instead.
+vim.g.loaded_nvim_dir_plugin = true
+
 local opt = vim.opt
 
 -- Borrow those settings from LazyVim

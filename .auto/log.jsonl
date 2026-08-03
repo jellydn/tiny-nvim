@@ -1,0 +1,2 @@
+{"event":"init","name":"Neovim 0.13 config migration","metric_name":"compat_failures","direction":"lower","unit":"count"}
+{"event":"result","iteration":0,"description":"post-fix baseline after textobjects+vim.uv","decision":"keep","metrics":{"compat_failures":0,"startup_ms":677,"fail_miniai":0,"fail_treesitter":0,"fail_ai":0,"fail_lsp":0,"fail_vim_loop":0},"asi":{"root_cause":"nvim-treesitter main dropped textobjects.scm; mini.ai needs nvim-treesitter-textobjects","supports":["treesitter","ai","lsp","miniai"]}}
