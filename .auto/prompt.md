@@ -14,7 +14,7 @@ patterns (`vim.hl.hl_op`, `vim.lsp.config`, etc.).
   - `startup_ms` — median warm headless startup milliseconds (regression monitor only)
   - `fail_binary`, `fail_startup`, `fail_messages`, `fail_deprecated`
   - `fail_loadfile`, `fail_fixture_lua`, `fail_fixture_md`
-  - `fail_vim_loop`, `fail_treesitter`, `fail_ai`, `fail_lsp`
+  - `fail_vim_loop`, `fail_treesitter`, `fail_ai`, `fail_lsp`, `fail_miniai`
 
 ## How to Run
 
@@ -57,9 +57,10 @@ Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/
 
 ## Must Support (hard)
 
-1. **Treesitter** — `nvim-treesitter` plugin present; `require("nvim-treesitter")` / config loads; `vim.treesitter` API available after startup
+1. **Treesitter** — `nvim-treesitter` + `nvim-treesitter-textobjects` present; `vim.treesitter` API available; Lua `textobjects` query reachable
 2. **AI** — `sidekick.nvim` present in lock + `lua/plugins/ai.lua`; module loadable after lazy setup
 3. **LSP** — `vim.lsp.enable` available; at least one `lsp/*.lua` config present; filetype enable path in `init.lua` intact
+4. **mini.ai** — treesitter textobjects (`af`/`if`) must not raise `Can not get query` for Lua
 
 ## What's Been Tried
 
@@ -70,5 +71,6 @@ Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/
 - `checkhealth vim.deprecated`: OK — no deprecated functions detected (health buffer)
 - Artificial `-u NONE` + `luafile` caused false `kanagawa` error — discarded as invalid probe
 - TS/Rust fixture LSP errors are missing-tooling env noise, not 0.13 API failures
-- Known `vim.loop` direct uses remain in: `init.lua`, `lua/langs/markdown.lua`,
-  `lua/plugins/extra/codecompanion.lua` (plus fallbacks in lazy/autocmds)
+- **Root cause of mini.ai E5108**: `nvim-treesitter` main no longer ships `textobjects.scm`; mini.ai `gen_spec.treesitter` needs them. Fix: add `nvim-treesitter/nvim-treesitter-textobjects` (main), depend from `mini.ai` (LazyVim reference pattern)
+- Replaced direct `vim.loop` with `vim.uv` in `init.lua`, `lua/langs/markdown.lua`, `lua/plugins/extra/codecompanion.lua`
+- Hardened treesitter FileType start via `pcall(vim.treesitter.start)` and lang membership check

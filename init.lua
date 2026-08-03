@@ -5,7 +5,7 @@ require "config.options"
 -- It can be used to set project specific settings
 local project_setting = vim.fn.getcwd() .. "/.nvim-config.lua"
 -- Check if the file exists and load it
-if vim.loop.fs_stat(project_setting) then
+if vim.uv.fs_stat(project_setting) then
   -- Read the file and run it with pcall to catch any errors
   local ok, err = pcall(dofile, project_setting)
   if not ok then
