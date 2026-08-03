@@ -359,10 +359,7 @@ return {
     lazy = false,
     build = ":TSUpdate",
     branch = "main",
-    keys = {
-      { "<c-space>", desc = "Increment Selection" },
-      { "<bs>", desc = "Decrement Selection", mode = "x" },
-    },
+    -- <C-Space>/<BS> treesitter expand/shrink live in keymaps.lua (main dropped incremental_selection)
     opts_extend = { "ensure_installed" },
     config = function(_, opts)
       if type(opts.ensure_installed) == "table" then
@@ -419,15 +416,6 @@ return {
         "vue",
         "xml",
         "yaml",
-      },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
       },
     },
   },

@@ -1,6 +1,6 @@
--- Treesitter select for vscode-neovim with flash-like letter marks.
--- Labels are painted via vscode.eval TextEditorDecorationType (after.contentText),
--- not nvim virt_text — that path was unreliable under vscode-neovim.
+-- Treesitter expand/shrink (+ optional labeled select under vscode-neovim).
+-- Used by <C-Space>/<BS> in terminal and vscode, and by flash `S` under vscode.
+-- Labels (select) use vscode.eval TextEditorDecorationType — not nvim virt_text.
 local M = {}
 
 ---@type string
