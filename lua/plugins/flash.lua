@@ -3,7 +3,8 @@ return {
     "folke/flash.nvim",
     event = "VeryLazy",
     opts = {},
-    vscode = true,
+    -- VS Code / Cursor already own jump navigation; flash hijacks s/S in the buffer
+    vscode = false,
     keys = {
       {
         "s",
