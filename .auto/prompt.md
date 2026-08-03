@@ -1,0 +1,74 @@
+# Autoresearch: Neovim 0.13 config migration
+
+## Objective
+
+Migrate this tiny-nvim config to Neovim 0.13 (`NVIM v0.13.0-dev-*`) while keeping
+**treesitter**, **AI (sidekick.nvim)**, and **native LSP** fully supported and loadable.
+This repo does **not** use LazyVim — consult LazyVim only as a reference for 0.13 API
+patterns (`vim.hl.hl_op`, `vim.lsp.config`, etc.).
+
+## Metrics
+
+- **Primary**: `compat_failures` (count, lower is better) — frozen assertion failures
+- **Secondary**:
+  - `startup_ms` — median warm headless startup milliseconds (regression monitor only)
+  - `fail_binary`, `fail_startup`, `fail_messages`, `fail_deprecated`
+  - `fail_loadfile`, `fail_fixture_lua`, `fail_fixture_md`
+  - `fail_vim_loop`, `fail_treesitter`, `fail_ai`, `fail_lsp`
+
+## How to Run
+
+`./.auto/measure.sh` — outputs `METRIC name=number` lines.
+
+Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/nvim`
+
+## Files in Scope
+
+- `init.lua` — entry, filetype-driven `vim.lsp.enable`
+- `lua/config/**` — options, keymaps, autocmds, lazy, theme, project
+- `lua/plugins/**` — plugin specs (including `ai.lua`, treesitter in `ui.lua`)
+- `lua/langs/**` — language extras
+- `lua/utils/**` — shared helpers
+- `lsp/**` — native Neovim 0.11+ LSP configs
+- `lazy-lock.json` — lock baseline already committed; update only for real compat fixes
+- `.auto/**` — harness (preserve across discards)
+
+## Off Limits
+
+- Do not remove/disable treesitter, sidekick/AI, or LSP to improve the metric
+- Do not delete scenarios, soften assertions, or filter diagnostics for scoring
+- Do not network-install or `:Lazy update` during measurement
+- Do not replace this config with LazyVim wholesale
+- Do not edit fixtures under `.auto/fixtures/` after baseline freeze
+- Do not change `.auto/measure.sh` assertion set after baseline without re-baselining
+
+## Constraints
+
+- Target: Neovim 0.13 nightly (mise `neovim/nightly`)
+- Prefer `vim.uv` over deprecated `vim.loop`
+- Prefer `vim.hl.hl_op` on 0.13 (already gated in autocmds)
+- Keep treesitter (`nvim-treesitter` main branch + `vim.treesitter.start`) working
+- Keep AI (`folke/sidekick.nvim` in `lua/plugins/ai.lua`) loadable
+- Keep native LSP (`vim.lsp.enable` + `lsp/*.lua`) working
+- TS/Rust language-server init errors from missing workspace tooling are **environment**
+  noise — do not count them as compat failures
+- Timing is secondary only — never keep a change solely for faster startup
+- Anti-cheat: equal/worse `compat_failures` → discard; only keep real reductions
+
+## Must Support (hard)
+
+1. **Treesitter** — `nvim-treesitter` plugin present; `require("nvim-treesitter")` / config loads; `vim.treesitter` API available after startup
+2. **AI** — `sidekick.nvim` present in lock + `lua/plugins/ai.lua`; module loadable after lazy setup
+3. **LSP** — `vim.lsp.enable` available; at least one `lsp/*.lua` config present; filetype enable path in `init.lua` intact
+
+## What's Been Tried
+
+- Confirmed `/Users/huynhdung/.config/nvim` → this repo (symlink)
+- Branch: `autoresearch/nvim-0.13-migration-2026-08-03`
+- Lock baseline committed: `chore(deps): update plugin lock baseline`
+- Normal headless startup on 0.13: OK (`lazy_ok=true`)
+- `checkhealth vim.deprecated`: OK — no deprecated functions detected (health buffer)
+- Artificial `-u NONE` + `luafile` caused false `kanagawa` error — discarded as invalid probe
+- TS/Rust fixture LSP errors are missing-tooling env noise, not 0.13 API failures
+- Known `vim.loop` direct uses remain in: `init.lua`, `lua/langs/markdown.lua`,
+  `lua/plugins/extra/codecompanion.lua` (plus fallbacks in lazy/autocmds)
