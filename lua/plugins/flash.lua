@@ -26,6 +26,12 @@ return {
         "S",
         mode = { "n", "x", "o" },
         function()
+          -- vscode-neovim cannot paint flash label extmarks; walk the same TS node
+          -- chain as flash and select ranges (notify shows node type).
+          if vim.g.vscode then
+            require("utils.vscode_treesitter").expand()
+            return
+          end
           require("flash").treesitter()
         end,
         desc = "Flash Treesitter",
