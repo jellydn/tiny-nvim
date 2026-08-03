@@ -35,6 +35,28 @@ map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
 map("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
 
+-- Treesitter expand: primary g<Space> (Ctrl+Space is often stolen by OS / Cursor).
+-- Terminal uses flash.treesitter actions; vscode uses expand helper. Same entry as flash.lua keys.
+local function treesitter_incremental_selection()
+  if vim.g.vscode then
+    require("utils.vscode_treesitter").expand()
+    return
+  end
+  require("flash").treesitter {
+    actions = {
+      ["g<Space>"] = "next",
+      ["<c-space>"] = "next",
+      ["<C-@>"] = "next",
+      ["<Nul>"] = "next",
+      ["<M-Space>"] = "next",
+      ["<BS>"] = "prev",
+    },
+  }
+end
+for _, lhs in ipairs { "g<Space>", "<C-Space>", "<C-@>", "<Nul>", "<M-Space>" } do
+  map({ "n", "x", "o" }, lhs, treesitter_incremental_selection, { desc = "Treesitter Incremental Selection" })
+end
+
 -- Resize window using <ctrl> arrow keys
 map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
 map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })
