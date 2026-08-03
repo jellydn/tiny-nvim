@@ -4,9 +4,12 @@ Guide for agentic coding agents working in this Neovim configuration repository.
 
 ## Project Overview
 
-tiny-nvim is a minimal Neovim 0.11+ config that relies on built-in LSP and a curated set
-of plugins managed by lazy.nvim. Most edits are Lua under `lua/` with optional extras
-under `lua/plugins/extra/`.
+tiny-nvim is a minimal Neovim 0.11+ config (tested on 0.13) that relies on built-in LSP and a
+curated set of plugins managed by lazy.nvim. Most edits are Lua under `lua/` with optional
+extras under `lua/plugins/extra/`.
+
+Core treesitter stack: `nvim-treesitter` (`main`) + `nvim-treesitter-textobjects` (queries for
+mini.ai). Prefer `vim.uv` over `vim.loop`, and `vim.hl.hl_op` on Neovim 0.13+.
 
 ## Build, Lint, Test
 

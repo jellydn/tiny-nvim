@@ -12,7 +12,7 @@
 <a href="https://dotfyle.com/jellydn/tiny-nvim"><img src="https://dotfyle.com/jellydn/tiny-nvim/badges/leaderkey?style=flat" /></a>
 <a href="https://dotfyle.com/jellydn/tiny-nvim"><img src="https://dotfyle.com/jellydn/tiny-nvim/badges/plugin-manager?style=flat" /></a>
 
-> Slim Neovim config for 0.11+ with minimal plugins.
+> Slim Neovim config for 0.11+ with minimal plugins (tested on 0.13).
 
 [![Slim Neovim config for 0.11](https://i.gyazo.com/6e351d72c2f119f70dbc55d61e9452fd.png)](https://gyazo.com/6e351d72c2f119f70dbc55d61e9452fd)
 
@@ -175,7 +175,7 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 - **mini.tabline**: Smart buffer/tabline with buffer management
 - **mini.icons**: Comprehensive icon support
 - **fff.nvim**: Fast fuzzy file picker with frecency scoring and live grep
-- **mini.ai**: Enhanced text objects for code
+- **mini.ai**: Enhanced text objects for code (treesitter-powered `af`/`if`, `ac`/`ic`, `ao`/`io` via [nvim-treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects))
 - **mini.pairs**: Automatic bracket and quote pairing
 - **mini.bufremove**: Cleaner buffer deletion
 - **mini.extra**: Additional pickers and utilities
@@ -586,10 +586,15 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Treesitter
 
+Uses [nvim-treesitter](https://github.com/nvim-treesitter/nvim-treesitter) (`main` branch) plus [nvim-treesitter-textobjects](https://github.com/nvim-treesitter/nvim-treesitter-textobjects) for query files that power mini.ai treesitter textobjects. After pulling updates, run `:Lazy sync` so both plugins stay installed.
+
 | Key         | Description                          |
 | ----------- | ------------------------------------ |
 | `<C-space>` | Increment Selection                  |
 | `<bs>`      | Decrement Selection (in visual mode) |
+| `af` / `if` | Around / inside function (mini.ai)   |
+| `ac` / `ic` | Around / inside class (mini.ai)      |
+| `ao` / `io` | Around / inside block/loop/conditional (mini.ai) |
 
 ### Folding
 
