@@ -26,9 +26,9 @@ return {
         "S",
         mode = { "n", "x", "o" },
         function()
-          -- vscode-neovim cannot paint flash letter labels reliably; expand TS parents instead
+          -- vscode-neovim: letter labels via vscode.eval decorations (see utils.vscode_treesitter)
           if vim.g.vscode then
-            require("utils.vscode_treesitter").expand()
+            require("utils.vscode_treesitter").select()
             return
           end
           require("flash").treesitter()
