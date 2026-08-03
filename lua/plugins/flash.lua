@@ -26,9 +26,9 @@ return {
         "S",
         mode = { "n", "x", "o" },
         function()
-          -- vscode-neovim: labeled picker (range hl + virt_text marks + getchar)
+          -- vscode-neovim cannot paint flash letter labels reliably; expand TS parents instead
           if vim.g.vscode then
-            require("utils.vscode_treesitter").select()
+            require("utils.vscode_treesitter").expand()
             return
           end
           require("flash").treesitter()
