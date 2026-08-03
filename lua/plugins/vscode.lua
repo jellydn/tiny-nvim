@@ -39,7 +39,7 @@ vim.api.nvim_create_autocmd("User", {
       vscode.action "fff-gpui.findFiles"
     end)
     -- Grep files (replaces fzf-picker.findWithinFiles)
-    vim.keymap.set({ "n", "v" }, "<leader>fw", function()
+    vim.keymap.set("v", "<leader>fw", function()
       vscode.action "fff-gpui.grepFiles"
     end)
     vim.keymap.set("n", "<leader>fw", function()
