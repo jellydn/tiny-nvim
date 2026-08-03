@@ -11,8 +11,8 @@ return {
     "folke/flash.nvim",
     event = "VeryLazy",
     opts = {},
-    -- VS Code / Cursor already own jump navigation; flash hijacks s/S in the buffer
-    vscode = false,
+    -- Re-enabled under vscode-neovim; 0.13 SearchState patch is preloaded above
+    vscode = true,
     keys = {
       {
         "s",
