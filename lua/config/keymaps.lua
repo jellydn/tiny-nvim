@@ -35,19 +35,6 @@ map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
 map("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
 
--- Treesitter expand/shrink (replaces removed nvim-treesitter incremental_selection on main).
--- Map several LHS: terminals often send Ctrl+Space as <Nul>/<C-@>; macOS may steal <C-Space>.
-local function ts_expand()
-  require("utils.vscode_treesitter").expand()
-end
-local function ts_shrink()
-  require("utils.vscode_treesitter").shrink()
-end
-for _, lhs in ipairs { "<C-Space>", "<C-@>", "<Nul>", "<M-Space>" } do
-  map({ "n", "x" }, lhs, ts_expand, { desc = "Treesitter Expand Selection" })
-end
-map("x", "<BS>", ts_shrink, { desc = "Treesitter Shrink Selection" })
-
 -- Resize window using <ctrl> arrow keys
 map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })
 map("n", "<C-Down>", "<cmd>resize -2<cr>", { desc = "Decrease Window Height" })

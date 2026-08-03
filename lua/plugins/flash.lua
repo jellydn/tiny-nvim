@@ -6,6 +6,22 @@ if vim.fn.has "nvim-0.13" == 1 then
   end
 end
 
+-- LazyVim-style incremental selection (nvim-treesitter main dropped incremental_selection).
+-- Aliases: terminals often send Ctrl+Space as <C-@>/<Nul>; <M-Space> if macOS steals Ctrl+Space.
+local function treesitter_incremental_selection()
+  -- vscode-neovim: flash UI overlays do not render; expand via utils.vscode_treesitter
+  if vim.g.vscode then
+    require("utils.vscode_treesitter").expand()
+    return
+  end
+  require("flash").treesitter {
+    actions = {
+      ["<c-space>"] = "next",
+      ["<BS>"] = "prev",
+    },
+  }
+end
+
 return {
   {
     "folke/flash.nvim",
@@ -34,6 +50,30 @@ return {
           require("flash").treesitter()
         end,
         desc = "Flash Treesitter",
+      },
+      {
+        "<c-space>",
+        mode = { "n", "o", "x" },
+        treesitter_incremental_selection,
+        desc = "Treesitter Incremental Selection",
+      },
+      {
+        "<c-@>",
+        mode = { "n", "o", "x" },
+        treesitter_incremental_selection,
+        desc = "Treesitter Incremental Selection",
+      },
+      {
+        "<Nul>",
+        mode = { "n", "o", "x" },
+        treesitter_incremental_selection,
+        desc = "Treesitter Incremental Selection",
+      },
+      {
+        "<M-Space>",
+        mode = { "n", "o", "x" },
+        treesitter_incremental_selection,
+        desc = "Treesitter Incremental Selection",
       },
       {
         "r",

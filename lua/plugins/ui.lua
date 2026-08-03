@@ -359,7 +359,7 @@ return {
     lazy = false,
     build = ":TSUpdate",
     branch = "main",
-    -- <C-Space>/<BS> treesitter expand/shrink live in keymaps.lua (main dropped incremental_selection)
+    -- <C-Space>/<BS> treesitter expand/shrink live in flash.lua (LazyVim pattern; main dropped incremental_selection)
     opts_extend = { "ensure_installed" },
     config = function(_, opts)
       if type(opts.ensure_installed) == "table" then
