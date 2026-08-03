@@ -42,6 +42,8 @@ return {
   },
   {
     "stevearc/oil.nvim",
+    -- Upstream: lazy-loading is hard to get right with default_file_explorer / BufEnter dirs
+    lazy = false,
     init = function()
       -- Neovim 0.13+: oil replaces netrw *and* the built-in `nvim.dir` browser
       vim.g.loaded_nvim_dir_plugin = true
