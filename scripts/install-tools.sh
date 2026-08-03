@@ -38,6 +38,7 @@ mise use -g rg@latest
 mise use -g ruff@latest
 mise use -g rye@latest
 mise use -g stylua@latest
+mise use -g tree-sitter@latest
 mise use -g usage@latest
 mise use -g uv@latest
 mise use -g zoxide@latest
@@ -52,19 +53,20 @@ if command -v apt &> /dev/null; then
     sudo apt install -y \
         trash-cli \
         imagemagick \
-        ghostscript \
-        tree-sitter-cli
+        ghostscript
 fi
 
-# Install tree-sitter CLI (required for nvim-treesitter on Neovim 0.11+)
-echo "Installing tree-sitter CLI..."
+# Ensure tree-sitter CLI is on PATH (required for nvim-treesitter compile on Neovim 0.11+)
+echo "Ensuring tree-sitter CLI..."
 if ! command -v tree-sitter &> /dev/null; then
-  if command -v cargo &> /dev/null; then
+  if command -v mise &> /dev/null; then
+    mise use -g tree-sitter@latest
+  elif command -v cargo &> /dev/null; then
     cargo install tree-sitter-cli
   elif command -v npm &> /dev/null; then
     npm install -g tree-sitter-cli
   else
-    echo "Warning: Neither cargo nor npm found. Please install tree-sitter-cli manually."
+    echo "Warning: tree-sitter CLI not found. Install via mise/cargo/npm."
   fi
 fi
 
