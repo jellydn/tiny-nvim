@@ -26,10 +26,9 @@ return {
         "S",
         mode = { "n", "x", "o" },
         function()
-          -- vscode-neovim cannot paint flash label extmarks; walk the same TS node
-          -- chain as flash and select ranges (notify shows node type).
+          -- vscode-neovim: labeled picker (range hl + virt_text marks + getchar)
           if vim.g.vscode then
-            require("utils.vscode_treesitter").expand()
+            require("utils.vscode_treesitter").select()
             return
           end
           require("flash").treesitter()

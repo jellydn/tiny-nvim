@@ -96,7 +96,7 @@ vim.api.nvim_create_autocmd("User", {
     -- Navigate VSCode tabs like lazyvim buffers
     vim.keymap.set("n", "<S-h>", "<Cmd>call VSCodeNotify('workbench.action.previousEditor')<CR>")
     vim.keymap.set("n", "<S-l>", "<Cmd>call VSCodeNotify('workbench.action.nextEditor')<CR>")
-    -- Shrink treesitter selection after flash `S` expand (see utils.vscode_treesitter)
+    -- Shrink to innermost treesitter node (flash `S` uses labeled select)
     vim.keymap.set({ "n", "x" }, "gS", function()
       require("utils.vscode_treesitter").shrink()
     end, { desc = "Shrink treesitter select" })
