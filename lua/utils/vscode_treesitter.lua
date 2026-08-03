@@ -35,7 +35,7 @@ local function select_match(match)
   vim.cmd.normal { "gv", bang = true }
 
   local node = match.node
-  if node then
+  if node and vim.g.vscode_treesitter_notify then
     vim.notify(string.format("ts: %s (depth %d)", node:type(), match.depth or 0), vim.log.levels.INFO, {
       title = "flash treesitter",
     })

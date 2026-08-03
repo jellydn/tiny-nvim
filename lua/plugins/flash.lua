@@ -6,24 +6,10 @@ if vim.fn.has "nvim-0.13" == 1 then
   end
 end
 
--- LazyVim-style incremental selection (nvim-treesitter main dropped incremental_selection).
+-- Incremental selection without flash letter marks (LazyVim uses flash labels; we expand only).
 -- Primary chord is g<Space> — Ctrl+Space is often stolen by macOS Input Sources / Cursor Suggest.
-local TS_INC_ACTIONS = {
-  ["g<Space>"] = "next",
-  ["<c-space>"] = "next",
-  ["<C-@>"] = "next",
-  ["<Nul>"] = "next",
-  ["<M-Space>"] = "next",
-  ["<BS>"] = "prev",
-}
-
 local function treesitter_incremental_selection()
-  -- vscode-neovim: flash UI overlays do not render; expand via utils.vscode_treesitter
-  if vim.g.vscode then
-    require("utils.vscode_treesitter").expand()
-    return
-  end
-  require("flash").treesitter { actions = TS_INC_ACTIONS }
+  require("utils.vscode_treesitter").expand()
 end
 
 return {
@@ -59,31 +45,31 @@ return {
         "g<Space>",
         mode = { "n", "o", "x" },
         treesitter_incremental_selection,
-        desc = "Treesitter Incremental Selection",
+        desc = "Treesitter Expand Selection",
       },
       {
         "<c-space>",
         mode = { "n", "o", "x" },
         treesitter_incremental_selection,
-        desc = "Treesitter Incremental Selection",
+        desc = "Treesitter Expand Selection",
       },
       {
         "<c-@>",
         mode = { "n", "o", "x" },
         treesitter_incremental_selection,
-        desc = "Treesitter Incremental Selection",
+        desc = "Treesitter Expand Selection",
       },
       {
         "<Nul>",
         mode = { "n", "o", "x" },
         treesitter_incremental_selection,
-        desc = "Treesitter Incremental Selection",
+        desc = "Treesitter Expand Selection",
       },
       {
         "<M-Space>",
         mode = { "n", "o", "x" },
         treesitter_incremental_selection,
-        desc = "Treesitter Incremental Selection",
+        desc = "Treesitter Expand Selection",
       },
       {
         "r",
