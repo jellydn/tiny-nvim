@@ -1,3 +1,11 @@
+-- neovim#39485 moved search_* FFI globals into Search; upstream PR #496 pending.
+-- Preload before flash.nvim loads so jump mode does not dlsym-crash on 0.13+.
+if vim.fn.has "nvim-0.13" == 1 then
+  package.preload["flash.hacks"] = function()
+    return require "utils.flash_hacks"
+  end
+end
+
 return {
   {
     "folke/flash.nvim",
