@@ -12,4 +12,3 @@
 - `.auto/log.jsonl` record shapes: `init` metadata, early `result` (partial fail_*), later `run` (full fail_* set). Treat as schema_version 1; do not infer a reduced check set from older `result` rows.
 - Optional: force JS linter via `vim.g.lsp_js_linter` when auto-detect picks wrong tool
 - Optional: drop `lsp/ts_ls.lua` once no projects override to legacy typescript-language-server
-- Optional: drop redundant per-config `on_attach = Lsp.on_attach` now that global LspAttach applies keymaps

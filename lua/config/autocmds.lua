@@ -199,8 +199,8 @@ vim.filetype.add {
   },
 }
 
--- LSP: shared keymaps + completion/inlay for every enabled server (incl. configs
--- that omit on_attach: eslint, json, oxlint, tailwindcss).
+-- LSP: shared keymaps + completion/inlay for every enabled server.
+-- Per-config on_attach is only for server-specific maps (e.g. biome fix).
 local completion = vim.g.completion_mode or "blink" -- or 'native'
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("my_nvim_lsp_attach", { clear = true }),

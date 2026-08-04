@@ -8,7 +8,6 @@ if tsserver then
   init_options.tsserver = { path = tsserver }
 end
 return {
-  on_attach = Lsp.on_attach,
   init_options = init_options,
   cmd = { "typescript-language-server", "--stdio" },
   filetypes = {

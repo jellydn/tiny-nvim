@@ -21,8 +21,8 @@ function M.get_default_keymaps()
   }
 end
 
--- Applied from LspAttach (all servers) and optional per-config on_attach.
--- Idempotent per buffer so dual wiring does not stack maps.
+-- Applied from global LspAttach. Idempotent per buffer if also called from a
+-- per-config on_attach (legacy dual wiring).
 M.on_attach = function(client, buffer)
   local ok_var, attached = pcall(vim.api.nvim_buf_get_var, buffer, "_tiny_nvim_lsp_keymaps")
   if ok_var and attached then

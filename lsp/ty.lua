@@ -3,7 +3,6 @@ local Lsp = require "utils.lsp"
 -- Install: uv tool install ty@latest
 return {
   cmd = Lsp.ty_cmd(),
-  on_attach = Lsp.on_attach,
   filetypes = { "python" },
   root_markers = {
     "ty.toml",
