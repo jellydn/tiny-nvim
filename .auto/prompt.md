@@ -31,8 +31,8 @@ Binary: `NVIM_BIN` if set, otherwise `nvim` from `PATH` (e.g. mise `neovim/night
 - `lua/utils/**` — shared helpers
 - `lsp/**` — native Neovim 0.11+ LSP configs
 - `lazy-lock.json` — lock baseline already committed; update only for real compat fixes
-- `.auto/**` — harness (preserve across discards). `log.jsonl` has `init` / early `result` /
-  full `run` shapes (schema_version 1); older partial `result` rows are not a reduced check set
+- `.auto/**` — harness (preserve across discards). `log.jsonl` shapes: see `.auto/log.schema.md`
+  (`schema_version` 1). Older partial `result` rows are not a reduced check set
 
 ## Off Limits
 

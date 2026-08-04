@@ -21,25 +21,28 @@ function M.get_default_keymaps()
   }
 end
 
--- Applied from global LspAttach. Idempotent per buffer if also called from a
--- per-config on_attach (legacy dual wiring).
+-- Applied from global LspAttach. Track installed keys so a later client can still
+-- add capability-gated maps the first client lacked (e.g. gd / definitionProvider).
 M.on_attach = function(client, buffer)
-  local ok_var, attached = pcall(vim.api.nvim_buf_get_var, buffer, "_tiny_nvim_lsp_keymaps")
-  if ok_var and attached then
-    return
+  local installed = {}
+  local ok_var, existing = pcall(vim.api.nvim_buf_get_var, buffer, "_tiny_nvim_lsp_keymaps")
+  if ok_var and type(existing) == "table" then
+    installed = existing
   end
-  pcall(vim.api.nvim_buf_set_var, buffer, "_tiny_nvim_lsp_keymaps", true)
 
   local keymaps = M.get_default_keymaps()
   for _, keymap in ipairs(keymaps) do
-    if not keymap.has or client.server_capabilities[keymap.has] then
+    local id = (keymap.mode or "n") .. "\0" .. keymap.keys
+    if not installed[id] and (not keymap.has or client.server_capabilities[keymap.has]) then
       vim.keymap.set(keymap.mode or "n", keymap.keys, keymap.func, {
         buffer = buffer,
         desc = "LSP: " .. keymap.desc,
         nowait = keymap.nowait,
       })
+      installed[id] = true
     end
   end
+  pcall(vim.api.nvim_buf_set_var, buffer, "_tiny_nvim_lsp_keymaps", installed)
 end
 
 M.action = setmetatable({}, {
@@ -139,8 +142,21 @@ local function get_config_path(filename, bufnr)
   return nil
 end
 
-M.biome_config_path = function()
-  return get_config_path "biome.json" or get_config_path "biome.jsonc"
+M.biome_config_path = function(bufnr)
+  -- One upward search for both names so the deepest directory wins (not parent
+  -- biome.json before child biome.jsonc).
+  local start, stop = marker_walk_bounds(bufnr)
+  local found = vim.fs.find(biome_markers, {
+    path = start,
+    upward = true,
+    type = "file",
+    stop = stop,
+    limit = 1,
+  })
+  if found[1] then
+    return vim.fs.dirname(found[1])
+  end
+  return nil
 end
 
 M.biome_config_exists = function()
@@ -178,10 +194,7 @@ function M.detect_js_linter(bufnr)
     if forced == "biome" or forced == "oxlint" or forced == "eslint" then
       return forced
     end
-    vim.notify(
-      ("lsp_js_linter=%q ignored; use biome|oxlint|eslint|false"):format(forced),
-      vim.log.levels.WARN
-    )
+    vim.notify(("lsp_js_linter=%q ignored; use biome|oxlint|eslint|false"):format(forced), vim.log.levels.WARN)
     -- Fall through to nearest-directory auto-detect.
   end
 
@@ -216,10 +229,7 @@ function M.resolve_typescript_server()
   if name == "vtsls" or name == "ts_ls" then
     return name
   end
-  vim.notify(
-    ("lsp_typescript_server=%q ignored; use vtsls|ts_ls"):format(tostring(name)),
-    vim.log.levels.WARN
-  )
+  vim.notify(("lsp_typescript_server=%q ignored; use vtsls|ts_ls"):format(tostring(name)), vim.log.levels.WARN)
   return "vtsls"
 end
 
@@ -302,66 +312,65 @@ M.spectral_config_path = function()
 end
 
 --- Prefer a `ruff` that supports `ruff server` (Homebrew 0.1.x does not).
----@return string[]
+--- Returns nil when no suitable binary exists (do not fall back to PATH `ruff`).
+---@return string[]|nil
 function M.ruff_cmd()
   local candidates = {}
-  local home = vim.fn.expand "~"
-  -- uv tool / mise installs before PATH (Homebrew often shadows with old ruff)
-  for _, path in ipairs {
-    home .. "/.local/bin/ruff",
-    home .. "/.local/share/mise/shims/ruff",
-  } do
-    if vim.uv.fs_stat(path) then
+  local seen = {}
+  local function add(path)
+    if path and path ~= "" and not seen[path] then
+      seen[path] = true
       table.insert(candidates, path)
     end
   end
+
+  local home = vim.fn.expand "~"
+  -- uv tool / mise installs before PATH (Homebrew often shadows with old ruff)
+  add(home .. "/.local/bin/ruff")
+  add(home .. "/.local/share/mise/shims/ruff")
   if vim.fn.executable "mise" == 1 then
     local out = vim.fn.system { "mise", "which", "ruff" }
     if vim.v.shell_error == 0 then
-      local path = vim.trim(out)
-      if path ~= "" then
-        table.insert(candidates, path)
-      end
+      add(vim.trim(out))
     end
   end
-  local on_path = vim.fn.exepath "ruff"
-  if on_path ~= "" then
-    table.insert(candidates, on_path)
-  end
+  add(vim.fn.exepath "ruff")
+
   for _, bin in ipairs(candidates) do
-    if vim.fn.executable(bin) == 1 then
+    if vim.uv.fs_stat(bin) or vim.fn.executable(bin) == 1 then
       local help = vim.fn.system { bin, "server", "--help" }
       if type(help) == "string" and help:find("language server", 1, true) then
         return { bin, "server" }
       end
     end
   end
-  return { "ruff", "server" }
+  return nil
 end
 
 --- Prefer uv-installed `ty` when Homebrew/PATH is incomplete.
----@return string[]
+--- Returns nil when no suitable binary exists.
+---@return string[]|nil
 function M.ty_cmd()
   local candidates = {}
-  local home = vim.fn.expand "~"
-  for _, path in ipairs {
-    home .. "/.local/bin/ty",
-    home .. "/.local/share/mise/shims/ty",
-  } do
-    if vim.uv.fs_stat(path) then
+  local seen = {}
+  local function add(path)
+    if path and path ~= "" and not seen[path] then
+      seen[path] = true
       table.insert(candidates, path)
     end
   end
-  local on_path = vim.fn.exepath "ty"
-  if on_path ~= "" then
-    table.insert(candidates, on_path)
-  end
+
+  local home = vim.fn.expand "~"
+  add(home .. "/.local/bin/ty")
+  add(home .. "/.local/share/mise/shims/ty")
+  add(vim.fn.exepath "ty")
+
   for _, bin in ipairs(candidates) do
-    if vim.fn.executable(bin) == 1 then
+    if vim.uv.fs_stat(bin) or vim.fn.executable(bin) == 1 then
       return { bin, "server" }
     end
   end
-  return { "ty", "server" }
+  return nil
 end
 
 --- Absolute path to typescript/lib/tsserver.js when available (ts_ls needs TS 5.x layout).
