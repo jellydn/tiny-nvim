@@ -2,16 +2,10 @@ local M = {}
 
 local function scan_directory(directory)
   local files = {}
-  local handle = io.popen(string.format("ls -1 %s/*.lua 2>/dev/null", directory))
-  if handle then
-    for file in handle:lines() do
-      local name = file:match "([^/]+)%.lua$"
-      if name then
-        table.insert(files, name)
-      end
-    end
-    handle:close()
+  for _, path in ipairs(vim.fn.glob(directory .. "/*.lua", false, true)) do
+    files[#files + 1] = vim.fn.fnamemodify(path, ":t:r")
   end
+  table.sort(files)
   return files
 end
 
