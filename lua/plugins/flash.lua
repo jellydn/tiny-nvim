@@ -41,7 +41,7 @@ if vim.fn.has "nvim-0.13" == 1 then
   end
 end
 
--- Expand/shrink chords live in lua/config/keymaps.lua (and vscode.lua under vscode-neovim).
+-- Expand/shrink chords: utils.vscode_treesitter.setup_keymaps (keymaps.lua / vscode.lua).
 
 return {
   {

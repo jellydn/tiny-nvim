@@ -4,6 +4,8 @@ return {
   cmd = Lsp.ruff_cmd(),
   filetypes = { "python" },
   root_markers = {
+    "ruff.toml",
+    ".ruff.toml",
     "pyproject.toml",
     "setup.py",
     "setup.cfg",

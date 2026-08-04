@@ -80,3 +80,5 @@ Binary: `NVIM_BIN` if set, otherwise `nvim` from `PATH` (e.g. mise `neovim/night
 - **Root cause of mini.ai E5108**: `nvim-treesitter` main no longer ships `textobjects.scm`; mini.ai `gen_spec.treesitter` needs them. Fix: add `nvim-treesitter/nvim-treesitter-textobjects` (main), depend from `mini.ai` (LazyVim reference pattern)
 - Replaced direct `vim.loop` with `vim.uv` in `init.lua`, `lua/langs/markdown.lua`, `lua/plugins/extra/codecompanion.lua`
 - Hardened treesitter FileType start via `pcall(vim.treesitter.start)` and lang membership check
+- Floor `compat_failures=0` held through: nvim.dir/oil/vscode `-`, flash SearchState patch (conditional preload), `g<Space>` expand, modern LSP (`ty`+`ruff`, default `vtsls`, nearest-dir JS lint), buffer-scoped git/linter detect, shared TS keymaps
+- Deferred: drop `flash_hacks` after flash.nvim PR #496 merges + lock update; do not drop `ts_ls` while measure attach smoke covers it
