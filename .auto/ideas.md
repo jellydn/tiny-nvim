@@ -1,6 +1,6 @@
 # Deferred ideas (nvim 0.13 migration / UX)
 
-- Drop `lua/utils/flash_hacks.lua` preload once folke/flash.nvim merges PR #496
+- Drop `lua/utils/flash_hacks.lua` once conditional preload sees upstream SearchState (PR #496) and lock is updated
 - If flash `s`/`S` conflicts with vscode-neovim defaults again, narrow modes (e.g. operator-only) instead of full disable
 - If vscode.eval label paint still fails in Cursor: try one shared Decoration type + per-range `renderOptions.after`
 - Drop vscode.eval label path if upstream flash/vscode-neovim overlay support lands

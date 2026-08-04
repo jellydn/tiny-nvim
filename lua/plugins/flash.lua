@@ -1,8 +1,27 @@
 -- neovim#39485 moved search_* FFI globals into Search; upstream PR #496 pending.
--- Preload before flash.nvim loads so jump mode does not dlsym-crash on 0.13+.
+-- Preload our patch only while installed flash.hacks still lacks SearchState.
 if vim.fn.has "nvim-0.13" == 1 then
-  package.preload["flash.hacks"] = function()
-    return require "utils.flash_hacks"
+  local function upstream_has_search_state()
+    local path = vim.fn.stdpath "data" .. "/lazy/flash.nvim/lua/flash/hacks.lua"
+    if not vim.uv.fs_stat(path) then
+      return false
+    end
+    local ok, lines = pcall(vim.fn.readfile, path)
+    if not ok or type(lines) ~= "table" then
+      return false
+    end
+    for _, line in ipairs(lines) do
+      if line:find("SearchState", 1, true) then
+        return true
+      end
+    end
+    return false
+  end
+
+  if not upstream_has_search_state() then
+    package.preload["flash.hacks"] = function()
+      return require "utils.flash_hacks"
+    end
   end
 end
 
