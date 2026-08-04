@@ -468,15 +468,17 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Movement & Editing
 
-| Key     | Description                      |
-| ------- | -------------------------------- |
-| `j`     | Down (with gj for wrapped lines) |
-| `k`     | Up (with gk for wrapped lines)   |
-| `<A-j>` | Move Line Down                   |
-| `<A-k>` | Move Line Up                     |
-| `gl`    | Go to end of line                |
-| `gh`    | Go to start of line              |
-| `<A-a>` | Select all text                  |
+| Key        | Description                                      |
+| ---------- | ------------------------------------------------ |
+| `j`        | Down (with gj for wrapped lines)                 |
+| `k`        | Up (with gk for wrapped lines)                   |
+| `<A-j>`    | Move Line Down                                   |
+| `<A-k>`    | Move Line Up                                     |
+| `gl`       | Go to end of line                                |
+| `gh`       | Go to start of line                              |
+| `<A-a>`    | Select all text                                  |
+| `g<Space>` | Treesitter expand selection (no flash labels)    |
+| `gS`       | Treesitter shrink selection (visual)             |
 
 ### Git Operations
 
