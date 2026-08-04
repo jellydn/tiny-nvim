@@ -8,6 +8,7 @@ return {
     ".ruff.toml",
     "pyproject.toml",
     "uv.lock",
+    "poetry.lock",
     "setup.py",
     "setup.cfg",
     "requirements.txt",

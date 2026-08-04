@@ -209,6 +209,20 @@ function M.detect_js_linter(bufnr)
   return nil
 end
 
+--- Resolve TypeScript LSP name. Default vtsls; legacy ts_ls via vim.g.lsp_typescript_server.
+---@return string
+function M.resolve_typescript_server()
+  local name = vim.g.lsp_typescript_server or "vtsls"
+  if name == "vtsls" or name == "ts_ls" then
+    return name
+  end
+  vim.notify(
+    ("lsp_typescript_server=%q ignored; use vtsls|ts_ls"):format(tostring(name)),
+    vim.log.levels.WARN
+  )
+  return "vtsls"
+end
+
 M.dprint_config_path = function()
   return get_config_path "dprint.json"
 end

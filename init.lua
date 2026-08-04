@@ -31,7 +31,7 @@ else
 
   -- TypeScript: vtsls by default (ts_ls is legacy — set vim.g.lsp_typescript_server = "ts_ls")
   local Lsp = require "utils.lsp"
-  local ts_server = vim.g.lsp_typescript_server or "vtsls"
+  local ts_server = Lsp.resolve_typescript_server()
 
   -- Enable LSP servers per filetype (Neovim 0.11+)
   -- JS/TS lint is chosen per buffer from project markers (biome > oxlint > eslint).
