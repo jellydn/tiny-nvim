@@ -353,7 +353,8 @@ Theme switching:
 
 ### VSCode Integration
 
-This configuration works seamlessly with VSCode through the [vscode-neovim](https://github.com/vscode-neovim/vscode-neovim) extension. The configuration includes:
+This configuration works seamlessly with VSCode/Cursor through the
+[vscode-neovim](https://github.com/vscode-neovim/vscode-neovim) extension. The configuration includes:
 
 - [VSCode-specific keymaps](lua/plugins/vscode.lua) for enhanced productivity
 - Integration with VSCode's built-in features
@@ -361,7 +362,7 @@ This configuration works seamlessly with VSCode through the [vscode-neovim](http
 - Git integration and file navigation
 - Task running and debugging support
 
-To use this configuration in VSCode:
+To use this configuration in VSCode/Cursor:
 
 1. Install the vscode-neovim extension
 2. Set your Neovim configuration path to point to this config:
@@ -370,9 +371,34 @@ To use this configuration in VSCode:
     "vscode-neovim.NVIM_APPNAME": "tiny-nvim",
    ```
 
-3. Restart VSCode
+3. Restart VSCode/Cursor (or **Developer: Reload Window** after pulling keymap changes)
 
 You'll get the same Neovim experience in VSCode, including all the plugins and keybindings.
+
+**Neovim 0.13 / Cursor notes**
+
+| Key | Behavior under vscode-neovim |
+| --- | --- |
+| `-` | Reveal active file in VS Code explorer (built-in `nvim.dir` buffer tree is disabled) |
+| `g<Space>` | Treesitter **expand** selection (preferred; no flash letter marks) |
+| `gS` / visual `<BS>` | Treesitter **shrink** selection |
+| `S` | Labeled treesitter select via vscode decorations |
+| `s` | Flash jump |
+
+`Ctrl+Space` is often stolen by macOS Input Sources or Cursor Suggest. Prefer `g<Space>`,
+or restore Neovim ownership in Cursor `keybindings.json`:
+
+```json
+{
+  "key": "ctrl+space",
+  "command": "vscode-neovim.send",
+  "args": "<C-Space>",
+  "when": "editorTextFocus && neovim.init && neovim.mode != 'insert'"
+}
+```
+
+Native visual `an`/`in` treesitter textobjects may land on recent nightlies; until the
+public API is stable, keep using `g<Space>` / `gS`.
 
 ### Language Support
 

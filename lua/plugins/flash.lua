@@ -6,11 +6,7 @@ if vim.fn.has "nvim-0.13" == 1 then
   end
 end
 
--- Incremental selection without flash letter marks (LazyVim uses flash labels; we expand only).
--- Primary chord is g<Space> — Ctrl+Space is often stolen by macOS Input Sources / Cursor Suggest.
-local function treesitter_incremental_selection()
-  require("utils.vscode_treesitter").expand()
-end
+-- Expand/shrink chords live in lua/config/keymaps.lua (and vscode.lua under vscode-neovim).
 
 return {
   {
@@ -40,36 +36,6 @@ return {
           require("flash").treesitter()
         end,
         desc = "Flash Treesitter",
-      },
-      {
-        "g<Space>",
-        mode = { "n", "o", "x" },
-        treesitter_incremental_selection,
-        desc = "Treesitter Expand Selection",
-      },
-      {
-        "<c-space>",
-        mode = { "n", "o", "x" },
-        treesitter_incremental_selection,
-        desc = "Treesitter Expand Selection",
-      },
-      {
-        "<c-@>",
-        mode = { "n", "o", "x" },
-        treesitter_incremental_selection,
-        desc = "Treesitter Expand Selection",
-      },
-      {
-        "<Nul>",
-        mode = { "n", "o", "x" },
-        treesitter_incremental_selection,
-        desc = "Treesitter Expand Selection",
-      },
-      {
-        "<M-Space>",
-        mode = { "n", "o", "x" },
-        treesitter_incremental_selection,
-        desc = "Treesitter Expand Selection",
       },
       {
         "r",
