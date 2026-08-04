@@ -60,7 +60,7 @@ else
   }
 
   local enabled_lsp = {}
-  local on_demands = vim.g.lsp_on_demands or {}
+  local on_demands = Lsp.filter_known_servers(vim.g.lsp_on_demands)
   local js_ts_filetypes = {
     javascript = true,
     javascriptreact = true,

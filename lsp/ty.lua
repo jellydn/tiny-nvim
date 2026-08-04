@@ -9,6 +9,8 @@ return {
     "pyproject.toml",
     "uv.lock",
     "poetry.lock",
+    "pdm.lock",
+    "Pipfile",
     "setup.py",
     "setup.cfg",
     "requirements.txt",

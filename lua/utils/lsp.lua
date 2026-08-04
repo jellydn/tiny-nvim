@@ -223,6 +223,40 @@ function M.resolve_typescript_server()
   return "vtsls"
 end
 
+--- Names of configs under lsp/*.lua (cached).
+---@return table<string, boolean>
+function M.known_server_names()
+  if M._known_servers then
+    return M._known_servers
+  end
+  local set = {}
+  local dir = vim.fn.stdpath "config" .. "/lsp"
+  for _, path in ipairs(vim.fn.glob(dir .. "/*.lua", false, true)) do
+    set[vim.fn.fnamemodify(path, ":t:r")] = true
+  end
+  M._known_servers = set
+  return set
+end
+
+--- Drop unknown vim.g.lsp_on_demands entries (warn once per bad name).
+---@param names string[]|nil
+---@return string[]
+function M.filter_known_servers(names)
+  if type(names) ~= "table" or #names == 0 then
+    return {}
+  end
+  local known = M.known_server_names()
+  local out = {}
+  for _, name in ipairs(names) do
+    if type(name) == "string" and known[name] then
+      out[#out + 1] = name
+    elseif type(name) == "string" then
+      vim.notify(("lsp_on_demands entry %q ignored; no lsp/%s.lua"):format(name, name), vim.log.levels.WARN)
+    end
+  end
+  return out
+end
+
 M.dprint_config_path = function()
   return get_config_path "dprint.json"
 end
