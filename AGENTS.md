@@ -15,7 +15,10 @@ Notable 0.13 notes for agents:
 - `lua/utils/flash_hacks.lua` patches flash.nvim SearchState until upstream PR #496 lands
   (preload is skipped automatically once installed `flash/hacks.lua` contains `SearchState`)
 - Default TS LSP is `vtsls`; Python is `ty` + `ruff`; JS lint is nearest-dir biome/oxlint/eslint
+<<<<<<< HEAD
 - Startup prepends `~/.local/bin` to `PATH` (no trailing empty component) for uv/mise tools
+=======
+>>>>>>> origin/main
 
 ## Build, Lint, Test
 
