@@ -57,80 +57,6 @@ M.action = setmetatable({}, {
 })
 
 -- Utils for conform / smart JS linter detect
---- Find a config file upward from the buffer (or cwd), stopping at git root / $HOME.
----@param filename string
----@return string | nil directory containing the config, if found
-local function get_config_path(filename)
-  local start = vim.fn.getcwd()
-  local buf = vim.api.nvim_buf_get_name(0)
-  if buf ~= "" and vim.bo.buftype == "" then
-    start = vim.fs.dirname(vim.fs.abspath(buf))
-  end
-
-  local stop = Path.get_git_root()
-  if type(stop) ~= "string" or stop == "" then
-    stop = vim.uv.os_homedir()
-  end
-
-  local found = vim.fs.find(filename, {
-    path = start,
-    upward = true,
-    type = "file",
-    stop = stop,
-    limit = 1,
-  })
-  if found[1] then
-    return vim.fs.dirname(found[1])
-  end
-  return nil
-end
-
-M.biome_config_path = function()
-  return get_config_path "biome.json" or get_config_path "biome.jsonc"
-end
-
-M.biome_config_exists = function()
-  return M.biome_config_path() ~= nil
-end
-
-M.oxlint_config_exists = function()
-  for _, name in ipairs {
-    "oxlintrc.json",
-    "oxlintrc.jsonc",
-    ".oxlintrc.json",
-    ".oxlintrc.jsonc",
-    "oxlint.config.ts",
-    "oxlint.config.js",
-    "oxlint.config.mjs",
-  } do
-    if get_config_path(name) then
-      return true
-    end
-  end
-  return false
-end
-
-M.eslint_config_exists = function()
-  for _, name in ipairs {
-    "eslint.config.js",
-    "eslint.config.mjs",
-    "eslint.config.cjs",
-    "eslint.config.ts",
-    "eslint.config.mts",
-    "eslint.config.cts",
-    ".eslintrc",
-    ".eslintrc.js",
-    ".eslintrc.cjs",
-    ".eslintrc.yaml",
-    ".eslintrc.yml",
-    ".eslintrc.json",
-  } do
-    if get_config_path(name) then
-      return true
-    end
-  end
-  return false
-end
 
 local biome_markers = { "biome.json", "biome.jsonc" }
 local oxlint_markers = {
@@ -169,25 +95,75 @@ local function dir_has_marker(dir, names)
   return false
 end
 
---- Start dir + stop dir for upward project-marker walks.
+--- Start dir + stop dir for upward project-marker walks (buffer-scoped).
+---@param bufnr? integer
 ---@return string, string
-local function marker_walk_bounds()
+local function marker_walk_bounds(bufnr)
+  bufnr = bufnr or 0
   local start = vim.fn.getcwd()
-  local buf = vim.api.nvim_buf_get_name(0)
-  if buf ~= "" and vim.bo.buftype == "" then
-    start = vim.fs.dirname(vim.fs.abspath(buf))
+  local ok_buf = vim.api.nvim_buf_is_valid(bufnr)
+  local name = ok_buf and vim.api.nvim_buf_get_name(bufnr) or ""
+  if name ~= "" and vim.bo[bufnr].buftype == "" then
+    start = vim.fs.dirname(vim.fs.abspath(name))
   end
-  local stop = Path.get_git_root()
+  local stop = Path.get_git_root(start)
   if type(stop) ~= "string" or stop == "" then
     stop = vim.uv.os_homedir() or start
   end
   return start, stop
 end
 
+--- Find a config file upward from the buffer (or cwd), stopping at git root / $HOME.
+---@param filename string
+---@param bufnr? integer
+---@return string | nil directory containing the config, if found
+local function get_config_path(filename, bufnr)
+  local start, stop = marker_walk_bounds(bufnr)
+
+  local found = vim.fs.find(filename, {
+    path = start,
+    upward = true,
+    type = "file",
+    stop = stop,
+    limit = 1,
+  })
+  if found[1] then
+    return vim.fs.dirname(found[1])
+  end
+  return nil
+end
+
+M.biome_config_path = function()
+  return get_config_path "biome.json" or get_config_path "biome.jsonc"
+end
+
+M.biome_config_exists = function()
+  return M.biome_config_path() ~= nil
+end
+
+M.oxlint_config_exists = function()
+  for _, name in ipairs(oxlint_markers) do
+    if get_config_path(name) then
+      return true
+    end
+  end
+  return false
+end
+
+M.eslint_config_exists = function()
+  for _, name in ipairs(eslint_markers) do
+    if get_config_path(name) then
+      return true
+    end
+  end
+  return false
+end
+
 --- Prefer biome > oxlint > eslint at the *nearest* directory with any marker.
 --- Never invent a linter. Override: vim.g.lsp_js_linter = "biome"|"oxlint"|"eslint"|false
+---@param bufnr? integer buffer to resolve markers from (default: current)
 ---@return string|nil
-function M.detect_js_linter()
+function M.detect_js_linter(bufnr)
   local forced = vim.g.lsp_js_linter
   if forced == false then
     return nil
@@ -196,7 +172,7 @@ function M.detect_js_linter()
     return forced
   end
 
-  local start, stop = marker_walk_bounds()
+  local start, stop = marker_walk_bounds(bufnr)
   local dir = start
   while dir and dir ~= "" do
     if dir_has_marker(dir, biome_markers) then

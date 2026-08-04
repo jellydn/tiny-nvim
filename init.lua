@@ -92,7 +92,7 @@ else
       local servers = vim.list_extend({}, lsp_by_ft[filetype] or {})
 
       if js_ts_filetypes[filetype] or json_filetypes[filetype] then
-        local linter = Lsp.detect_js_linter()
+        local linter = Lsp.detect_js_linter(event.buf)
         if linter then
           table.insert(servers, linter)
         end
