@@ -175,7 +175,14 @@ function M.detect_js_linter(bufnr)
     return nil
   end
   if type(forced) == "string" and forced ~= "" then
-    return forced
+    if forced == "biome" or forced == "oxlint" or forced == "eslint" then
+      return forced
+    end
+    vim.notify(
+      ("lsp_js_linter=%q ignored; use biome|oxlint|eslint|false"):format(forced),
+      vim.log.levels.WARN
+    )
+    -- Fall through to nearest-directory auto-detect.
   end
 
   local start, stop = marker_walk_bounds(bufnr)

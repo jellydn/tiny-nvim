@@ -7,6 +7,7 @@ return {
     "ruff.toml",
     ".ruff.toml",
     "pyproject.toml",
+    "uv.lock",
     "setup.py",
     "setup.cfg",
     "requirements.txt",

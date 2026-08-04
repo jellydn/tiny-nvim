@@ -7,6 +7,7 @@ return {
   root_markers = {
     "ty.toml",
     "pyproject.toml",
+    "uv.lock",
     "setup.py",
     "setup.cfg",
     "requirements.txt",
