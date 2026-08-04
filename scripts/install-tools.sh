@@ -60,12 +60,15 @@ fi
 echo "Ensuring tree-sitter CLI..."
 if ! command -v tree-sitter &> /dev/null; then
   if command -v mise &> /dev/null; then
-    mise use -g tree-sitter@latest
-  elif command -v cargo &> /dev/null; then
+    mise use -g tree-sitter@latest || true
+  fi
+  if ! command -v tree-sitter &> /dev/null && command -v cargo &> /dev/null; then
     cargo install tree-sitter-cli
-  elif command -v npm &> /dev/null; then
+  fi
+  if ! command -v tree-sitter &> /dev/null && command -v npm &> /dev/null; then
     npm install -g tree-sitter-cli
-  else
+  fi
+  if ! command -v tree-sitter &> /dev/null; then
     echo "Warning: tree-sitter CLI not found. Install via mise/cargo/npm."
   fi
 fi

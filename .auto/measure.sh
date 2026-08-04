@@ -5,7 +5,12 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
-NVIM="${NVIM_BIN:-/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/nvim}"
+# Prefer NVIM_BIN; otherwise resolve `nvim` from PATH (portable across hosts/CI).
+NVIM="${NVIM_BIN:-$(command -v nvim 2>/dev/null || true)}"
+if [[ -z "$NVIM" || ! -x "$NVIM" ]]; then
+  echo "nvim not found on PATH; set NVIM_BIN to a Neovim 0.13 binary" >&2
+  exit 1
+fi
 FIX="$ROOT/.auto/fixtures"
 WORKDIR="$(mktemp -d "${TMPDIR:-/tmp}/nvim13-measure.XXXXXX")"
 trap 'rm -rf "$WORKDIR"' EXIT
@@ -91,8 +96,11 @@ run_to 30 "$NVIM" --headless \
   +"lua vim.g.autoresearch_bench=true" \
   +"lua vim.defer_fn(function() local o=vim.api.nvim_exec2('messages',{output=true}).output; vim.fn.writefile(vim.split(o, '\\n', {plain=true}), [[$msg_file]]); vim.cmd('qa!') end, 3000)" \
   >"$WORKDIR/messages.log" 2>"$WORKDIR/messages.err" || true
+# Exact missing-workspace tooling signatures (environment noise only).
+# Keep narrow: any other TS/Rust init error still fails fail_messages.
+ENV_LSP_NOISE='TypeScript installation|rust-analyzer quit|tsserver|Could not find a valid TypeScript'
 if [[ -f "$msg_file" ]]; then
-  filtered="$(grep -Eiv 'TypeScript installation|rust-analyzer quit|tsserver|Could not find a valid TypeScript' "$msg_file" || true)"
+  filtered="$(grep -Eiv "$ENV_LSP_NOISE" "$msg_file" || true)"
   if echo "$filtered" | grep -Eiq 'E[0-9]{3,}:|stack traceback|is deprecated|Can not get query|error_treesitter'; then
     fail_messages=1
     echo "ASSERT messages FAIL" >&2
@@ -275,7 +283,10 @@ for _ in 1 2 3; do
   ms="$(python3 -c "print(int(($t1-$t0)*1000))")"
   times+=("$ms")
 done
-IFS=$'\n' sorted=($(printf '%s\n' "${times[@]}" | sort -n))
+sorted=()
+while IFS= read -r line; do
+  sorted+=("$line")
+done < <(printf '%s\n' "${times[@]}" | sort -n)
 startup_ms="${sorted[1]}"
 
 compat_failures=$((fail_binary + fail_startup + fail_messages + fail_deprecated + fail_loadfile + fail_fixture_lua + fail_fixture_md + fail_vim_loop + fail_treesitter + fail_ai + fail_lsp + fail_miniai))

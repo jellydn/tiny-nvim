@@ -130,20 +130,40 @@ local function clear_vscode_labels()
   end)
 end
 
+---@param buf integer
+---@param row1 integer 1-based line
+---@param byte_col integer 0-based byte column
+---@return integer utf16_col 0-based UTF-16 code units (capped at line length)
+local function byte_to_utf16(buf, row1, byte_col)
+  local line = vim.api.nvim_buf_get_lines(buf, row1 - 1, row1, false)[1] or ""
+  local byte_len = #line
+  if byte_col < 0 then
+    byte_col = 0
+  elseif byte_col > byte_len then
+    byte_col = byte_len
+  end
+  local ok, col = pcall(vim.str_utfindex, line, "utf-16", byte_col, false)
+  if ok and type(col) == "number" then
+    return col
+  end
+  return byte_col
+end
+
 ---@param matches Flash.Match.TS[]
 ---@param current Flash.Match.TS?
 local function paint_vscode_labels(matches, current)
   if not has_vscode_eval() then
     return false
   end
+  local buf = vim.api.nvim_get_current_buf()
   ---@type table[]
   local items = {}
   for _, match in ipairs(matches) do
     table.insert(items, {
       line = match.pos[1] - 1,
-      character = match.pos[2],
+      character = byte_to_utf16(buf, match.pos[1], match.pos[2]),
       endLine = match.end_pos[1] - 1,
-      endCharacter = match.end_pos[2] + 1,
+      endCharacter = byte_to_utf16(buf, match.end_pos[1], match.end_pos[2] + 1),
       label = match.label,
       current = current == match,
     })

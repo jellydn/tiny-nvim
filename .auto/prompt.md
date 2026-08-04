@@ -20,7 +20,7 @@ patterns (`vim.hl.hl_op`, `vim.lsp.config`, etc.).
 
 `./.auto/measure.sh` — outputs `METRIC name=number` lines.
 
-Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/nvim`
+Binary: `NVIM_BIN` if set, otherwise `nvim` from `PATH` (e.g. mise `neovim/nightly`).
 
 ## Files in Scope
 
@@ -31,7 +31,8 @@ Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/
 - `lua/utils/**` — shared helpers
 - `lsp/**` — native Neovim 0.11+ LSP configs
 - `lazy-lock.json` — lock baseline already committed; update only for real compat fixes
-- `.auto/**` — harness (preserve across discards)
+- `.auto/**` — harness (preserve across discards). `log.jsonl` has `init` / early `result` /
+  full `run` shapes (schema_version 1); older partial `result` rows are not a reduced check set
 
 ## Off Limits
 
@@ -50,8 +51,11 @@ Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/
 - Keep treesitter (`nvim-treesitter` main branch + `vim.treesitter.start`) working
 - Keep AI (`folke/sidekick.nvim` in `lua/plugins/ai.lua`) loadable
 - Keep native LSP (`vim.lsp.enable` + `lsp/*.lua`) working
-- TS/Rust language-server init errors from missing workspace tooling are **environment**
-  noise — do not count them as compat failures
+- `fail_lsp` asserts API/config presence (`vim.lsp.enable`, `lsp/*.lua`, init wiring) — not
+  language-server process health
+- Startup-message filter (`fail_messages`) exempts **only** these missing-workspace tooling
+  signatures (exact substrings): `TypeScript installation`, `Could not find a valid TypeScript`,
+  `tsserver`, `rust-analyzer quit`. All other TS/Rust init errors still count
 - Timing is secondary only — never keep a change solely for faster startup
 - Anti-cheat: equal/worse `compat_failures` → discard; only keep real reductions
 
@@ -64,7 +68,7 @@ Binary (fixed): `/Users/huynhdung/.local/share/mise/installs/neovim/nightly/bin/
 
 ## What's Been Tried
 
-- Confirmed `/Users/huynhdung/.config/nvim` → this repo (symlink)
+- Confirmed this config dir is the active Neovim config (often via symlink)
 - Branch: `autoresearch/nvim-0.13-migration-2026-08-03`
 - Lock baseline committed: `chore(deps): update plugin lock baseline`
 - Normal headless startup on 0.13: OK (`lazy_ok=true`)
