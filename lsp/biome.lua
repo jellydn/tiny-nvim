@@ -13,25 +13,25 @@ end
 
 return {
   cmd = { "biome", "lsp-proxy" },
+  -- Shared LSP keymaps come from global LspAttach; only biome-specific maps here.
   on_attach = function(client, bufnr)
-    Lsp.on_attach(client, bufnr)
-    -- Map <leader>cb to biome_fix and <leader>cB to biome_fix_unsafe
-    if client then
-      vim.api.nvim_buf_set_keymap(
-        bufnr,
-        "n",
-        "<leader>cb",
-        "<cmd>lua biome_fix()<CR>",
-        { noremap = true, silent = true, desc = "Biome: Fix" }
-      )
-      vim.api.nvim_buf_set_keymap(
-        bufnr,
-        "n",
-        "<leader>cB",
-        "<cmd>lua biome_fix_unsafe()<CR>",
-        { noremap = true, silent = true, desc = "Biome: Fix unsafe" }
-      )
+    if not client then
+      return
     end
+    vim.api.nvim_buf_set_keymap(
+      bufnr,
+      "n",
+      "<leader>cb",
+      "<cmd>lua biome_fix()<CR>",
+      { noremap = true, silent = true, desc = "Biome: Fix" }
+    )
+    vim.api.nvim_buf_set_keymap(
+      bufnr,
+      "n",
+      "<leader>cB",
+      "<cmd>lua biome_fix_unsafe()<CR>",
+      { noremap = true, silent = true, desc = "Biome: Fix unsafe" }
+    )
   end,
   filetypes = {
     "astro",
@@ -46,5 +46,5 @@ return {
     "typescriptreact",
     "vue",
   },
-  root_markers = { "biome.json", "biome.jsonc", ".git" },
+  root_markers = Lsp.biome_root_markers,
 }

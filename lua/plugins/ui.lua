@@ -93,7 +93,13 @@ local function git_blame_line()
       return
     end
     vim.notify(
-      string.format(" %s   %s   %s   %s", commit:sub(1, 8), info.author or "?", info.time or "?", info.summary or "?"),
+      string.format(
+        " %s   %s   %s   %s",
+        commit:sub(1, 8),
+        info.author or "?",
+        info.time or "?",
+        info.summary or "?"
+      ),
       vim.log.levels.INFO
     )
   end)
@@ -353,22 +359,24 @@ return {
     lazy = false,
     build = ":TSUpdate",
     branch = "main",
-    keys = {
-      { "<c-space>", desc = "Increment Selection" },
-      { "<bs>", desc = "Decrement Selection", mode = "x" },
-    },
+    -- Expand/shrink: lua/config/keymaps.lua (g<Space>/gS); vscode.lua under vscode-neovim
     opts_extend = { "ensure_installed" },
     config = function(_, opts)
       if type(opts.ensure_installed) == "table" then
         opts.ensure_installed = deduplicate(opts.ensure_installed)
       end
-      require("nvim-treesitter.config").setup(opts)
-      local filetypes = opts.ensure_installed
-      require("nvim-treesitter").install(filetypes)
+      local TS = require "nvim-treesitter"
+      TS.setup(opts)
+      -- Install missing parsers; install() is async and safe to call repeatedly.
+      TS.install(opts.ensure_installed)
       vim.api.nvim_create_autocmd("FileType", {
-        pattern = filetypes,
-        callback = function()
-          vim.treesitter.start()
+        group = vim.api.nvim_create_augroup("my_nvim_treesitter", { clear = true }),
+        callback = function(ev)
+          local lang = vim.treesitter.language.get_lang(ev.match) or ev.match
+          if not vim.tbl_contains(opts.ensure_installed or {}, lang) then
+            return
+          end
+          pcall(vim.treesitter.start)
         end,
       })
     end,
@@ -409,16 +417,15 @@ return {
         "xml",
         "yaml",
       },
-      incremental_selection = {
-        enable = true,
-        keymaps = {
-          init_selection = "<C-space>",
-          node_incremental = "<C-space>",
-          scope_incremental = false,
-          node_decremental = "<bs>",
-        },
-      },
     },
+  },
+  -- Provides textobjects.scm queries required by mini.ai gen_spec.treesitter
+  -- (nvim-treesitter main no longer ships these queries).
+  {
+    "nvim-treesitter/nvim-treesitter-textobjects",
+    branch = "main",
+    event = "VeryLazy",
+    opts = {},
   },
   {
     "folke/which-key.nvim",

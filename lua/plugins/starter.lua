@@ -8,7 +8,7 @@ local logo = [[
 ]]
 
 logo = string.rep("\n", 4) .. logo .. "\n"
-local hostname = io.popen("hostname"):read("*a"):gsub("%s+", "")
+local hostname = (vim.uv.os_gethostname() or ""):gsub("%s+", "")
 
 local function action_find_files()
   require("fff").find_files()

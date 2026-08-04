@@ -5,7 +5,7 @@ require "config.options"
 -- It can be used to set project specific settings
 local project_setting = vim.fn.getcwd() .. "/.nvim-config.lua"
 -- Check if the file exists and load it
-if vim.loop.fs_stat(project_setting) then
+if vim.uv.fs_stat(project_setting) then
   -- Read the file and run it with pcall to catch any errors
   local ok, err = pcall(dofile, project_setting)
   if not ok then
@@ -29,24 +29,28 @@ else
   theme.setup()
   theme.apply()
 
-  local ts_server = vim.g.lsp_typescript_server or "ts_ls" -- "ts_ls" or "vtsls" for TypeScript
+  -- TypeScript: vtsls by default (ts_ls is legacy — set vim.g.lsp_typescript_server = "ts_ls")
+  local Lsp = require "utils.lsp"
+  local ts_server = Lsp.resolve_typescript_server()
 
   -- Enable LSP servers per filetype (Neovim 0.11+)
+  -- JS/TS lint is chosen per buffer from project markers (biome > oxlint > eslint).
   local lsp_by_ft = {
     lua = { "lua_ls" },
-    json = { "json", "biome" },
-    jsonc = { "json", "biome" },
-    json5 = { "json", "biome" },
-    python = { "basedpyright", "ruff" },
+    json = { "json" },
+    jsonc = { "json" },
+    json5 = { "json" },
+    -- Astral stack: ty (types) + ruff (lint/format)
+    python = { "ty", "ruff" },
     go = { "gopls" },
     gomod = { "gopls" },
     gowork = { "gopls" },
     gotmpl = { "gopls" },
     rust = { "rust-analyzer" },
-    javascript = { ts_server, "biome", "oxlint" },
-    javascriptreact = { ts_server, "biome", "oxlint" },
-    typescript = { ts_server, "biome", "oxlint" },
-    typescriptreact = { ts_server, "biome", "oxlint" },
+    javascript = { ts_server },
+    javascriptreact = { ts_server },
+    typescript = { ts_server },
+    typescriptreact = { ts_server },
     html = { "tailwindcss" },
     css = { "tailwindcss" },
     scss = { "tailwindcss" },
@@ -56,12 +60,14 @@ else
   }
 
   local enabled_lsp = {}
-  local on_demands = vim.g.lsp_on_demands or {}
+  local on_demands = Lsp.filter_known_servers(vim.g.lsp_on_demands)
   local js_ts_filetypes = {
     javascript = true,
     javascriptreact = true,
     typescript = true,
     typescriptreact = true,
+  }
+  local json_filetypes = {
     json = true,
     jsonc = true,
     json5 = true,
@@ -83,9 +89,16 @@ else
     group = vim.api.nvim_create_augroup("my_nvim_lsp_by_ft", { clear = true }),
     callback = function(event)
       local filetype = vim.bo[event.buf].filetype
-      local servers = lsp_by_ft[filetype] or {}
+      local servers = vim.list_extend({}, lsp_by_ft[filetype] or {})
 
-      if js_ts_filetypes[filetype] and #on_demands > 0 then
+      if js_ts_filetypes[filetype] or json_filetypes[filetype] then
+        local linter = Lsp.detect_js_linter(event.buf)
+        if linter then
+          table.insert(servers, linter)
+        end
+      end
+
+      if (js_ts_filetypes[filetype] or json_filetypes[filetype]) and #on_demands > 0 then
         for _, server in ipairs(on_demands) do
           table.insert(servers, server)
         end

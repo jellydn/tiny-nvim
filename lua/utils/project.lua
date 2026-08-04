@@ -2,16 +2,10 @@ local M = {}
 
 local function scan_directory(directory)
   local files = {}
-  local handle = io.popen(string.format("ls -1 %s/*.lua 2>/dev/null", directory))
-  if handle then
-    for file in handle:lines() do
-      local name = file:match "([^/]+)%.lua$"
-      if name then
-        table.insert(files, name)
-      end
-    end
-    handle:close()
+  for _, path in ipairs(vim.fn.glob(directory .. "/*.lua", false, true)) do
+    files[#files + 1] = vim.fn.fnamemodify(path, ":t:r")
   end
+  table.sort(files)
   return files
 end
 
@@ -93,10 +87,13 @@ Available options:
 ```lua
 -- Project-specific Neovim configuration
 
--- Set TypeScript LSP server
-vim.g.lsp_typescript_server = "ts_ls" -- or "vtsls"
+-- Set TypeScript LSP server (default is vtsls; ts_ls is legacy)
+vim.g.lsp_typescript_server = "vtsls"
 
--- Enable additional LSP servers
+-- Optional JS lint override (default: auto-detect biome > oxlint > eslint)
+-- vim.g.lsp_js_linter = "biome"
+
+-- Force additional LSP servers (e.g. eslint when no config markers)
 vim.g.lsp_on_demands = {
     "oxlint",
 }
@@ -149,8 +146,8 @@ local function create_nvim_config()
       local config = [[
 -- Project-specific Neovim configuration
 
--- Set TypeScript LSP server
-vim.g.lsp_typescript_server = "ts_ls" -- or "vtsls"
+-- TypeScript LSP (default vtsls; ts_ls is legacy)
+vim.g.lsp_typescript_server = "vtsls"
 
 -- Enable additional LSP servers
 vim.g.lsp_on_demands = {

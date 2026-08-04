@@ -39,7 +39,7 @@ When given a task:
 4. You can only give one reply for each conversation turn.
 5. The active document is the source code the user is looking at right now.
 ]],
-  vim.loop.os_uname().sysname
+  vim.uv.os_uname().sysname
 )
 local COPILOT_EXPLAIN =
   string.format [[You are a world-class coding tutor. Your code explanations perfectly balance high-level concepts and granular details. Your approach ensures that students not only understand how to write code, but also grasp the underlying principles that guide effective programming.
@@ -285,9 +285,13 @@ return {
             {
               role = "user",
               content = function()
+                local diff = vim.fn.system { "git", "diff", "--staged" }
+                if vim.v.shell_error ~= 0 then
+                  diff = "(failed to read staged diff)"
+                end
                 return "Write commit message for the change with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how'."
                   .. "\n\n```\n"
-                  .. vim.fn.system "git diff --staged"
+                  .. diff
                   .. "\n```"
               end,
               opts = {

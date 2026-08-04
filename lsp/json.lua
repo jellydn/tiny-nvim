@@ -5,5 +5,12 @@ return {
   init_options = {
     provideFormatter = true,
   },
-  root_markers = { ".git" },
+  root_markers = {
+    "package.json",
+    "tsconfig.json",
+    "jsconfig.json",
+    "biome.json",
+    "biome.jsonc",
+    ".git",
+  },
 }

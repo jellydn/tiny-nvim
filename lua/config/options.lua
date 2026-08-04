@@ -1,6 +1,24 @@
 vim.g.mapleader = " "
 vim.g.maplocalleader = "\\"
 
+-- Neovim 0.13 built-in dir browser maps `-` / BufEnter to a directory buffer.
+-- This config uses oil.nvim (terminal) or VS Code explorer (vscode-neovim) instead.
+vim.g.loaded_nvim_dir_plugin = true
+
+-- Prefer uv tool installs (ty/ruff) over Homebrew stubs that often shadow on PATH.
+-- Avoid `local_bin:` when PATH is empty — a trailing empty PATH component means CWD on POSIX.
+do
+  local local_bin = vim.fn.expand "~/.local/bin"
+  if vim.uv.fs_stat(local_bin) then
+    local path = vim.env.PATH or ""
+    if path == "" then
+      vim.env.PATH = local_bin
+    elseif not vim.startswith(path, local_bin .. ":") and path ~= local_bin then
+      vim.env.PATH = local_bin .. ":" .. path
+    end
+  end
+end
+
 local opt = vim.opt
 
 -- Borrow those settings from LazyVim

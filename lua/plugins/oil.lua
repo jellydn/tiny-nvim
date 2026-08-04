@@ -42,6 +42,14 @@ return {
   },
   {
     "stevearc/oil.nvim",
+    -- Upstream: lazy-loading is hard to get right with default_file_explorer / BufEnter dirs
+    lazy = false,
+    init = function()
+      -- Neovim 0.13+: oil replaces netrw *and* the built-in `nvim.dir` browser
+      vim.g.loaded_nvim_dir_plugin = true
+      pcall(vim.api.nvim_del_augroup_by_name, "nvim.dir")
+      pcall(vim.keymap.del, "n", "-")
+    end,
     opts = {
       -- Set to false if you still want to use netrw.
       default_file_explorer = true,
@@ -96,6 +104,13 @@ return {
     },
     -- Use g? to see default key mappings
     keys = {
+      {
+        "-",
+        function()
+          require("oil").open()
+        end,
+        desc = "Open parent directory (oil)",
+      },
       {
         "<leader>e",
         function()

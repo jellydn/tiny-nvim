@@ -121,9 +121,8 @@ vim.api.nvim_create_autocmd({ "BufWritePre" }, {
     if event.match:match "^%w%w+:[\\/][\\/]" then
       return
     end
-    -- support both new and old versions of neovim
-    local uv = vim.uv or vim.loop
-    local file = uv.fs_realpath and uv.fs_realpath(event.match) or event.match
+    -- Neovim 0.13+: prefer vim.uv (vim.loop is deprecated)
+    local file = vim.uv.fs_realpath and vim.uv.fs_realpath(event.match) or event.match
     vim.fn.mkdir(vim.fn.fnamemodify(file, ":p:h"), "p")
   end,
 })
@@ -199,21 +198,28 @@ vim.filetype.add {
   },
 }
 
--- LSP
+-- LSP: shared keymaps + completion/inlay for every enabled server.
+-- Per-config on_attach is only for server-specific maps (e.g. biome fix).
 local completion = vim.g.completion_mode or "blink" -- or 'native'
 vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("my_nvim_lsp_attach", { clear = true }),
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client then
-      -- Built-in completion
-      if completion == "native" and client:supports_method "textDocument/completion" then
-        vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
-      end
+    if not client then
+      return
+    end
 
-      -- Inlay hints
-      if client:supports_method "textDocument/inlayHints" then
-        vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
-      end
+    -- Default buffer keymaps for all servers (Neovim 0.11+ LspAttach pattern)
+    require("utils.lsp").on_attach(client, args.buf)
+
+    -- Built-in completion
+    if completion == "native" and client:supports_method "textDocument/completion" then
+      vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+    end
+
+    -- Inlay hints
+    if client:supports_method "textDocument/inlayHints" then
+      vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
     end
   end,
 })

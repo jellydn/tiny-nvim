@@ -4,9 +4,17 @@ Guide for agentic coding agents working in this Neovim configuration repository.
 
 ## Project Overview
 
-tiny-nvim is a minimal Neovim 0.11+ config that relies on built-in LSP and a curated set
+tiny-nvim is a minimal Neovim **0.13+** config that relies on built-in LSP and a curated set
 of plugins managed by lazy.nvim. Most edits are Lua under `lua/` with optional extras
 under `lua/plugins/extra/`.
+
+Notable 0.13 notes for agents:
+
+- Built-in `nvim.dir` is disabled (`vim.g.loaded_nvim_dir_plugin`); oil owns `-` in terminal,
+  vscode-neovim reveals the VS Code explorer instead
+- `lua/utils/flash_hacks.lua` patches flash.nvim SearchState until upstream PR #496 lands
+  (preload is skipped automatically once installed `flash/hacks.lua` contains `SearchState`)
+- Default TS LSP is `vtsls`; Python is `ty` + `ruff`; JS lint is nearest-dir biome/oxlint/eslint
 
 ## Build, Lint, Test
 
@@ -123,7 +131,7 @@ lua/
     extra/     optional/extra plugins
   langs/       language-specific configs
   utils/       shared helpers
-lsp/           native Neovim 0.11+ LSP configs
+lsp/           native Neovim 0.11+ LSP configs (runtime target 0.13+)
 scripts/       install/setup scripts
 ```
 
@@ -135,7 +143,7 @@ scripts/       install/setup scripts
 
 ### LSP and Project Overrides
 
-- LSP configs live in `lsp/` and use native Neovim 0.11+ format
+- LSP configs live in `lsp/` and use native Neovim 0.11+ format (target runtime: 0.13+)
 - Project-specific overrides go in `.nvim-config.lua` (gitignored)
 - Global config toggles use `vim.g.*` (e.g., `vim.g.enable_extra_plugins`)
 

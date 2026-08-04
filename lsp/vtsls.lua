@@ -1,11 +1,9 @@
--- Lsp for typescript
-local Lsp = require "utils.lsp"
+-- Lsp for typescript (default TS server)
 -- Source: https://github.com/yioneko/vtsls
 -- Usage: npm install -g @vtsls/language-server
 -- This config base on https://github.com/neovim/nvim-lspconfig/blob/master/lua/lspconfig/configs/vtsls.lua
 return {
   cmd = { "vtsls", "--stdio" },
-  on_attach = Lsp.on_attach,
   filetypes = {
     "javascript",
     "javascriptreact",

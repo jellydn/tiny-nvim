@@ -353,7 +353,8 @@ Theme switching:
 
 ### VSCode Integration
 
-This configuration works seamlessly with VSCode through the [vscode-neovim](https://github.com/vscode-neovim/vscode-neovim) extension. The configuration includes:
+This configuration works seamlessly with VSCode/Cursor through the
+[vscode-neovim](https://github.com/vscode-neovim/vscode-neovim) extension. The configuration includes:
 
 - [VSCode-specific keymaps](lua/plugins/vscode.lua) for enhanced productivity
 - Integration with VSCode's built-in features
@@ -361,7 +362,7 @@ This configuration works seamlessly with VSCode through the [vscode-neovim](http
 - Git integration and file navigation
 - Task running and debugging support
 
-To use this configuration in VSCode:
+To use this configuration in VSCode/Cursor:
 
 1. Install the vscode-neovim extension
 2. Set your Neovim configuration path to point to this config:
@@ -370,18 +371,43 @@ To use this configuration in VSCode:
     "vscode-neovim.NVIM_APPNAME": "tiny-nvim",
    ```
 
-3. Restart VSCode
+3. Restart VSCode/Cursor (or **Developer: Reload Window** after pulling keymap changes)
 
 You'll get the same Neovim experience in VSCode, including all the plugins and keybindings.
+
+**Neovim 0.13 / Cursor notes**
+
+| Key | Behavior under vscode-neovim |
+| --- | --- |
+| `-` | Reveal active file in VS Code explorer (built-in `nvim.dir` buffer tree is disabled) |
+| `g<Space>` | Treesitter **expand** selection (preferred; no flash letter marks) |
+| `gS` / visual `<BS>` | Treesitter **shrink** selection |
+| `S` | Labeled treesitter select via vscode decorations |
+| `s` | Flash jump |
+
+`Ctrl+Space` is often stolen by macOS Input Sources or Cursor Suggest. Prefer `g<Space>`,
+or restore Neovim ownership in Cursor `keybindings.json`:
+
+```json
+{
+  "key": "ctrl+space",
+  "command": "vscode-neovim.send",
+  "args": "<C-Space>",
+  "when": "editorTextFocus && neovim.init && neovim.mode != 'insert'"
+}
+```
+
+Native visual `an`/`in` treesitter textobjects may land on recent nightlies; until the
+public API is stable, keep using `g<Space>` / `gS`.
 
 ### Language Support
 
 The configuration includes specialized support for various programming languages in the `lua/langs` directory:
 
-- **TypeScript**: Enhanced TypeScript development with type checking and error translation
-- **Lua**: Lua development with syntax highlighting and completion
-- **Go**: Go development with gopls LSP integration
-- **Python**: Python development support with LSP integration
+- **TypeScript / JavaScript**: `vtsls` by default; one of biome / oxlint / eslint from nearest project markers
+- **Lua**: `lua_ls` with syntax highlighting and completion
+- **Go**: `gopls` LSP integration
+- **Python**: Astral `ty` (types) + `ruff` (lint/format)
 - **Markdown**: Markdown editing with preview support
 
 Each language configuration is modular and can be customized according to your needs.
@@ -442,15 +468,17 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 
 ### Movement & Editing
 
-| Key     | Description                      |
-| ------- | -------------------------------- |
-| `j`     | Down (with gj for wrapped lines) |
-| `k`     | Up (with gk for wrapped lines)   |
-| `<A-j>` | Move Line Down                   |
-| `<A-k>` | Move Line Up                     |
-| `gl`    | Go to end of line                |
-| `gh`    | Go to start of line              |
-| `<A-a>` | Select all text                  |
+| Key        | Description                                      |
+| ---------- | ------------------------------------------------ |
+| `j`        | Down (with gj for wrapped lines)                 |
+| `k`        | Up (with gk for wrapped lines)                   |
+| `<A-j>`    | Move Line Down                                   |
+| `<A-k>`    | Move Line Up                                     |
+| `gl`       | Go to end of line                                |
+| `gh`       | Go to start of line                              |
+| `<A-a>`    | Select all text                                  |
+| `g<Space>` | Treesitter expand selection (no flash labels)    |
+| `gS`       | Treesitter shrink selection (visual)             |
 
 ### Git Operations
 
@@ -744,11 +772,11 @@ Available options:
    - `difft`: Structural diffs
 
 2. LSP Servers:
-   - `oxlint`: Oxlint = Rust-based linter (ESLint replacement)
+   - `vtsls`: TypeScript/JavaScript language server (default; `ts_ls` is legacy)
+   - `biome` / `oxlint` / `eslint`: JS lint — nearest directory with markers (biome > oxlint > eslint; not all at once)
    - `lua_ls`: Lua language server
-   - `biome`: Biome = Linter + Formatter
    - `json`: JSON language server
-   - `pyright`: Python language server
+   - `ty` / `ruff`: Astral Python stack (types + lint/format)
    - `gopls`: Go language server
    - `tailwindcss`: Tailwind CSS language server
 
@@ -766,12 +794,15 @@ You can also manually create a `.nvim-config.lua` file:
 ```lua
 -- Project-specific Neovim configuration
 
--- Set TypeScript LSP server
-vim.g.lsp_typescript_server = "ts_ls"
+-- TypeScript LSP: default is "vtsls"; set "ts_ls" only for legacy typescript-language-server
+vim.g.lsp_typescript_server = "vtsls"
 
--- Enable additional LSP servers
+-- Optional: force JS linter (default auto: nearest dir, biome > oxlint > eslint)
+-- vim.g.lsp_js_linter = "biome" -- or "oxlint" | "eslint" | false
+
+-- Force additional LSP servers (rarely needed; eslint is not auto-started)
 vim.g.lsp_on_demands = {
-  -- Add LSP servers here, e.g., "biome"
+  -- e.g. "eslint" if you must force it without config markers
 }
 
 -- Enable extra plugins

@@ -17,7 +17,7 @@ local function term_nav(dir)
     end)
   end
 end
-local hostname = io.popen("hostname"):read("*a"):gsub("%s+", "")
+local hostname = (vim.uv.os_gethostname() or ""):gsub("%s+", "")
 
 return {
   {

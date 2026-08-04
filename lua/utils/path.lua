@@ -1,16 +1,24 @@
 local M = {}
 
---- Check if current directory is a git repo
+--- Check if path (or cwd) is inside a git work tree
+---@param path? string
 ---@return boolean
-function M.is_git_repo()
-  vim.fn.system "git rev-parse --is-inside-work-tree"
+function M.is_git_repo(path)
+  local dir = path or vim.fn.getcwd()
+  vim.fn.system { "git", "-C", dir, "rev-parse", "--is-inside-work-tree" }
   return vim.v.shell_error == 0
 end
 
---- Get root directory of git project
+--- Get root directory of git project containing path (or cwd)
+---@param path? string
 ---@return string|nil
-function M.get_git_root()
-  return vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+function M.get_git_root(path)
+  local dir = path or vim.fn.getcwd()
+  local out = vim.fn.systemlist { "git", "-C", dir, "rev-parse", "--show-toplevel" }
+  if vim.v.shell_error ~= 0 or not out[1] or out[1] == "" then
+    return nil
+  end
+  return out[1]
 end
 
 --- Get root directory of git project or fallback to current directory

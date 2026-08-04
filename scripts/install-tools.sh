@@ -38,6 +38,7 @@ mise use -g rg@latest
 mise use -g ruff@latest
 mise use -g rye@latest
 mise use -g stylua@latest
+mise use -g tree-sitter@latest
 mise use -g usage@latest
 mise use -g uv@latest
 mise use -g zoxide@latest
@@ -52,19 +53,23 @@ if command -v apt &> /dev/null; then
     sudo apt install -y \
         trash-cli \
         imagemagick \
-        ghostscript \
-        tree-sitter-cli
+        ghostscript
 fi
 
-# Install tree-sitter CLI (required for nvim-treesitter on Neovim 0.11+)
-echo "Installing tree-sitter CLI..."
+# Ensure tree-sitter CLI is on PATH (required for nvim-treesitter compile on Neovim 0.11+)
+echo "Ensuring tree-sitter CLI..."
 if ! command -v tree-sitter &> /dev/null; then
-  if command -v cargo &> /dev/null; then
+  if command -v mise &> /dev/null; then
+    mise use -g tree-sitter@latest || true
+  fi
+  if ! command -v tree-sitter &> /dev/null && command -v cargo &> /dev/null; then
     cargo install tree-sitter-cli
-  elif command -v npm &> /dev/null; then
+  fi
+  if ! command -v tree-sitter &> /dev/null && command -v npm &> /dev/null; then
     npm install -g tree-sitter-cli
-  else
-    echo "Warning: Neither cargo nor npm found. Please install tree-sitter-cli manually."
+  fi
+  if ! command -v tree-sitter &> /dev/null; then
+    echo "Warning: tree-sitter CLI not found. Install via mise/cargo/npm."
   fi
 fi
 
@@ -89,10 +94,11 @@ else
 fi
 
 # Install npm packages
+# Pin typescript@5 — TS 7+ drops classic lib/tsserver.js required by typescript-language-server.
+# Default TS LSP is vtsls; ts_ls remains available via vim.g.lsp_typescript_server = "ts_ls".
 echo "Installing npm packages..."
 npm install -g --force \
   @antfu/ni \
-  basedpyright \
   @fsouza/prettierd \
   @mermaid-js/mermaid-cli \
   @tailwindcss/language-server \
@@ -103,14 +109,27 @@ npm install -g --force \
   pnpm \
   prettier \
   rustywind \
-  typescript \
+  typescript@5 \
   typescript-language-server \
   vscode-langservers-extracted
 
-# Install Python tools with uv (note: pyright is already handled by npm)
-echo "Installing tools with uv..."
+# Astral Python stack: uv (env) + ruff (lint/format LSP) + ty (type checker LSP)
+echo "Installing Astral Python tools with uv..."
 uv tool install codespell
 uv tool install isort
-uv tool install ruff
+uv tool install --force ruff@latest
+uv tool install --force ty@latest
+
+# Old Homebrew ruff (0.1.x) lacks `ruff server` and often shadows mise/uv on PATH.
+if command -v ruff &> /dev/null; then
+  if ! ruff server --help 2>&1 | grep -qi "language server"; then
+    echo "Warning: $(command -v ruff) does not support 'ruff server'."
+    echo "  Prefer mise/uv ruff (lsp/ruff.lua will try mise which ruff)."
+    echo "  Or: brew uninstall ruff && uv tool install ruff"
+  fi
+fi
+if ! command -v ty &> /dev/null; then
+  echo "Warning: ty not on PATH. Ensure ~/.local/bin is in PATH (uv tool install ty)."
+fi
 
 echo "All tools have been installed successfully!"

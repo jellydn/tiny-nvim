@@ -5,10 +5,9 @@ end
 local enabled = {
   "lazy.nvim",
   "nvim-treesitter",
-  "ts-comments.nvim",
-  "nvim-treesitter",
   "nvim-treesitter-textobjects",
   "nvim-ts-context-commentstring",
+  "ts-comments.nvim",
   "vim-repeat",
 }
 
@@ -39,7 +38,7 @@ vim.api.nvim_create_autocmd("User", {
       vscode.action "fff-gpui.findFiles"
     end)
     -- Grep files (replaces fzf-picker.findWithinFiles)
-    vim.keymap.set({ "n", "v" }, "<leader>fw", function()
+    vim.keymap.set("v", "<leader>fw", function()
       vscode.action "fff-gpui.grepFiles"
     end)
     vim.keymap.set("n", "<leader>fw", function()
@@ -71,6 +70,12 @@ vim.api.nvim_create_autocmd("User", {
     vim.keymap.set("n", "<leader>e", function()
       vscode.action "workbench.view.explorer"
     end)
+    -- Neovim 0.13 `nvim.dir` maps `-` to a buffer tree; reveal in VS Code instead
+    pcall(vim.keymap.del, "n", "-")
+    pcall(vim.api.nvim_del_augroup_by_name, "nvim.dir")
+    vim.keymap.set("n", "-", function()
+      vscode.action "workbench.files.action.showActiveFileInExplorer"
+    end, { desc = "Reveal in VS Code explorer" })
 
     -- +Search
     -- Open symbol
@@ -90,6 +95,8 @@ vim.api.nvim_create_autocmd("User", {
     -- Navigate VSCode tabs like lazyvim buffers
     vim.keymap.set("n", "<S-h>", "<Cmd>call VSCodeNotify('workbench.action.previousEditor')<CR>")
     vim.keymap.set("n", "<S-l>", "<Cmd>call VSCodeNotify('workbench.action.nextEditor')<CR>")
+    -- Expand/shrink: shared helper (g<Space> primary; vscode also gets <BS> / n-mode gS)
+    require("utils.vscode_treesitter").setup_keymaps { vscode = true }
 
     -- Search work in current buffer
     vim.keymap.set("n", "<leader>sb", function()

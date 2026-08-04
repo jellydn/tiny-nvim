@@ -1,8 +1,14 @@
 local Lsp = require "utils.lsp"
--- NOTE: npm install -g typescript typescript-language-server
+-- LEGACY: prefer vtsls (default). Enable with vim.g.lsp_typescript_server = "ts_ls"
+-- NOTE: npm install -g typescript@5 typescript-language-server
+-- TypeScript 7+ dropped classic lib/tsserver.js; pin TS 5.x for ts_ls.
+local tsserver = Lsp.tsserver_js_path()
+local init_options = { hostInfo = "neovim" }
+if tsserver then
+  init_options.tsserver = { path = tsserver }
+end
 return {
-  on_attach = Lsp.on_attach,
-  init_options = { hostInfo = "neovim" },
+  init_options = init_options,
   cmd = { "typescript-language-server", "--stdio" },
   filetypes = {
     "javascript",
