@@ -48,20 +48,15 @@ return {
         -- Using `start` via cmd opens the default browser on Windows
         vim.g.previm_open_cmd = "start"
       else
-        -- Try to find a suitable open command on Linux/Unix
-        local handle =
-          io.popen "command -v xdg-open 2>/dev/null || command -v brave-browser 2>/dev/null || command -v google-chrome 2>/dev/null || command -v firefox 2>/dev/null || command -v sensible-browser 2>/dev/null"
-        local cmd = ""
-        if handle then
-          cmd = handle:read "*a" or ""
-          handle:close()
-          cmd = cmd:gsub("%s+$", "")
+        -- Prefer the first available open command on Linux/Unix
+        local open_cmd = "xdg-open"
+        for _, cand in ipairs { "xdg-open", "brave-browser", "google-chrome", "firefox", "sensible-browser" } do
+          if vim.fn.executable(cand) == 1 then
+            open_cmd = cand
+            break
+          end
         end
-        if cmd == "" then
-          vim.g.previm_open_cmd = "xdg-open"
-        else
-          vim.g.previm_open_cmd = cmd
-        end
+        vim.g.previm_open_cmd = open_cmd
       end
     end,
     ft = { "markdown" },
