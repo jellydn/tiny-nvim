@@ -94,10 +94,11 @@ else
 fi
 
 # Install npm packages
+# Pin typescript@5 — TS 7+ drops classic lib/tsserver.js required by typescript-language-server.
+# Default TS LSP is vtsls; ts_ls remains available via vim.g.lsp_typescript_server = "ts_ls".
 echo "Installing npm packages..."
 npm install -g --force \
   @antfu/ni \
-  basedpyright \
   @fsouza/prettierd \
   @mermaid-js/mermaid-cli \
   @tailwindcss/language-server \
@@ -108,14 +109,27 @@ npm install -g --force \
   pnpm \
   prettier \
   rustywind \
-  typescript \
+  typescript@5 \
   typescript-language-server \
   vscode-langservers-extracted
 
-# Install Python tools with uv (note: pyright is already handled by npm)
-echo "Installing tools with uv..."
+# Astral Python stack: uv (env) + ruff (lint/format LSP) + ty (type checker LSP)
+echo "Installing Astral Python tools with uv..."
 uv tool install codespell
 uv tool install isort
-uv tool install ruff
+uv tool install --force ruff@latest
+uv tool install --force ty@latest
+
+# Old Homebrew ruff (0.1.x) lacks `ruff server` and often shadows mise/uv on PATH.
+if command -v ruff &> /dev/null; then
+  if ! ruff server --help 2>&1 | grep -qi "language server"; then
+    echo "Warning: $(command -v ruff) does not support 'ruff server'."
+    echo "  Prefer mise/uv ruff (lsp/ruff.lua will try mise which ruff)."
+    echo "  Or: brew uninstall ruff && uv tool install ruff"
+  fi
+fi
+if ! command -v ty &> /dev/null; then
+  echo "Warning: ty not on PATH. Ensure ~/.local/bin is in PATH (uv tool install ty)."
+fi
 
 echo "All tools have been installed successfully!"

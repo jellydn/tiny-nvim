@@ -748,7 +748,7 @@ Available options:
    - `lua_ls`: Lua language server
    - `biome`: Biome = Linter + Formatter
    - `json`: JSON language server
-   - `pyright`: Python language server
+   - `ty` / `ruff`: Astral Python stack (types + lint/format)
    - `gopls`: Go language server
    - `tailwindcss`: Tailwind CSS language server
 
@@ -766,12 +766,12 @@ You can also manually create a `.nvim-config.lua` file:
 ```lua
 -- Project-specific Neovim configuration
 
--- Set TypeScript LSP server
-vim.g.lsp_typescript_server = "ts_ls"
+-- TypeScript LSP: default is "vtsls"; set "ts_ls" for typescript-language-server
+vim.g.lsp_typescript_server = "vtsls"
 
 -- Enable additional LSP servers
 vim.g.lsp_on_demands = {
-  -- Add LSP servers here, e.g., "biome"
+  -- Add LSP servers here, e.g., "eslint"
 }
 
 -- Enable extra plugins

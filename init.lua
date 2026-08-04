@@ -29,7 +29,8 @@ else
   theme.setup()
   theme.apply()
 
-  local ts_server = vim.g.lsp_typescript_server or "ts_ls" -- "ts_ls" or "vtsls" for TypeScript
+  -- Modern defaults: vtsls (TS), ty+ruff (Python). Override with vim.g.lsp_typescript_server.
+  local ts_server = vim.g.lsp_typescript_server or "vtsls" -- "vtsls" or "ts_ls"
 
   -- Enable LSP servers per filetype (Neovim 0.11+)
   local lsp_by_ft = {
@@ -37,7 +38,8 @@ else
     json = { "json", "biome" },
     jsonc = { "json", "biome" },
     json5 = { "json", "biome" },
-    python = { "basedpyright", "ruff" },
+    -- Astral stack: ty (types) + ruff (lint/format); replaces basedpyright
+    python = { "ty", "ruff" },
     go = { "gopls" },
     gomod = { "gopls" },
     gowork = { "gopls" },

@@ -12,3 +12,5 @@
 - `.auto/log.jsonl` record shapes: `init` metadata, early `result` (partial fail_*), later `run` (full fail_* set). Treat as schema_version 1; do not infer a reduced check set from older `result` rows.
 - Optional: add `eslint` to default `lsp_by_ft` JS/TS list (currently `vim.g.lsp_on_demands` only)
 - Optional: drop redundant per-config `on_attach = Lsp.on_attach` now that global LspAttach applies keymaps
+- Optional: explore LazyVim `tsgo` extra when TypeScript native LSP matures
+- Ensure `~/.local/bin` is on PATH so uv-installed `ty`/`ruff` win over Homebrew stubs

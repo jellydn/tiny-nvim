@@ -1,7 +1,7 @@
 local Lsp = require "utils.lsp"
--- uv tool install ruff@latest
+-- Prefer mise/uv ruff that supports `ruff server` (old Homebrew ruff 0.1.x cannot).
 return {
-  cmd = { "ruff", "server" },
+  cmd = Lsp.ruff_cmd(),
   on_attach = Lsp.on_attach,
   filetypes = { "python" },
   root_markers = {

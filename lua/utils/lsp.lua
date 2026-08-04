@@ -107,4 +107,92 @@ M.spectral_config_path = function()
   return get_config_path ".spectral.yaml"
 end
 
+--- Prefer a `ruff` that supports `ruff server` (Homebrew 0.1.x does not).
+---@return string[]
+function M.ruff_cmd()
+  local candidates = {}
+  local home = vim.fn.expand "~"
+  -- uv tool / mise installs before PATH (Homebrew often shadows with old ruff)
+  for _, path in ipairs {
+    home .. "/.local/bin/ruff",
+    home .. "/.local/share/mise/shims/ruff",
+  } do
+    if vim.uv.fs_stat(path) then
+      table.insert(candidates, path)
+    end
+  end
+  if vim.fn.executable "mise" == 1 then
+    local out = vim.fn.system { "mise", "which", "ruff" }
+    if vim.v.shell_error == 0 then
+      local path = vim.trim(out)
+      if path ~= "" then
+        table.insert(candidates, path)
+      end
+    end
+  end
+  local on_path = vim.fn.exepath "ruff"
+  if on_path ~= "" then
+    table.insert(candidates, on_path)
+  end
+  for _, bin in ipairs(candidates) do
+    if vim.fn.executable(bin) == 1 then
+      local help = vim.fn.system { bin, "server", "--help" }
+      if type(help) == "string" and help:find("language server", 1, true) then
+        return { bin, "server" }
+      end
+    end
+  end
+  return { "ruff", "server" }
+end
+
+--- Prefer uv-installed `ty` when Homebrew/PATH is incomplete.
+---@return string[]
+function M.ty_cmd()
+  local candidates = {}
+  local home = vim.fn.expand "~"
+  for _, path in ipairs {
+    home .. "/.local/bin/ty",
+    home .. "/.local/share/mise/shims/ty",
+  } do
+    if vim.uv.fs_stat(path) then
+      table.insert(candidates, path)
+    end
+  end
+  local on_path = vim.fn.exepath "ty"
+  if on_path ~= "" then
+    table.insert(candidates, on_path)
+  end
+  for _, bin in ipairs(candidates) do
+    if vim.fn.executable(bin) == 1 then
+      return { bin, "server" }
+    end
+  end
+  return { "ty", "server" }
+end
+
+--- Absolute path to typescript/lib/tsserver.js when available (ts_ls needs TS 5.x layout).
+---@return string|nil
+function M.tsserver_js_path()
+  local roots = {}
+  if vim.fn.executable "npm" == 1 then
+    local root = vim.trim(vim.fn.system { "npm", "root", "-g" })
+    if vim.v.shell_error == 0 and root ~= "" then
+      table.insert(roots, root)
+    end
+  end
+  local node = vim.fn.exepath "node"
+  if node ~= "" then
+    -- sibling lib/node_modules next to node binary (mise layout)
+    local lib = vim.fn.fnamemodify(node, ":h:h") .. "/lib/node_modules"
+    table.insert(roots, lib)
+  end
+  for _, root in ipairs(roots) do
+    local path = root .. "/typescript/lib/tsserver.js"
+    if vim.uv.fs_stat(path) then
+      return path
+    end
+  end
+  return nil
+end
+
 return M

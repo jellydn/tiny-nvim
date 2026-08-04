@@ -1,0 +1,22 @@
+local Lsp = require "utils.lsp"
+-- Astral ty: type checker + language server (replaces basedpyright/pyright).
+-- Install: uv tool install ty@latest
+return {
+  cmd = Lsp.ty_cmd(),
+  on_attach = Lsp.on_attach,
+  filetypes = { "python" },
+  root_markers = {
+    "ty.toml",
+    "pyproject.toml",
+    "setup.py",
+    "setup.cfg",
+    "requirements.txt",
+    ".git",
+  },
+  settings = {
+    ty = {
+      -- openFilesOnly keeps editor noise low; set workspace for full-project checks
+      diagnosticMode = "openFilesOnly",
+    },
+  },
+}

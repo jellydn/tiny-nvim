@@ -51,8 +51,10 @@ Binary: `NVIM_BIN` if set, otherwise `nvim` from `PATH` (e.g. mise `neovim/night
 - Keep treesitter (`nvim-treesitter` main branch + `vim.treesitter.start`) working
 - Keep AI (`folke/sidekick.nvim` in `lua/plugins/ai.lua`) loadable
 - Keep native LSP (`vim.lsp.enable` + `lsp/*.lua`) working
-- `fail_lsp` asserts API/config presence (`vim.lsp.enable`, `lsp/*.lua`, init wiring) **and**
-  every `lsp/*.lua` loads as a table with `cmd` (`LSP_ALL_OK`) — not language-server process health
+- `fail_lsp` asserts API/config presence (`vim.lsp.enable`, `lsp/*.lua`, init wiring),
+  every `lsp/*.lua` loads with `cmd` (`LSP_ALL_OK`), **and** smoke client attach on temp
+  fixtures (`LSP_ATTACH_OK`). Missing binaries are skipped (not failures); attach timeouts fail.
+  Language-server *project* health beyond initialize is out of scope.
 - Startup-message filter (`fail_messages`) exempts **only** these missing-workspace tooling
   signatures (exact substrings): `TypeScript installation`, `Could not find a valid TypeScript`,
   `tsserver`, `rust-analyzer quit`. All other TS/Rust init errors still count

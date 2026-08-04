@@ -5,6 +5,9 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 cd "$ROOT"
 
+# Prefer uv tool bins (ty/ruff) over shadowed Homebrew stubs on PATH
+export PATH="${HOME}/.local/bin:${PATH}"
+
 # Prefer NVIM_BIN; otherwise resolve `nvim` from PATH (portable across hosts/CI).
 NVIM="${NVIM_BIN:-$(command -v nvim 2>/dev/null || true)}"
 if [[ -z "$NVIM" || ! -x "$NVIM" ]]; then
@@ -213,18 +216,37 @@ if ! grep -q 'AI_MOD=true' "$ai_mark" 2>/dev/null \
   cat "$ai_mark" 2>/dev/null >&2 || true
 fi
 
-# --- 10) LSP support (API + every lsp/*.lua config loadable with cmd) ---
+# --- 10) LSP support (config load + smoke client attach on temp fixtures) ---
+# Temp fixtures live under WORKDIR (do not mutate frozen .auto/fixtures/).
+lsp_ws="$WORKDIR/lsp_ws"
+mkdir -p "$lsp_ws/rustproj/src" "$lsp_ws/tsproj"
+printf '%s\n' 'local x = 1' 'return x' >"$lsp_ws/a.lua"
+printf '%s\n' '{"a":1}' >"$lsp_ws/a.json"
+printf '%s\n' 'x = 1' >"$lsp_ws/a.py"
+: >"$lsp_ws/pyproject.toml"
+printf '%s\n' 'package main' 'func main() {}' >"$lsp_ws/main.go"
+printf '%s\n' '[package]' 'name = "probe"' 'version = "0.1.0"' 'edition = "2021"' >"$lsp_ws/rustproj/Cargo.toml"
+printf '%s\n' 'fn main() {}' >"$lsp_ws/rustproj/src/main.rs"
+printf '%s\n' '{"name":"probe","private":true}' >"$lsp_ws/tsproj/package.json"
+printf '%s\n' 'const x: number = 1' >"$lsp_ws/tsproj/a.ts"
+printf '%s\n' 'const z = 1' >"$lsp_ws/a.js"
+printf '%s\n' '.x { color: red; }' >"$lsp_ws/a.css"
+# Prefer workspace typescript@5 for ts_ls when global TS7 lacks tsserver.js
+if command -v npm >/dev/null 2>&1; then
+  (cd "$lsp_ws/tsproj" && npm install --no-fund --no-audit --silent typescript@5.9.3) >/dev/null 2>&1 || true
+fi
+
 lsp_mark="$WORKDIR/lsp.txt"
-run_to 30 "$NVIM" --headless \
+run_to 120 "$NVIM" --headless \
   +"lua vim.g.autoresearch_bench=true" \
   +"lua vim.defer_fn(function()
       local has_enable = type(vim.lsp.enable) == 'function'
       local configs = vim.fn.glob(vim.fn.stdpath('config') .. '/lsp/*.lua', false, true)
+      table.sort(configs)
       local has_configs = #configs > 0
       local init = table.concat(vim.fn.readfile(vim.fn.stdpath('config') .. '/init.lua'), '\\n')
       local init_ok = init:find('vim%.lsp%.enable', 1, false) ~= nil
-      local bad = 0
-      local details = {}
+      local bad, details = 0, {}
       for _, p in ipairs(configs) do
         local name = vim.fn.fnamemodify(p, ':t:r')
         local cfg = vim.lsp.config[name]
@@ -232,14 +254,77 @@ run_to 30 "$NVIM" --headless \
           bad = bad + 1
           table.insert(details, name)
         else
-          -- Smoke-enable without requiring the binary to stay alive
           pcall(vim.lsp.enable, name)
         end
       end
       local all_ok = bad == 0
+
+      -- Smoke-attach: open a temp fixture and wait for client.initialized
+      local ws = [[$lsp_ws]]
+      local fixtures = {
+        lua_ls = { path = ws .. '/a.lua', ft = 'lua' },
+        json = { path = ws .. '/a.json', ft = 'json' },
+        biome = { path = ws .. '/a.json', ft = 'json' },
+        ty = { path = ws .. '/a.py', ft = 'python' },
+        ruff = { path = ws .. '/a.py', ft = 'python' },
+        gopls = { path = ws .. '/main.go', ft = 'go' },
+        ['rust-analyzer'] = { path = ws .. '/rustproj/src/main.rs', ft = 'rust' },
+        ts_ls = { path = ws .. '/tsproj/a.ts', ft = 'typescript' },
+        vtsls = { path = ws .. '/tsproj/a.ts', ft = 'typescript' },
+        oxlint = { path = ws .. '/a.js', ft = 'javascript' },
+        eslint = { path = ws .. '/a.js', ft = 'javascript' },
+        tailwindcss = { path = ws .. '/a.css', ft = 'css' },
+      }
+      local function wait_attach(name, timeout_ms)
+        local t0 = vim.uv.hrtime()
+        while (vim.uv.hrtime() - t0) / 1e6 < timeout_ms do
+          for _, c in ipairs(vim.lsp.get_clients({ name = name })) do
+            if c.initialized then return true end
+          end
+          vim.wait(50)
+        end
+        return false
+      end
+      local attach_fail, attach_skip, attach_ok, attach_fail_names, attach_skip_names = 0, 0, 0, {}, {}
+      for _, p in ipairs(configs) do
+        local name = vim.fn.fnamemodify(p, ':t:r')
+        local cfg = vim.lsp.config[name]
+        local fx = fixtures[name]
+        if type(cfg) ~= 'table' or type(cfg.cmd) ~= 'table' or not cfg.cmd[1] then
+          -- already counted in bad
+        elseif vim.fn.executable(cfg.cmd[1]) ~= 1 then
+          attach_skip = attach_skip + 1
+          table.insert(attach_skip_names, name .. ':no_bin')
+        elseif not fx then
+          attach_skip = attach_skip + 1
+          table.insert(attach_skip_names, name .. ':no_fixture')
+        else
+          for _, c in ipairs(vim.lsp.get_clients({ name = name })) do
+            pcall(function() c:stop(true) end)
+          end
+          pcall(vim.lsp.enable, name)
+          pcall(vim.cmd.edit, fx.path)
+          vim.bo.filetype = fx.ft
+          pcall(vim.lsp.enable, name)
+          if wait_attach(name, 10000) then
+            attach_ok = attach_ok + 1
+          else
+            attach_fail = attach_fail + 1
+            table.insert(attach_fail_names, name)
+          end
+          for _, c in ipairs(vim.lsp.get_clients({ name = name })) do
+            pcall(function() c:stop(true) end)
+          end
+          pcall(vim.cmd.bwipeout, '!')
+        end
+      end
+      local attach_ok_flag = attach_fail == 0
       vim.fn.writefile({
         string.format('LSP_ENABLE=%s LSP_CONFIGS=%s LSP_INIT=%s LSP_ALL_OK=%s LSP_BAD=%d', tostring(has_enable), tostring(has_configs), tostring(init_ok), tostring(all_ok), bad),
         'LSP_BAD_NAMES=' .. table.concat(details, ','),
+        string.format('LSP_ATTACH_OK=%s LSP_ATTACH_N=%d LSP_ATTACH_FAIL=%d LSP_ATTACH_SKIP=%d', tostring(attach_ok_flag), attach_ok, attach_fail, attach_skip),
+        'LSP_ATTACH_FAIL_NAMES=' .. table.concat(attach_fail_names, ','),
+        'LSP_ATTACH_SKIP_NAMES=' .. table.concat(attach_skip_names, ','),
       }, [[$lsp_mark]])
       vim.cmd('qa!')
     end, 2500)" \
@@ -247,10 +332,12 @@ run_to 30 "$NVIM" --headless \
 if ! grep -q 'LSP_ENABLE=true' "$lsp_mark" 2>/dev/null \
   || ! grep -q 'LSP_CONFIGS=true' "$lsp_mark" 2>/dev/null \
   || ! grep -q 'LSP_INIT=true' "$lsp_mark" 2>/dev/null \
-  || ! grep -q 'LSP_ALL_OK=true' "$lsp_mark" 2>/dev/null; then
+  || ! grep -q 'LSP_ALL_OK=true' "$lsp_mark" 2>/dev/null \
+  || ! grep -q 'LSP_ATTACH_OK=true' "$lsp_mark" 2>/dev/null; then
   fail_lsp=1
   echo "ASSERT lsp FAIL" >&2
   cat "$lsp_mark" 2>/dev/null >&2 || true
+  tail -n 40 "$WORKDIR/lsp.err" 2>/dev/null >&2 || true
 fi
 
 # --- 11) mini.ai treesitter textobjects for lua (the user-reported failure) ---
