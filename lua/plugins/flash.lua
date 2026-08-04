@@ -1,9 +1,25 @@
 -- neovim#39485 moved search_* FFI globals into Search; upstream PR #496 pending.
 -- Preload our patch only while installed flash.hacks still lacks SearchState.
 if vim.fn.has "nvim-0.13" == 1 then
+  local function flash_hacks_path()
+    local roots = {}
+    local ok, lazy_config = pcall(require, "lazy.core.config")
+    if ok and lazy_config.options and lazy_config.options.root then
+      roots[#roots + 1] = lazy_config.options.root
+    end
+    roots[#roots + 1] = vim.fn.stdpath "data" .. "/lazy"
+    for _, root in ipairs(roots) do
+      local path = root .. "/flash.nvim/lua/flash/hacks.lua"
+      if vim.uv.fs_stat(path) then
+        return path
+      end
+    end
+    return nil
+  end
+
   local function upstream_has_search_state()
-    local path = vim.fn.stdpath "data" .. "/lazy/flash.nvim/lua/flash/hacks.lua"
-    if not vim.uv.fs_stat(path) then
+    local path = flash_hacks_path()
+    if not path then
       return false
     end
     local ok, lines = pcall(vim.fn.readfile, path)

@@ -5,10 +5,9 @@ end
 local enabled = {
   "lazy.nvim",
   "nvim-treesitter",
-  "ts-comments.nvim",
-  "nvim-treesitter",
   "nvim-treesitter-textobjects",
   "nvim-ts-context-commentstring",
+  "ts-comments.nvim",
   "vim-repeat",
 }
 
