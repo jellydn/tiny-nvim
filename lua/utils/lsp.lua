@@ -32,9 +32,11 @@ M.on_attach = function(client, buffer)
 
   local keymaps = M.get_default_keymaps()
   for _, keymap in ipairs(keymaps) do
-    local id = (keymap.mode or "n") .. "\0" .. keymap.keys
+    local mode = keymap.mode or "n"
+    -- ":" not "\0": nvim_buf_set_var uses Vimscript dicts that truncate at NUL.
+    local id = mode .. ":" .. keymap.keys
     if not installed[id] and (not keymap.has or client.server_capabilities[keymap.has]) then
-      vim.keymap.set(keymap.mode or "n", keymap.keys, keymap.func, {
+      vim.keymap.set(mode, keymap.keys, keymap.func, {
         buffer = buffer,
         desc = "LSP: " .. keymap.desc,
         nowait = keymap.nowait,
