@@ -130,8 +130,9 @@ return {
       vim.api.nvim_create_autocmd("User", {
         pattern = "LazyVimStarted",
         callback = function()
-          if starter.refresh then
-            starter.refresh()
+          local buf = vim.api.nvim_get_current_buf()
+          if vim.api.nvim_buf_is_valid(buf) and vim.bo[buf].filetype == "ministarter" then
+            starter.refresh(buf)
           end
         end,
       })
