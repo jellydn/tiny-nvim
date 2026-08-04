@@ -10,7 +10,11 @@ end
 --- Get root directory of git project
 ---@return string|nil
 function M.get_git_root()
-  return vim.fn.systemlist("git rev-parse --show-toplevel")[1]
+  local out = vim.fn.systemlist "git rev-parse --show-toplevel"
+  if vim.v.shell_error ~= 0 or not out[1] or out[1] == "" then
+    return nil
+  end
+  return out[1]
 end
 
 --- Get root directory of git project or fallback to current directory

@@ -773,7 +773,7 @@ Available options:
 
 2. LSP Servers:
    - `vtsls`: TypeScript/JavaScript language server (default; `ts_ls` is legacy)
-   - `biome` / `oxlint` / `eslint`: JS lint — auto-detected from project markers (not all at once)
+   - `biome` / `oxlint` / `eslint`: JS lint — nearest directory with markers (biome > oxlint > eslint; not all at once)
    - `lua_ls`: Lua language server
    - `json`: JSON language server
    - `ty` / `ruff`: Astral Python stack (types + lint/format)
@@ -797,7 +797,7 @@ You can also manually create a `.nvim-config.lua` file:
 -- TypeScript LSP: default is "vtsls"; set "ts_ls" only for legacy typescript-language-server
 vim.g.lsp_typescript_server = "vtsls"
 
--- Optional: force JS linter (default auto: biome > oxlint > eslint from config files)
+-- Optional: force JS linter (default auto: nearest dir, biome > oxlint > eslint)
 -- vim.g.lsp_js_linter = "biome" -- or "oxlint" | "eslint" | false
 
 -- Force additional LSP servers (rarely needed; eslint is not auto-started)
