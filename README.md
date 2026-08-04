@@ -744,9 +744,9 @@ Available options:
    - `difft`: Structural diffs
 
 2. LSP Servers:
-   - `oxlint`: Oxlint = Rust-based linter (ESLint replacement)
+   - `vtsls`: TypeScript/JavaScript language server (default; `ts_ls` is legacy)
+   - `biome` / `oxlint` / `eslint`: JS lint — auto-detected from project markers (not all at once)
    - `lua_ls`: Lua language server
-   - `biome`: Biome = Linter + Formatter
    - `json`: JSON language server
    - `ty` / `ruff`: Astral Python stack (types + lint/format)
    - `gopls`: Go language server
@@ -766,12 +766,15 @@ You can also manually create a `.nvim-config.lua` file:
 ```lua
 -- Project-specific Neovim configuration
 
--- TypeScript LSP: default is "vtsls"; set "ts_ls" for typescript-language-server
+-- TypeScript LSP: default is "vtsls"; set "ts_ls" only for legacy typescript-language-server
 vim.g.lsp_typescript_server = "vtsls"
 
--- Enable additional LSP servers
+-- Optional: force JS linter (default auto: biome > oxlint > eslint from config files)
+-- vim.g.lsp_js_linter = "biome" -- or "oxlint" | "eslint" | false
+
+-- Force additional LSP servers (rarely needed; eslint is not auto-started)
 vim.g.lsp_on_demands = {
-  -- Add LSP servers here, e.g., "eslint"
+  -- e.g. "eslint" if you must force it without config markers
 }
 
 -- Enable extra plugins

@@ -81,12 +81,73 @@ local function get_config_path(filename)
 end
 
 M.biome_config_path = function()
-  return get_config_path "biome.json"
+  return get_config_path "biome.json" or get_config_path "biome.jsonc"
 end
 
 M.biome_config_exists = function()
-  local has_config = get_config_path "biome.json"
-  return has_config ~= nil
+  return M.biome_config_path() ~= nil
+end
+
+M.oxlint_config_exists = function()
+  for _, name in ipairs {
+    "oxlintrc.json",
+    "oxlintrc.jsonc",
+    ".oxlintrc.json",
+    ".oxlintrc.jsonc",
+    "oxlint.config.ts",
+    "oxlint.config.js",
+    "oxlint.config.mjs",
+  } do
+    if get_config_path(name) then
+      return true
+    end
+  end
+  return false
+end
+
+M.eslint_config_exists = function()
+  for _, name in ipairs {
+    "eslint.config.js",
+    "eslint.config.mjs",
+    "eslint.config.cjs",
+    "eslint.config.ts",
+    "eslint.config.mts",
+    "eslint.config.cts",
+    ".eslintrc",
+    ".eslintrc.js",
+    ".eslintrc.cjs",
+    ".eslintrc.yaml",
+    ".eslintrc.yml",
+    ".eslintrc.json",
+  } do
+    if get_config_path(name) then
+      return true
+    end
+  end
+  return false
+end
+
+--- Prefer biome > oxlint > eslint from project markers. Never invent a linter.
+--- Override with vim.g.lsp_js_linter = "biome"|"oxlint"|"eslint"|false
+---@return string|nil
+function M.detect_js_linter()
+  local forced = vim.g.lsp_js_linter
+  if forced == false then
+    return nil
+  end
+  if type(forced) == "string" and forced ~= "" then
+    return forced
+  end
+  if M.biome_config_exists() then
+    return "biome"
+  end
+  if M.oxlint_config_exists() then
+    return "oxlint"
+  end
+  if M.eslint_config_exists() then
+    return "eslint"
+  end
+  return nil
 end
 
 M.dprint_config_path = function()

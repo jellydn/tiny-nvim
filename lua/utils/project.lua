@@ -93,10 +93,13 @@ Available options:
 ```lua
 -- Project-specific Neovim configuration
 
--- Set TypeScript LSP server
-vim.g.lsp_typescript_server = "ts_ls" -- or "vtsls"
+-- Set TypeScript LSP server (default is vtsls; ts_ls is legacy)
+vim.g.lsp_typescript_server = "vtsls"
 
--- Enable additional LSP servers
+-- Optional JS lint override (default: auto-detect biome > oxlint > eslint)
+-- vim.g.lsp_js_linter = "biome"
+
+-- Force additional LSP servers (e.g. eslint when no config markers)
 vim.g.lsp_on_demands = {
     "oxlint",
 }
@@ -149,8 +152,8 @@ local function create_nvim_config()
       local config = [[
 -- Project-specific Neovim configuration
 
--- Set TypeScript LSP server
-vim.g.lsp_typescript_server = "ts_ls" -- or "vtsls"
+-- TypeScript LSP (default vtsls; ts_ls is legacy)
+vim.g.lsp_typescript_server = "vtsls"
 
 -- Enable additional LSP servers
 vim.g.lsp_on_demands = {

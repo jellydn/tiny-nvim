@@ -1,4 +1,4 @@
--- Lsp for typescript
+-- Lsp for typescript (default TS server)
 local Lsp = require "utils.lsp"
 -- Source: https://github.com/yioneko/vtsls
 -- Usage: npm install -g @vtsls/language-server

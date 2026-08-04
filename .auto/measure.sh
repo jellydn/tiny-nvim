@@ -231,6 +231,10 @@ printf '%s\n' '{"name":"probe","private":true}' >"$lsp_ws/tsproj/package.json"
 printf '%s\n' 'const x: number = 1' >"$lsp_ws/tsproj/a.ts"
 printf '%s\n' 'const z = 1' >"$lsp_ws/a.js"
 printf '%s\n' '.x { color: red; }' >"$lsp_ws/a.css"
+# Linter config markers for attach smoke (mirrors smart detect)
+printf '%s\n' '{}' >"$lsp_ws/biome.json"
+printf '%s\n' '{}' >"$lsp_ws/.oxlintrc.json"
+printf '%s\n' 'export default [];' >"$lsp_ws/eslint.config.js"
 # Prefer workspace typescript@5 for ts_ls when global TS7 lacks tsserver.js
 if command -v npm >/dev/null 2>&1; then
   (cd "$lsp_ws/tsproj" && npm install --no-fund --no-audit --silent typescript@5.9.3) >/dev/null 2>&1 || true
@@ -285,7 +289,8 @@ run_to 120 "$NVIM" --headless \
         end
         return false
       end
-      local attach_fail, attach_skip, attach_ok, attach_fail_names, attach_skip_names = 0, 0, 0, {}, {}
+      local attach_fail, attach_skip, attach_ok = 0, 0, 0
+      local attach_ok_names, attach_fail_names, attach_skip_names = {}, {}, {}
       for _, p in ipairs(configs) do
         local name = vim.fn.fnamemodify(p, ':t:r')
         local cfg = vim.lsp.config[name]
@@ -308,6 +313,7 @@ run_to 120 "$NVIM" --headless \
           pcall(vim.lsp.enable, name)
           if wait_attach(name, 10000) then
             attach_ok = attach_ok + 1
+            table.insert(attach_ok_names, name)
           else
             attach_fail = attach_fail + 1
             table.insert(attach_fail_names, name)
@@ -323,12 +329,18 @@ run_to 120 "$NVIM" --headless \
         string.format('LSP_ENABLE=%s LSP_CONFIGS=%s LSP_INIT=%s LSP_ALL_OK=%s LSP_BAD=%d', tostring(has_enable), tostring(has_configs), tostring(init_ok), tostring(all_ok), bad),
         'LSP_BAD_NAMES=' .. table.concat(details, ','),
         string.format('LSP_ATTACH_OK=%s LSP_ATTACH_N=%d LSP_ATTACH_FAIL=%d LSP_ATTACH_SKIP=%d', tostring(attach_ok_flag), attach_ok, attach_fail, attach_skip),
+        'LSP_ATTACH_OK_NAMES=' .. table.concat(attach_ok_names, ','),
         'LSP_ATTACH_FAIL_NAMES=' .. table.concat(attach_fail_names, ','),
         'LSP_ATTACH_SKIP_NAMES=' .. table.concat(attach_skip_names, ','),
       }, [[$lsp_mark]])
       vim.cmd('qa!')
     end, 2500)" \
   >"$WORKDIR/lsp.log" 2>"$WORKDIR/lsp.err" || true
+# Always surface attach smoke report (pass or fail)
+if [[ -f "$lsp_mark" ]]; then
+  echo "=== LSP attach smoke ===" >&2
+  cat "$lsp_mark" >&2 || true
+fi
 if ! grep -q 'LSP_ENABLE=true' "$lsp_mark" 2>/dev/null \
   || ! grep -q 'LSP_CONFIGS=true' "$lsp_mark" 2>/dev/null \
   || ! grep -q 'LSP_INIT=true' "$lsp_mark" 2>/dev/null \
@@ -336,8 +348,15 @@ if ! grep -q 'LSP_ENABLE=true' "$lsp_mark" 2>/dev/null \
   || ! grep -q 'LSP_ATTACH_OK=true' "$lsp_mark" 2>/dev/null; then
   fail_lsp=1
   echo "ASSERT lsp FAIL" >&2
-  cat "$lsp_mark" 2>/dev/null >&2 || true
   tail -n 40 "$WORKDIR/lsp.err" 2>/dev/null >&2 || true
+fi
+
+# Emit attach counts as secondary METRIC-friendly diagnostics (parsed via METRIC lines later)
+if [[ -f "$lsp_mark" ]]; then
+  attach_n="$(sed -n 's/.*LSP_ATTACH_N=\([0-9]*\).*/\1/p' "$lsp_mark" | head -1)"
+  attach_fail_n="$(sed -n 's/.*LSP_ATTACH_FAIL=\([0-9]*\).*/\1/p' "$lsp_mark" | head -1)"
+  attach_skip_n="$(sed -n 's/.*LSP_ATTACH_SKIP=\([0-9]*\).*/\1/p' "$lsp_mark" | head -1)"
+  : "${attach_n:=0}" "${attach_fail_n:=0}" "${attach_skip_n:=0}"
 fi
 
 # --- 11) mini.ai treesitter textobjects for lua (the user-reported failure) ---

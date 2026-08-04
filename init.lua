@@ -29,26 +29,28 @@ else
   theme.setup()
   theme.apply()
 
-  -- Modern defaults: vtsls (TS), ty+ruff (Python). Override with vim.g.lsp_typescript_server.
-  local ts_server = vim.g.lsp_typescript_server or "vtsls" -- "vtsls" or "ts_ls"
+  -- TypeScript: vtsls by default (ts_ls is legacy — set vim.g.lsp_typescript_server = "ts_ls")
+  local Lsp = require "utils.lsp"
+  local ts_server = vim.g.lsp_typescript_server or "vtsls"
 
   -- Enable LSP servers per filetype (Neovim 0.11+)
+  -- JS/TS lint is chosen per buffer from project markers (biome > oxlint > eslint).
   local lsp_by_ft = {
     lua = { "lua_ls" },
-    json = { "json", "biome" },
-    jsonc = { "json", "biome" },
-    json5 = { "json", "biome" },
-    -- Astral stack: ty (types) + ruff (lint/format); replaces basedpyright
+    json = { "json" },
+    jsonc = { "json" },
+    json5 = { "json" },
+    -- Astral stack: ty (types) + ruff (lint/format)
     python = { "ty", "ruff" },
     go = { "gopls" },
     gomod = { "gopls" },
     gowork = { "gopls" },
     gotmpl = { "gopls" },
     rust = { "rust-analyzer" },
-    javascript = { ts_server, "biome", "oxlint" },
-    javascriptreact = { ts_server, "biome", "oxlint" },
-    typescript = { ts_server, "biome", "oxlint" },
-    typescriptreact = { ts_server, "biome", "oxlint" },
+    javascript = { ts_server },
+    javascriptreact = { ts_server },
+    typescript = { ts_server },
+    typescriptreact = { ts_server },
     html = { "tailwindcss" },
     css = { "tailwindcss" },
     scss = { "tailwindcss" },
@@ -64,6 +66,8 @@ else
     javascriptreact = true,
     typescript = true,
     typescriptreact = true,
+  }
+  local json_filetypes = {
     json = true,
     jsonc = true,
     json5 = true,
@@ -85,9 +89,16 @@ else
     group = vim.api.nvim_create_augroup("my_nvim_lsp_by_ft", { clear = true }),
     callback = function(event)
       local filetype = vim.bo[event.buf].filetype
-      local servers = lsp_by_ft[filetype] or {}
+      local servers = vim.list_extend({}, lsp_by_ft[filetype] or {})
 
-      if js_ts_filetypes[filetype] and #on_demands > 0 then
+      if js_ts_filetypes[filetype] or json_filetypes[filetype] then
+        local linter = Lsp.detect_js_linter()
+        if linter then
+          table.insert(servers, linter)
+        end
+      end
+
+      if (js_ts_filetypes[filetype] or json_filetypes[filetype]) and #on_demands > 0 then
         for _, server in ipairs(on_demands) do
           table.insert(servers, server)
         end

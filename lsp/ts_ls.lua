@@ -1,4 +1,5 @@
 local Lsp = require "utils.lsp"
+-- LEGACY: prefer vtsls (default). Enable with vim.g.lsp_typescript_server = "ts_ls"
 -- NOTE: npm install -g typescript@5 typescript-language-server
 -- TypeScript 7+ dropped classic lib/tsserver.js; pin TS 5.x for ts_ls.
 local tsserver = Lsp.tsserver_js_path()
