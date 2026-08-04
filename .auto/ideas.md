@@ -7,3 +7,4 @@
 - `.auto/log.jsonl` record shapes: `init` metadata, early `result` (partial fail_*), later `run` (full fail_* set). Treat as schema_version 1; do not infer a reduced check set from older `result` rows.
 - Optional: force JS linter via `vim.g.lsp_js_linter` when auto-detect picks wrong tool
 - Optional: drop `lsp/ts_ls.lua` once no projects override to legacy typescript-language-server (measure attach smoke still covers it)
+- Optional: cache `detect_js_linter` per buffer root if upward walks show up in profiles
