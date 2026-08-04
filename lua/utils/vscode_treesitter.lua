@@ -294,4 +294,30 @@ function M.debug_labels()
   return matches, by_label
 end
 
+--- Single source for expand/shrink chords (terminal + vscode-neovim).
+---@param opts? { vscode?: boolean }
+function M.setup_keymaps(opts)
+  opts = opts or {}
+  local map = vim.keymap.set
+  local expand = function()
+    M.expand()
+  end
+  -- Primary: g<Space>. Ctrl+Space aliases often stolen by OS / Cursor.
+  for _, lhs in ipairs { "g<Space>", "<C-Space>", "<C-@>", "<Nul>", "<M-Space>" } do
+    map({ "n", "x", "o" }, lhs, expand, { desc = "Treesitter Expand Selection" })
+  end
+  if opts.vscode then
+    map("x", "<BS>", function()
+      M.shrink()
+    end, { desc = "Treesitter Shrink Selection" })
+    map({ "n", "x" }, "gS", function()
+      M.shrink()
+    end, { desc = "Treesitter Shrink Selection" })
+  else
+    map("x", "gS", function()
+      M.shrink()
+    end, { desc = "Treesitter Shrink Selection" })
+  end
+end
+
 return M

@@ -35,17 +35,8 @@ map("n", "<C-j>", "<C-w>j", { desc = "Go to Lower Window", remap = true })
 map("n", "<C-k>", "<C-w>k", { desc = "Go to Upper Window", remap = true })
 map("n", "<C-l>", "<C-w>l", { desc = "Go to Right Window", remap = true })
 
--- Treesitter expand only (no flash letter marks). Primary: g<Space>.
--- Ctrl+Space aliases kept; often stolen by OS / Cursor.
-local function treesitter_incremental_selection()
-  require("utils.vscode_treesitter").expand()
-end
-for _, lhs in ipairs { "g<Space>", "<C-Space>", "<C-@>", "<Nul>", "<M-Space>" } do
-  map({ "n", "x", "o" }, lhs, treesitter_incremental_selection, { desc = "Treesitter Expand Selection" })
-end
-map("x", "gS", function()
-  require("utils.vscode_treesitter").shrink()
-end, { desc = "Treesitter Shrink Selection" })
+-- Treesitter expand/shrink (no flash letter marks). See utils.vscode_treesitter.
+require("utils.vscode_treesitter").setup_keymaps()
 
 -- Resize window using <ctrl> arrow keys
 map("n", "<C-Up>", "<cmd>resize +2<cr>", { desc = "Increase Window Height" })

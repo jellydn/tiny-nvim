@@ -96,21 +96,8 @@ vim.api.nvim_create_autocmd("User", {
     -- Navigate VSCode tabs like lazyvim buffers
     vim.keymap.set("n", "<S-h>", "<Cmd>call VSCodeNotify('workbench.action.previousEditor')<CR>")
     vim.keymap.set("n", "<S-l>", "<Cmd>call VSCodeNotify('workbench.action.nextEditor')<CR>")
-    -- Expand via g<Space> (Ctrl+Space stolen by Cursor/macOS); gS shrinks.
-    vim.keymap.set({ "n", "x", "o" }, "g<Space>", function()
-      require("utils.vscode_treesitter").expand()
-    end, { desc = "Treesitter Incremental Selection" })
-    for _, lhs in ipairs { "<C-Space>", "<C-@>", "<Nul>", "<M-Space>" } do
-      vim.keymap.set({ "n", "x", "o" }, lhs, function()
-        require("utils.vscode_treesitter").expand()
-      end, { desc = "Treesitter Incremental Selection" })
-    end
-    vim.keymap.set("x", "<BS>", function()
-      require("utils.vscode_treesitter").shrink()
-    end, { desc = "Treesitter Shrink Selection" })
-    vim.keymap.set({ "n", "x" }, "gS", function()
-      require("utils.vscode_treesitter").shrink()
-    end, { desc = "Shrink treesitter select" })
+    -- Expand/shrink: shared helper (g<Space> primary; vscode also gets <BS> / n-mode gS)
+    require("utils.vscode_treesitter").setup_keymaps { vscode = true }
 
     -- Search work in current buffer
     vim.keymap.set("n", "<leader>sb", function()
