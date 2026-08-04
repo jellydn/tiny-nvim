@@ -1,3 +1,5 @@
+local Lsp = require "utils.lsp"
+
 return {
   cmd = { "oxlint", "--lsp" },
   filetypes = {
@@ -9,14 +11,6 @@ return {
     "svelte",
     "astro",
   },
-  root_markers = {
-    "oxlintrc.json",
-    "oxlintrc.jsonc",
-    ".oxlintrc.json",
-    ".oxlintrc.jsonc",
-    "oxlint.config.ts",
-    "oxlint.config.js",
-    "oxlint.config.mjs",
-  },
+  root_markers = Lsp.oxlint_root_markers,
   settings = {},
 }

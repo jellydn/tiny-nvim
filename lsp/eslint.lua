@@ -1,5 +1,6 @@
 -- NOTE: You need to install the eslint language server to use this config.
 -- npm i -g vscode-langservers-extracted
+local Lsp = require "utils.lsp"
 
 return {
   cmd = { "vscode-eslint-language-server", "--stdio" },
@@ -12,20 +13,7 @@ return {
     "svelte",
     "astro",
   },
-  root_markers = {
-    ".eslintrc",
-    ".eslintrc.js",
-    ".eslintrc.cjs",
-    ".eslintrc.yaml",
-    ".eslintrc.yml",
-    ".eslintrc.json",
-    "eslint.config.js",
-    "eslint.config.mjs",
-    "eslint.config.cjs",
-    "eslint.config.ts",
-    "eslint.config.mts",
-    "eslint.config.cts",
-  },
+  root_markers = Lsp.eslint_root_markers,
   -- Refer to https://github.com/Microsoft/vscode-eslint#settings-options for documentation.
   settings = {
     validate = "on",

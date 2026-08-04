@@ -67,6 +67,7 @@ local oxlint_markers = {
   "oxlint.config.ts",
   "oxlint.config.js",
   "oxlint.config.mjs",
+  "oxlint.config.cjs",
 }
 local eslint_markers = {
   "eslint.config.js",
@@ -82,6 +83,11 @@ local eslint_markers = {
   ".eslintrc.yml",
   ".eslintrc.json",
 }
+
+-- Shared with lsp/*.lua root_markers so detect and attach stay in sync.
+M.biome_root_markers = biome_markers
+M.oxlint_root_markers = oxlint_markers
+M.eslint_root_markers = eslint_markers
 
 ---@param dir string
 ---@param names string[]

@@ -1,3 +1,5 @@
+local Lsp = require "utils.lsp"
+
 function _G.biome_fix()
   -- NOTE: Migrate to LSP later if it's available
   local file = vim.fn.fnameescape(vim.fn.expand "%:p") -- Escape file path for shell
@@ -44,5 +46,5 @@ return {
     "typescriptreact",
     "vue",
   },
-  root_markers = { "biome.json", "biome.jsonc" },
+  root_markers = Lsp.biome_root_markers,
 }
