@@ -213,7 +213,7 @@ if ! grep -q 'AI_MOD=true' "$ai_mark" 2>/dev/null \
   cat "$ai_mark" 2>/dev/null >&2 || true
 fi
 
-# --- 10) LSP support ---
+# --- 10) LSP support (API + every lsp/*.lua config loadable with cmd) ---
 lsp_mark="$WORKDIR/lsp.txt"
 run_to 30 "$NVIM" --headless \
   +"lua vim.g.autoresearch_bench=true" \
@@ -223,13 +223,31 @@ run_to 30 "$NVIM" --headless \
       local has_configs = #configs > 0
       local init = table.concat(vim.fn.readfile(vim.fn.stdpath('config') .. '/init.lua'), '\\n')
       local init_ok = init:find('vim%.lsp%.enable', 1, false) ~= nil
-      vim.fn.writefile({string.format('LSP_ENABLE=%s LSP_CONFIGS=%s LSP_INIT=%s', tostring(has_enable), tostring(has_configs), tostring(init_ok))}, [[$lsp_mark]])
+      local bad = 0
+      local details = {}
+      for _, p in ipairs(configs) do
+        local name = vim.fn.fnamemodify(p, ':t:r')
+        local cfg = vim.lsp.config[name]
+        if type(cfg) ~= 'table' or type(cfg.cmd) ~= 'table' or not cfg.cmd[1] then
+          bad = bad + 1
+          table.insert(details, name)
+        else
+          -- Smoke-enable without requiring the binary to stay alive
+          pcall(vim.lsp.enable, name)
+        end
+      end
+      local all_ok = bad == 0
+      vim.fn.writefile({
+        string.format('LSP_ENABLE=%s LSP_CONFIGS=%s LSP_INIT=%s LSP_ALL_OK=%s LSP_BAD=%d', tostring(has_enable), tostring(has_configs), tostring(init_ok), tostring(all_ok), bad),
+        'LSP_BAD_NAMES=' .. table.concat(details, ','),
+      }, [[$lsp_mark]])
       vim.cmd('qa!')
     end, 2500)" \
   >"$WORKDIR/lsp.log" 2>"$WORKDIR/lsp.err" || true
 if ! grep -q 'LSP_ENABLE=true' "$lsp_mark" 2>/dev/null \
   || ! grep -q 'LSP_CONFIGS=true' "$lsp_mark" 2>/dev/null \
-  || ! grep -q 'LSP_INIT=true' "$lsp_mark" 2>/dev/null; then
+  || ! grep -q 'LSP_INIT=true' "$lsp_mark" 2>/dev/null \
+  || ! grep -q 'LSP_ALL_OK=true' "$lsp_mark" 2>/dev/null; then
   fail_lsp=1
   echo "ASSERT lsp FAIL" >&2
   cat "$lsp_mark" 2>/dev/null >&2 || true

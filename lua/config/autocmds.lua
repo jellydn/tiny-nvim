@@ -199,21 +199,28 @@ vim.filetype.add {
   },
 }
 
--- LSP
+-- LSP: shared keymaps + completion/inlay for every enabled server (incl. configs
+-- that omit on_attach: eslint, json, oxlint, tailwindcss).
 local completion = vim.g.completion_mode or "blink" -- or 'native'
 vim.api.nvim_create_autocmd("LspAttach", {
+  group = vim.api.nvim_create_augroup("my_nvim_lsp_attach", { clear = true }),
   callback = function(args)
     local client = vim.lsp.get_client_by_id(args.data.client_id)
-    if client then
-      -- Built-in completion
-      if completion == "native" and client:supports_method "textDocument/completion" then
-        vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
-      end
+    if not client then
+      return
+    end
 
-      -- Inlay hints
-      if client:supports_method "textDocument/inlayHints" then
-        vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
-      end
+    -- Default buffer keymaps for all servers (Neovim 0.11+ LspAttach pattern)
+    require("utils.lsp").on_attach(client, args.buf)
+
+    -- Built-in completion
+    if completion == "native" and client:supports_method "textDocument/completion" then
+      vim.lsp.completion.enable(true, client.id, args.buf, { autotrigger = true })
+    end
+
+    -- Inlay hints
+    if client:supports_method "textDocument/inlayHints" then
+      vim.lsp.inlay_hint.enable(true, { bufnr = args.buf })
     end
   end,
 })
