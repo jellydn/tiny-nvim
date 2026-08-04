@@ -257,6 +257,32 @@ function M.filter_known_servers(names)
   return out
 end
 
+--- Shared Python project roots (ty/ruff prepend their own config files).
+M.python_project_markers = {
+  "pyproject.toml",
+  "uv.lock",
+  "poetry.lock",
+  "pdm.lock",
+  "Pipfile",
+  "setup.py",
+  "setup.cfg",
+  "requirements.txt",
+  ".git",
+}
+
+---@param extra? string[] server-specific markers first (e.g. ty.toml, ruff.toml)
+---@return string[]
+function M.python_root_markers(extra)
+  local markers = {}
+  for _, name in ipairs(extra or {}) do
+    markers[#markers + 1] = name
+  end
+  for _, name in ipairs(M.python_project_markers) do
+    markers[#markers + 1] = name
+  end
+  return markers
+end
+
 M.dprint_config_path = function()
   return get_config_path "dprint.json"
 end

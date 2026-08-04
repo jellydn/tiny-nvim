@@ -285,9 +285,13 @@ return {
             {
               role = "user",
               content = function()
+                local diff = vim.fn.system { "git", "diff", "--staged" }
+                if vim.v.shell_error ~= 0 then
+                  diff = "(failed to read staged diff)"
+                end
                 return "Write commit message for the change with commitizen convention. Write clear, informative commit messages that explain the 'what' and 'why' behind changes, not just the 'how'."
                   .. "\n\n```\n"
-                  .. vim.fn.system "git diff --staged"
+                  .. diff
                   .. "\n```"
               end,
               opts = {

@@ -4,18 +4,7 @@ local Lsp = require "utils.lsp"
 return {
   cmd = Lsp.ty_cmd(),
   filetypes = { "python" },
-  root_markers = {
-    "ty.toml",
-    "pyproject.toml",
-    "uv.lock",
-    "poetry.lock",
-    "pdm.lock",
-    "Pipfile",
-    "setup.py",
-    "setup.cfg",
-    "requirements.txt",
-    ".git",
-  },
+  root_markers = Lsp.python_root_markers { "ty.toml" },
   settings = {
     ty = {
       -- openFilesOnly keeps editor noise low; set workspace for full-project checks

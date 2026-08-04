@@ -3,17 +3,5 @@ local Lsp = require "utils.lsp"
 return {
   cmd = Lsp.ruff_cmd(),
   filetypes = { "python" },
-  root_markers = {
-    "ruff.toml",
-    ".ruff.toml",
-    "pyproject.toml",
-    "uv.lock",
-    "poetry.lock",
-    "pdm.lock",
-    "Pipfile",
-    "setup.py",
-    "setup.cfg",
-    "requirements.txt",
-    ".git",
-  },
+  root_markers = Lsp.python_root_markers { "ruff.toml", ".ruff.toml" },
 }
