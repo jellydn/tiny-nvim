@@ -404,10 +404,10 @@ public API is stable, keep using `g<Space>` / `gS`.
 
 The configuration includes specialized support for various programming languages in the `lua/langs` directory:
 
-- **TypeScript**: Enhanced TypeScript development with type checking and error translation
-- **Lua**: Lua development with syntax highlighting and completion
-- **Go**: Go development with gopls LSP integration
-- **Python**: Python development support with LSP integration
+- **TypeScript / JavaScript**: `vtsls` by default; one of biome / oxlint / eslint from nearest project markers
+- **Lua**: `lua_ls` with syntax highlighting and completion
+- **Go**: `gopls` LSP integration
+- **Python**: Astral `ty` (types) + `ruff` (lint/format)
 - **Markdown**: Markdown editing with preview support
 
 Each language configuration is modular and can be customized according to your needs.

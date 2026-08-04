@@ -132,8 +132,60 @@ M.eslint_config_exists = function()
   return false
 end
 
---- Prefer biome > oxlint > eslint from project markers. Never invent a linter.
---- Override with vim.g.lsp_js_linter = "biome"|"oxlint"|"eslint"|false
+local biome_markers = { "biome.json", "biome.jsonc" }
+local oxlint_markers = {
+  "oxlintrc.json",
+  "oxlintrc.jsonc",
+  ".oxlintrc.json",
+  ".oxlintrc.jsonc",
+  "oxlint.config.ts",
+  "oxlint.config.js",
+  "oxlint.config.mjs",
+}
+local eslint_markers = {
+  "eslint.config.js",
+  "eslint.config.mjs",
+  "eslint.config.cjs",
+  "eslint.config.ts",
+  "eslint.config.mts",
+  "eslint.config.cts",
+  ".eslintrc",
+  ".eslintrc.js",
+  ".eslintrc.cjs",
+  ".eslintrc.yaml",
+  ".eslintrc.yml",
+  ".eslintrc.json",
+}
+
+---@param dir string
+---@param names string[]
+---@return boolean
+local function dir_has_marker(dir, names)
+  for _, name in ipairs(names) do
+    if vim.uv.fs_stat(dir .. "/" .. name) then
+      return true
+    end
+  end
+  return false
+end
+
+--- Start dir + stop dir for upward project-marker walks.
+---@return string, string
+local function marker_walk_bounds()
+  local start = vim.fn.getcwd()
+  local buf = vim.api.nvim_buf_get_name(0)
+  if buf ~= "" and vim.bo.buftype == "" then
+    start = vim.fs.dirname(vim.fs.abspath(buf))
+  end
+  local stop = Path.get_git_root()
+  if type(stop) ~= "string" or stop == "" then
+    stop = vim.uv.os_homedir() or start
+  end
+  return start, stop
+end
+
+--- Prefer biome > oxlint > eslint at the *nearest* directory with any marker.
+--- Never invent a linter. Override: vim.g.lsp_js_linter = "biome"|"oxlint"|"eslint"|false
 ---@return string|nil
 function M.detect_js_linter()
   local forced = vim.g.lsp_js_linter
@@ -143,14 +195,27 @@ function M.detect_js_linter()
   if type(forced) == "string" and forced ~= "" then
     return forced
   end
-  if M.biome_config_exists() then
-    return "biome"
-  end
-  if M.oxlint_config_exists() then
-    return "oxlint"
-  end
-  if M.eslint_config_exists() then
-    return "eslint"
+
+  local start, stop = marker_walk_bounds()
+  local dir = start
+  while dir and dir ~= "" do
+    if dir_has_marker(dir, biome_markers) then
+      return "biome"
+    end
+    if dir_has_marker(dir, oxlint_markers) then
+      return "oxlint"
+    end
+    if dir_has_marker(dir, eslint_markers) then
+      return "eslint"
+    end
+    if dir == stop then
+      break
+    end
+    local parent = vim.fs.dirname(dir)
+    if parent == dir then
+      break
+    end
+    dir = parent
   end
   return nil
 end
