@@ -31,6 +31,7 @@ return {
       go = { "goimports", "gofmt" },
       -- rustfmt is installed via rustup component add rustfmt
       rust = { "rustfmt" },
+      toml = { "taplo" },
       -- Install Ruff globally.
       -- uv tool install ruff@latest
       python = function(bufnr)

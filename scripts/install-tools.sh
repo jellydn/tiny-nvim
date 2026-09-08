@@ -38,6 +38,7 @@ mise use -g rg@latest
 mise use -g ruff@latest
 mise use -g rye@latest
 mise use -g stylua@latest
+mise use -g taplo@latest
 mise use -g tree-sitter@latest
 mise use -g usage@latest
 mise use -g uv@latest

@@ -51,6 +51,7 @@ else
     gowork = { "gopls" },
     gotmpl = { "gopls" },
     rust = { "rust-analyzer" },
+    toml = { "taplo" },
     javascript = { ts_server },
     javascriptreact = { ts_server },
     typescript = { ts_server },

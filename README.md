@@ -450,6 +450,8 @@ The configuration includes specialized support for various programming languages
 - **Lua**: `lua_ls` with syntax highlighting and completion
 - **Go**: `gopls` LSP integration
 - **Python**: Astral `ty` (types) + `ruff` (lint/format)
+- **Rust**: `rust-analyzer` LSP integration
+- **TOML**: `taplo` LSP (completion, validation, schemas) + formatter
 - **Markdown**: Markdown editing with preview support
 
 Each language configuration is modular and can be customized according to your needs.
@@ -821,6 +823,8 @@ Available options:
    - `json`: JSON language server
    - `ty` / `ruff`: Astral Python stack (types + lint/format)
    - `gopls`: Go language server
+   - `rust-analyzer`: Rust language server
+   - `taplo`: TOML language server (format, lint, schemas)
    - `tailwindcss`: Tailwind CSS language server
 
 When prompted, enter your selections as comma-separated values:
