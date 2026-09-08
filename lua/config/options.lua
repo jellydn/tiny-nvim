@@ -5,6 +5,12 @@ vim.g.maplocalleader = "\\"
 -- This config uses oil.nvim (terminal) or VS Code explorer (vscode-neovim) instead.
 vim.g.loaded_nvim_dir_plugin = true
 
+-- LuaSnip v2.5 still calls vim.F.if_nil (renamed to vim.nonnil in 0.13, removed in 0.15).
+-- Drop after LuaSnip ships https://github.com/L3MON4D3/LuaSnip/issues/1436 (unreleased).
+if vim.F and vim.nonnil then
+  vim.F.if_nil = vim.nonnil
+end
+
 -- Prefer uv tool installs (ty/ruff) over Homebrew stubs that often shadow on PATH.
 -- Avoid a trailing separator when PATH is empty because it can add CWD to PATH.
 do
