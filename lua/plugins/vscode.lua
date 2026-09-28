@@ -1,3 +1,6 @@
+-- vscode-neovim only. VSCodeVim does not load Lua.
+-- Its docs load remap lines from a .vimrc, and VS Code commands go in
+-- vim.*ModeKeyBindings in settings.json. Those bindings mirror this file.
 if not vim.g.vscode then
   return {}
 end
@@ -238,7 +241,7 @@ vim.api.nvim_create_autocmd("User", {
     end)
 
     -- Other keymaps will be used with https://github.com/VSpaceCode/vscode-which-key, so we don't need to define them here
-    -- Trigger which-key by pressing <CMD+Space>, refer more default keymaps https://github.com/VSpaceCode/vscode-which-key/blob/15c5aa2da5812a21210c5599d9779c46d7bfbd3c/package.json#L265
+    -- Trigger which-key by pressing <Shift+Space>, refer more default keymaps https://github.com/VSpaceCode/vscode-which-key/blob/15c5aa2da5812a21210c5599d9779c46d7bfbd3c/package.json#L265
 
     -- Multiple cursors
     vim.keymap.set({ "n", "x", "i" }, "<C-m>", function()
