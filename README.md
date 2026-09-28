@@ -12,25 +12,26 @@
 <a href="https://dotfyle.com/jellydn/tiny-nvim"><img src="https://dotfyle.com/jellydn/tiny-nvim/badges/leaderkey?style=flat" /></a>
 <a href="https://dotfyle.com/jellydn/tiny-nvim"><img src="https://dotfyle.com/jellydn/tiny-nvim/badges/plugin-manager?style=flat" /></a>
 
-> Slim Neovim config for **0.13+** with minimal plugins.
+> Slim Neovim config for **0.11+** with minimal plugins.
 
-[![Slim Neovim config for 0.13](https://i.gyazo.com/6e351d72c2f119f70dbc55d61e9452fd.png)](https://gyazo.com/6e351d72c2f119f70dbc55d61e9452fd)
+[![Slim Neovim config for 0.11+](https://i.gyazo.com/6e351d72c2f119f70dbc55d61e9452fd.png)](https://gyazo.com/6e351d72c2f119f70dbc55d61e9452fd)
 
 ## Requirements
 
-- **Neovim 0.13+** (runtime target; built-in LSP configs use the 0.11+ `lsp/` format)
-- External tools from [`./scripts/install-tools.sh`](./scripts/install-tools.sh) (includes `tree-sitter` CLI for parser compile)
-- `~/.local/bin` on `PATH` is prepended at startup so tools from `uv` / mise (e.g. `ty`, `ruff`) resolve correctly
+- **Neovim 0.11.0 or newer**. This is the minimum version because the config uses `vim.lsp.enable()` and the native `lsp/` config format introduced in Neovim 0.11.
+- Git, a [Nerd Font](https://www.nerdfonts.com/), and the external tools used by the features you enable.
+- On Linux and macOS, [`./scripts/install-tools.sh`](./scripts/install-tools.sh) installs the full tool set, including the `tree-sitter` CLI used to compile parsers.
+- When `~/.local/bin` exists, the config prepends it to `PATH` with the correct separator for the operating system. This lets tools installed by `uv` or mise, such as `ty` and `ruff`, resolve correctly.
 
 ## Motivation
 
 This configuration is a migration from [my-nvim-ide](https://github.com/jellydn/my-nvim-ide) with two main goals:
 
-1. **Leverage Neovim Built-in Features (0.11 API, 0.13 runtime)**:
+1. **Leverage Neovim Built-in Features (0.11+)**:
    - Remove dependency on [`lspconfig`](https://github.com/neovim/nvim-lspconfig/pull/3659) by utilizing Neovim's built-in LSP support
    - No need for the `mason.nvim` plugin; instead, use a shell [script](./scripts/install-tools.sh) to install necessary tools
    - Experience faster startup times and reduced complexity
-   - Target Neovim **0.13+** behavior (e.g. disable built-in `nvim.dir` so oil / VS Code explorer own `-`)
+   - Use newer behavior when available while keeping Neovim 0.11 as the minimum supported version
 
 2. **Optimize Plugin Selection**:
    - Trim down the plugin list to only essential ones
@@ -50,7 +51,9 @@ The result is a faster, more maintainable configuration that still provides all 
 
 ## Quick Start
 
-### One-liner Installation (Recommended)
+### Linux and macOS installation
+
+The one-line installer and `scripts/install-tools.sh` require Bash. They do not support native Windows shells.
 
 ```bash
 # Install with default app name (tiny-nvim)
@@ -77,6 +80,38 @@ NVIM_APPNAME=tiny-nvim nvim
 # If using custom app name
 NVIM_APPNAME=my_nvim nvim
 ```
+
+### Windows installation
+
+On Windows 11, run this command in PowerShell:
+
+```powershell
+irm https://raw.githubusercontent.com/jellydn/tiny-nvim/main/install.ps1 | iex
+```
+
+The installer uses `winget` to install Git and Neovim when they are missing. It verifies Neovim 0.11+, backs up an existing `%LOCALAPPDATA%\tiny-nvim` directory, clones the config, installs plugins, and sets `NVIM_APPNAME=tiny-nvim` for your user account. Open a new PowerShell window and run `nvim` when it finishes.
+
+To use a different app name, set `TINY_NVIM_APPNAME` for the installation command:
+
+```powershell
+$env:TINY_NVIM_APPNAME = "my_nvim"
+irm https://raw.githubusercontent.com/jellydn/tiny-nvim/main/install.ps1 | iex
+```
+
+For a manual installation, install Neovim 0.11+ and Git, then run:
+
+```powershell
+git clone https://github.com/jellydn/tiny-nvim.git "$env:LOCALAPPDATA\tiny-nvim"
+$env:NVIM_APPNAME = "tiny-nvim"
+nvim
+```
+
+Windows compatibility notes:
+
+- The Bash installation scripts do not run in PowerShell. Install the external tools you use with `winget`, Scoop, Chocolatey, or mise. Git is required to install plugins; `rg`, `fd`, and `tree-sitter` are recommended for search and Treesitter support.
+- The optional LuaSnip JavaScript regular-expression build is skipped on Windows. Normal snippet support still works.
+- Optional plugins with a `make` build step need GNU Make and the compiler required by that plugin.
+- Markdown preview uses the Windows default browser.
 
 ### Cleanup
 
@@ -156,7 +191,7 @@ This configuration has migrated from `snacks.nvim` to `mini.nvim` as its core UI
 - Consistent ecosystem from a single author
 - Better integration between plugins
 - Reduced dependencies while maintaining feature parity
-- Optimized for Neovim 0.13+
+- Uses Neovim 0.11+ built-in APIs
 
 | Feature      | Previously (snacks) | Now (mini.nvim + extras) |
 | ------------ | ------------------- | ------------------------ |
@@ -191,7 +226,7 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 ### Core Development
 
 - **LSP & Completion**
-  - Built-in LSP support (Neovim 0.11+ `lsp/` format; runtime **0.13+**)
+  - Built-in LSP support (Neovim **0.11+** native `lsp/` format)
   - Defaults: TypeScript/`vtsls`, Python/`ty`+`ruff`, JS lint via nearest biome → oxlint → eslint
   - [blink.cmp](https://github.com/saghen/blink.cmp) (v1.\*): Enhanced completion menu
   - [conform.nvim](https://github.com/stevearc/conform.nvim): Code formatting
@@ -984,7 +1019,7 @@ Also increasing Key Repeat and Delay Until Repeat settings in System Preferences
 <details>
 <summary>Click to expand learning resources</summary>
 
-This config targets **Neovim 0.13+**. The 0.11 links below still explain the built-in LSP/`lsp/` foundation this repo uses.
+This config supports **Neovim 0.11.0 and newer**. The links below explain the built-in LSP/`lsp/` foundation this repo uses.
 
 - [What's New in Neovim 0.11](https://gpanders.com/blog/whats-new-in-neovim-0-11/): A detailed overview of the latest features and improvements in Neovim 0.11.
 - [Neovim 0.11 Built-in Completion Setup](https://gist.github.com/miroshQa/7c61292bc37070bb7606a29e07fe00e2): A comprehensive guide for setting up built-in completion in Neovim 0.11+.
