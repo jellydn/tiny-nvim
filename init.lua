@@ -1,3 +1,7 @@
+if vim.fn.has "nvim-0.11" == 0 then
+  error "tiny-nvim requires Neovim 0.11.0 or newer"
+end
+
 require "config.options"
 
 -- Load project setting if available, e.g: .nvim-config.lua

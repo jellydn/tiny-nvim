@@ -6,15 +6,16 @@ vim.g.maplocalleader = "\\"
 vim.g.loaded_nvim_dir_plugin = true
 
 -- Prefer uv tool installs (ty/ruff) over Homebrew stubs that often shadow on PATH.
--- Avoid `local_bin:` when PATH is empty — a trailing empty PATH component means CWD on POSIX.
+-- Avoid a trailing separator when PATH is empty because it can add CWD to PATH.
 do
   local local_bin = vim.fn.expand "~/.local/bin"
   if vim.uv.fs_stat(local_bin) then
     local path = vim.env.PATH or ""
+    local path_separator = package.config:sub(1, 1) == "\\" and ";" or ":"
     if path == "" then
       vim.env.PATH = local_bin
-    elseif not vim.startswith(path, local_bin .. ":") and path ~= local_bin then
-      vim.env.PATH = local_bin .. ":" .. path
+    elseif not vim.startswith(path, local_bin .. path_separator) and path ~= local_bin then
+      vim.env.PATH = local_bin .. path_separator .. path
     end
   end
 end

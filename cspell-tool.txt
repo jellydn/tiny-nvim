@@ -264,3 +264,6 @@ claudecode
 deepcopy
 startinsert
 termcodes
+winget
+LOCALAPPDATA
+LASTEXITCODE
