@@ -275,6 +275,7 @@ Theme switching:
 ### Navigation & Search
 
 - [flash.nvim](https://github.com/folke/flash.nvim): Navigation and search enhancements
+- [demicolon.nvim](https://github.com/mawkler/demicolon.nvim): Repeat `]`/`[` jumps and `f`/`t` finds with `;` (forward) and `,` (backward)
 - [which-key.nvim](https://github.com/folke/which-key.nvim): Keybinding hints and management
 - [fff.nvim](https://github.com/dmtrKovalenko/fff.nvim): Fast fuzzy file picker with frecency scoring, git integration, and live grep
 - [oil.nvim](https://github.com/stevearc/oil.nvim): File explorer that lets you edit your filesystem like a buffer
@@ -426,6 +427,7 @@ You'll get the same Neovim experience in VSCode, including all the plugins and k
 | `gS` / visual `<BS>` | Treesitter **shrink** selection |
 | `S` | Labeled treesitter select via vscode decorations |
 | `s` | Flash jump |
+| `;` / `,` | Same demicolon repeat as terminal Neovim (`;` forward, `,` backward) |
 
 `Ctrl+Space` is often stolen by macOS Input Sources or Cursor Suggest. Prefer `g<Space>`,
 or restore Neovim ownership in Cursor `keybindings.json`:
@@ -520,6 +522,8 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `<A-k>`    | Move Line Up                                     |
 | `gl`       | Go to end of line                                |
 | `gh`       | Go to start of line                              |
+| `;`        | Repeat `]`/`[` or `f`/`t` forward (demicolon)    |
+| `,`        | Repeat `]`/`[` or `F`/`T` backward (demicolon)   |
 | `<A-a>`    | Select all text                                  |
 | `g<Space>` | Treesitter expand selection (no flash labels)    |
 | `gS`       | Treesitter shrink selection (visual)             |
@@ -588,6 +592,8 @@ This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim
 | `[e`         | Previous Error                    |
 | `]w`         | Next Warning                      |
 | `[w`         | Previous Warning                  |
+
+Repeat these `]`/`[` jumps with `;` (forward) and `,` (backward). See Movement & Editing.
 
 ### File Operations
 

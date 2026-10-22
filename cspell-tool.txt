@@ -180,6 +180,8 @@ textobjects
 danymat
 Neogen
 stevearc
+demicolon
+mawkler
 goimports
 gofmt
 isort

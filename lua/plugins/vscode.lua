@@ -12,6 +12,7 @@ local enabled = {
   "nvim-ts-context-commentstring",
   "ts-comments.nvim",
   "vim-repeat",
+  "demicolon.nvim",
 }
 
 local Config = require "lazy.core.config"
