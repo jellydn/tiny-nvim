@@ -345,6 +345,27 @@ return {
         },
       },
     },
+    config = function(_, opts)
+      -- noice.nvim sizes notify windows with the removed 1-arg vim.str_utfindex(s).
+      -- Upstream main still does this (notify.lua). Load a one-line patched copy.
+      local module_name = "noice.view.backend.notify"
+      if not package.loaded[module_name] then
+        local path = vim.fn.stdpath "data" .. "/lazy/noice.nvim/lua/noice/view/backend/notify.lua"
+        local file = io.open(path, "r")
+        if file then
+          local src = file:read "*a"
+          file:close()
+          local patched, replacements = src:gsub("vim%.str_utfindex%(line%)", 'vim.str_utfindex(line, "utf-32")', 1)
+          if replacements > 0 then
+            local chunk = load(patched, "@noice-notify-utfindex-patch")
+            if chunk then
+              package.preload[module_name] = chunk
+            end
+          end
+        end
+      end
+      require("noice").setup(opts)
+    end,
     keys = {
       {
         "<leader>ud",
