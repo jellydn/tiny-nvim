@@ -133,10 +133,23 @@ map("n", "[q", vim.cmd.cprev, { desc = "Previous Quickfix" })
 map("n", "]q", vim.cmd.cnext, { desc = "Next Quickfix" })
 
 -- diagnostic
+-- Same window as the old `float = true` shim: cursor diagnostic, unfocused.
+local function open_diagnostic_float(_, bufnr)
+  vim.diagnostic.open_float {
+    bufnr = bufnr,
+    scope = "cursor",
+    focus = false,
+  }
+end
+
 local diagnostic_goto = function(next, severity)
   severity = severity and vim.diagnostic.severity[severity] or nil
   return function()
-    vim.diagnostic.jump { count = next and 1 or -1, float = true, severity = severity }
+    vim.diagnostic.jump {
+      count = next and 1 or -1,
+      severity = severity,
+      on_jump = open_diagnostic_float,
+    }
   end
 end
 map("n", "<leader>cd", vim.diagnostic.open_float, { desc = "Line Diagnostics" })
