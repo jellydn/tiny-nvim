@@ -1,11 +1,15 @@
 local M = {}
 
-local theme_names = { "kanagawa" }
+local theme_names = { "cobalt2", "kanagawa" }
 
 M.themes = {
   kanagawa = function()
     vim.o.background = "dark"
     require("kanagawa").load "wave"
+  end,
+  cobalt2 = function()
+    vim.o.background = "dark"
+    require("colorbuddy").colorscheme "cobalt2"
   end,
 }
 
@@ -55,7 +59,7 @@ local function apply_overrides()
 end
 
 function M.apply(name)
-  local theme = name or vim.g.theme or "kanagawa"
+  local theme = name or vim.g.theme or "cobalt2"
   local apply = M.themes[theme]
   if not apply then
     vim.notify(("Unknown theme '%s'. Available: %s"):format(theme, list_themes()), vim.log.levels.WARN)
@@ -74,7 +78,7 @@ function M.setup()
 
   vim.api.nvim_create_user_command("Theme", function(opts)
     if opts.args == "" then
-      local current = vim.g.theme or "kanagawa"
+      local current = vim.g.theme or "cobalt2"
       vim.notify(("Current theme: %s. Available: %s"):format(current, list_themes()))
       return
     end

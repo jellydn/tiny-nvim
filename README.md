@@ -260,7 +260,8 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 
 ### UI & Theme
 
-- [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim): Beautiful theme inspired by Kanagawa wave
+- [cobalt2.nvim](https://github.com/lalitmee/cobalt2.nvim): Default theme — port of the Cobalt2 scheme (via colorbuddy.nvim)
+- [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim): Alternative theme inspired by Kanagawa wave
 - [mini.nvim](https://github.com/echasnovski/mini.nvim): Buffer management via mini.tabline/mini.bufremove
 - Statusline, tabline, icons, and starter via mini.nvim ecosystem
 - [noice.nvim](https://github.com/folke/noice.nvim): Improved notifications and command-line UI
@@ -268,8 +269,8 @@ This configuration leverages the mini.nvim plugin suite as its core UI framework
 
 Theme switching:
 
-- Default theme: `kanagawa`
-- Switch theme: `:Theme kanagawa`
+- Default theme: `cobalt2`
+- Switch theme: `:Theme cobalt2` (or `:Theme kanagawa`)
 - Check current theme: `:Theme`
 
 ### Navigation & Search
@@ -460,7 +461,7 @@ Each language configuration is modular and can be customized according to your n
 
 ### Theme
 
-This configuration uses [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) as the default theme. The theme is inspired by the Kanagawa wave and provides a beautiful, elegant color scheme that's easy on the eyes while maintaining good contrast and readability.
+This configuration uses [cobalt2.nvim](https://github.com/lalitmee/cobalt2.nvim) as the default theme. It is a port of the famous Cobalt2 scheme (popularized by Wes Bos), built on [colorbuddy.nvim](https://github.com/tjdevries/colorbuddy.nvim), with a dark, easy-on-the-eyes palette and good contrast. [kanagawa.nvim](https://github.com/rebelot/kanagawa.nvim) remains available as an alternative — switch anytime with `:Theme cobalt2` or `:Theme kanagawa`.
 
 </details>
 

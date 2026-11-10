@@ -7,6 +7,8 @@ Nvim
 Keymaps
 modeline
 kanagawa
+cobalt2
+colorbuddy
 vtsls
 pyright
 gopls
