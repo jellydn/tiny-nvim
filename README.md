@@ -391,7 +391,9 @@ Theme switching:
 ### File Type Support
 
 - [render-markdown.nvim](https://github.com/MeanderingProgrammer/render-markdown.nvim): Markdown rendering and preview
-- [previm](https://github.com/previm/previm): Markdown preview in browser
+- [previm](https://github.com/previm/previm): Markdown preview in browser (`<leader>m`). It uses the
+  default system browser; set `vim.g.previm_browser = "Safari"` (macOS app name) in
+  `.nvim-config.lua` to use a different one.
 - [ts-error-translator.nvim](https://github.com/dmmulroy/ts-error-translator.nvim): TypeScript error translation
 - [typecheck.nvim](https://github.com/jellydn/typecheck.nvim): Type checking for TypeScript
 

@@ -1,19 +1,57 @@
+-- Command that previm appends the preview file path to.
+-- Set `vim.g.previm_browser` (e.g. in .nvim-config.lua) to pick a specific browser.
+local function previm_open_cmd()
+  local browser = vim.g.previm_browser
+  local sysname = vim.uv.os_uname().sysname or ""
+
+  if type(browser) == "string" and browser ~= "" then
+    if vim.fn.has "mac" == 1 or sysname == "Darwin" then
+      return ('open -a "%s"'):format(browser)
+    end
+    return browser
+  end
+
+  if vim.fn.has "mac" == 1 or sysname == "Darwin" then
+    -- `open` uses the default browser and reuses a running instance.
+    -- Launching the browser binary directly can drop the file URL.
+    return "open"
+  end
+
+  if vim.fn.has "win32" == 1 or vim.fn.has "win64" == 1 or sysname:match "^Windows" then
+    -- The empty "" is the window title; without it `start` swallows the path.
+    return 'cmd /c start ""'
+  end
+
+  for _, cand in ipairs { "xdg-open", "brave-browser", "google-chrome", "firefox", "sensible-browser" } do
+    if vim.fn.executable(cand) == 1 then
+      return cand
+    end
+  end
+  return "xdg-open"
+end
+
 return {
-  {
-    "folke/which-key.nvim",
-    optional = true,
-    opts = {
-      spec = {
-        { "<leader>m", group = "markdown", icon = "" },
-      },
-    },
-  },
   {
     "nvim-treesitter/nvim-treesitter",
     optional = true,
     opts = { ensure_installed = { "markdown", "markdown_inline" } },
   },
-  -- Markdown preview
+  -- Markdown preview in the browser
+  {
+    "previm/previm",
+    config = function()
+      vim.g.previm_open_cmd = previm_open_cmd()
+    end,
+    ft = { "markdown" },
+    keys = {
+      {
+        "<leader>m",
+        "<cmd>PrevimOpen<cr>",
+        desc = "Markdown preview in browser",
+      },
+    },
+  },
+  -- Markdown preview inside Neovim
   {
     "MeanderingProgrammer/render-markdown.nvim",
     dependencies = { "nvim-treesitter/nvim-treesitter" },
@@ -26,45 +64,6 @@ return {
         "<leader>tm",
         "<cmd>RenderMarkdown toggle<cr>",
         desc = "Toggle Markdown preview",
-      },
-    },
-  },
-  {
-    "previm/previm",
-    config = function()
-      -- define global for open markdown preview (cross-platform)
-      -- macOS: use Brave app binary path
-      -- Windows: use `start` to open default browser
-      -- Linux/other: prefer xdg-open, fallback to available browser binary
-      local ok, uname = pcall(vim.uv.os_uname)
-      local sysname = ""
-      if ok and uname and uname.sysname then
-        sysname = uname.sysname
-      end
-
-      if vim.fn.has "mac" == 1 or sysname == "Darwin" then
-        vim.g.previm_open_cmd = "/Applications/Brave\\ Browser.app/Contents/MacOS/Brave\\ Browser"
-      elseif vim.fn.has "win32" == 1 or vim.fn.has "win64" == 1 or sysname:match "^Windows" then
-        -- Using `start` via cmd opens the default browser on Windows
-        vim.g.previm_open_cmd = "start"
-      else
-        -- Prefer the first available open command on Linux/Unix
-        local open_cmd = "xdg-open"
-        for _, cand in ipairs { "xdg-open", "brave-browser", "google-chrome", "firefox", "sensible-browser" } do
-          if vim.fn.executable(cand) == 1 then
-            open_cmd = cand
-            break
-          end
-        end
-        vim.g.previm_open_cmd = open_cmd
-      end
-    end,
-    ft = { "markdown" },
-    keys = {
-      {
-        "<leader>m",
-        "<cmd>PrevimOpen<cr>",
-        desc = "Markdown preview on browser",
       },
     },
   },
